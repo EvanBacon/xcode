@@ -1,5 +1,7 @@
 # pbxproj-json
 
+> This project is a _work in progress_ / _proof of concept_
+
 > Website https://xcode-seven.vercel.app/
 
 Here is a diagram of the grammar used for parsing:
