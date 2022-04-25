@@ -1,27 +1,7 @@
-export interface XcodeProject {
-  archiveVersion: string;
-  classes: unknown;
-  objectVersion: string;
-  objects: Record<string, Object<any>>;
-  rootObject: string;
-}
-
-interface Object<TISA extends ISA> {
-  /** custom */
-  _id?: string;
-  isa: TISA;
-}
-
-export interface PBXFileReference extends Object<ISA.PBXFileReference> {
-  isa: ISA.PBXFileReference;
-  children?: string[];
-  fileEncoding?: string;
-  lastKnownFileType?: string;
-  explicitFileType?: string;
-  path?: string;
-  sourceTree: SourceTree;
-  name?: string;
-  includeInIndex?: string;
+export enum SourceTree {
+  DeveloperDir = "DEVELOPER_DIR",
+  Group = "<group>",
+  Sdkroot = "SDKROOT",
 }
 
 /** Elements: http://www.monobjc.net/xcode-project-file-format.html */
@@ -50,10 +30,30 @@ export enum ISA {
   XCConfigurationList = "XCConfigurationList",
 }
 
-export enum SourceTree {
-  DeveloperDir = "DEVELOPER_DIR",
-  Group = "<group>",
-  Sdkroot = "SDKROOT",
+interface Object<TISA extends ISA> {
+  /** custom */
+  _id?: string;
+  isa: TISA;
+}
+
+export interface XcodeProject {
+  archiveVersion: string;
+  classes: unknown;
+  objectVersion: string;
+  objects: Record<string, Object<any>>;
+  rootObject: string;
+}
+
+export interface PBXFileReference extends Object<ISA.PBXFileReference> {
+  isa: ISA.PBXFileReference;
+  children?: string[];
+  fileEncoding?: string;
+  lastKnownFileType?: string;
+  explicitFileType?: string;
+  path?: string;
+  sourceTree: SourceTree;
+  name?: string;
+  includeInIndex?: string;
 }
 
 export interface PBXShellScriptBuildPhase
@@ -78,7 +78,16 @@ export interface PBXFrameworksBuildPhase
   runOnlyForDeploymentPostprocessing: string;
 }
 
-export interface PBXNativeTarget extends Object<ISA.PBXNativeTarget> {
+/** This is the element for a build target that aggregates several others. */
+export interface PBXAggregateTarget extends PBXTarget<ISA.PBXAggregateTarget> {
+  buildConfigurationList: string;
+  buildPhases: string[];
+  dependencies: string[];
+  name: string;
+  productName: string;
+}
+
+export interface PBXNativeTarget extends PBXTarget<ISA.PBXNativeTarget> {
   buildConfigurationList: string;
   buildPhases: string[];
   buildRules: any[];
@@ -101,6 +110,16 @@ export interface PBXContainerItemProxy
   remoteInfo: string;
 }
 
+/** This element is an abstract parent for specialized targets. */
+export interface PBXTarget<
+  TTargetIsa extends
+    | ISA.PBXAggregateTarget
+    | ISA.PBXLegacyTarget
+    | ISA.PBXNativeTarget
+> extends Object<TTargetIsa> {
+  target: string;
+  targetProxy: string;
+}
 export interface PBXTargetDependency extends Object<ISA.PBXTargetDependency> {
   target: string;
   targetProxy: string;
