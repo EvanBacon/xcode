@@ -3,9 +3,14 @@ import {
   isPBXBuildFile,
   isPBXFileReference,
 } from "./referenceBuilder";
-import { EOL } from "os";
 import { PBXBuildFile, PBXFileReference, XcodeProject } from "./types";
 import { addQuotes } from "./unicode";
+
+let EOL = "\n";
+
+try {
+  EOL = require("os").EOL;
+} catch {}
 
 export type JSONPrimitive =
   | boolean
