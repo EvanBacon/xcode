@@ -1,5 +1,5 @@
-export const QUOTE_MAP = Object.freeze({
-  "a": "\\a",
+export const QUOTE_MAP: Record<string, string> = Object.freeze({
+  [`\a`]: "\\a",
   "\b": "\\b",
   "\f": "\\f",
   "\r": "\\r",
@@ -28,26 +28,27 @@ export const QUOTE_MAP = Object.freeze({
   "\x18": "\\U0018",
   "\x19": "\\U0019",
   "\x1A": "\\U001a",
-  "e": "\\U001b",
+  [`\e`]: "\\U001b",
   "\x1C": "\\U001c",
   "\x1D": "\\U001d",
   "\x1E": "\\U001e",
   "\x1F": "\\U001f",
 });
 
-export const UNQUOTE_MAP = Object.freeze({
-  "\n": "\n",
-  a: "a",
+export const UNQUOTE_MAP: Record<string, string> = Object.freeze({
+  a: `\a`,
   b: "\b",
   f: "\f",
+  n: "\n",
   r: "\r",
   t: "\t",
   v: "\v",
-  n: "\n",
-  "'": "'",
-  '"': '"',
+  "\n": "\n",
+  '"': `\"`,
+  "'": `\'`,
+  // ... U
   "\\": "\\",
 });
 
 export const QUOTE_REGEXP =
-  /\x07|\x08|\f|\r|\t|\v|\n|"|\\|\x00|\x01|\x02|\x03|\x04|\x05|\x06|\x0E|\x0F|\x10|\x11|\x12|\x13|\x14|\x15|\x16|\x17|\x18|\x19|\x1A|\x1B|\x1C|\x1D|\x1E|\x1F/;
+  /\x07|\x08|\f|\r|\t|\v|\n|"|\\|\x00|\x01|\x02|\x03|\x04|\x05|\x06|\x0E|\x0F|\x10|\x11|\x12|\x13|\x14|\x15|\x16|\x17|\x18|\x19|\x1A|\x1B|\x1C|\x1D|\x1E|\x1F/g;

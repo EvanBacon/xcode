@@ -5,6 +5,7 @@ import {
 } from "./referenceBuilder";
 import { EOL } from "os";
 import { PBXBuildFile, PBXFileReference, XcodeProject } from "./types";
+import { addQuotes } from "./unicode";
 
 export type JSONPrimitive =
   | boolean
@@ -22,11 +23,6 @@ export interface JSONObject {
   [key: string]: JSONValue | undefined;
 }
 
-function pad(x: number): string {
-  // \t might also work...
-  return x > 0 ? "    " + pad(x - 1) : "";
-}
-
 function isObject(value: any): value is JSONObject {
   return (
     typeof value === "object" && value !== null && !(value instanceof Buffer)
@@ -35,6 +31,8 @@ function isObject(value: any): value is JSONObject {
 
 /** Ensure string values that use invalid characters are wrapped in quotes. */
 function ensureQuotes(value: any): string {
+  value = addQuotes(value);
+
   // Seems like no hyphen is the wehhh
   if (/^[\w_$/:.]+$/.test(value)) {
     //   if (/^[\w_$/:.-]+$/.test(value)) {
@@ -71,9 +69,23 @@ export class Writer {
   private contents: string = "";
   private comments: { [key: string]: string } = {};
 
+  pad(x: number): string {
+    // \t might also work...
+    const tab = this.options.tab ?? "\t";
+    return x > 0 ? tab + this.pad(x - 1) : "";
+    // return x > 0 ? "    " + pad(x - 1) : "";
+  }
+
   constructor(
     private project: Partial<XcodeProject>,
-    private options: { shebang?: string; skipNullishValues?: boolean } = {}
+    private options: {
+      /** @default `\t`` */
+      tab?: string;
+      /** @default `!$*UTF8*$!` */
+      shebang?: string;
+      /** @default `false` */
+      skipNullishValues?: boolean;
+    } = {}
   ) {
     this.comments = createReferenceList(project);
     this.writeShebang();
@@ -85,13 +97,13 @@ export class Writer {
   }
 
   private println(string?: JSONPrimitive) {
-    this.contents += pad(this.indent);
+    this.contents += this.pad(this.indent);
     this.contents += string;
     this.contents += EOL;
   }
 
   private write(string?: JSONPrimitive) {
-    this.contents += pad(this.indent);
+    this.contents += this.pad(this.indent);
     this.contents += string;
   }
 
@@ -140,6 +152,12 @@ export class Writer {
       } else if (Array.isArray(value)) {
         this.writeArray(key, value);
       } else if (isObject(value)) {
+        // Deeper empty objects should be inlined.
+        if (!isBase && !Object.keys(value).length) {
+          this.println(ensureQuotes(key) + " = {};");
+          return;
+        }
+
         this.println(ensureQuotes(key) + " = {");
         this.indent++;
         if (isBase && key === "objects") {
@@ -150,7 +168,12 @@ export class Writer {
         this.indent--;
         this.println("};");
       } else {
-        this.printAssignLn(ensureQuotes(key), this.formatId(value as any));
+        this.printAssignLn(
+          ensureQuotes(key),
+          key === "remoteGlobalIDString"
+            ? ensureQuotes(value)
+            : this.formatId(value as any)
+        );
       }
     });
   }

@@ -1,6 +1,6 @@
 // https://github.com/CocoaPods/Nanaimo/blob/master/lib/nanaimo/unicode/next_step_mapping.rb
 // Taken from http://ftp.unicode.org/Public/MAPPINGS/VENDORS/NEXT/NEXTSTEP.TXT
-export const NEXT_STEP_MAPPING = Object.freeze({
+export const NEXT_STEP_MAPPING: Record<number, number> = Object.freeze({
   [0x80]: 0x00a0, // NO-BREAK SPACE
   [0x81]: 0x00c0, // LATIN CAPITAL LETTER A WITH GRAVE
   [0x82]: 0x00c1, // LATIN CAPITAL LETTER A WITH ACUTE

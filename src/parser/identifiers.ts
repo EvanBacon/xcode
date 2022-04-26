@@ -1,6 +1,6 @@
 import { createToken, Lexer } from "chevrotain";
 
-// import { unquotify_string } from "../unicode";
+import { stripQuotes } from "../unicode";
 
 export const ObjectStart = createToken({ name: "OpenBracket", pattern: /{/ });
 export const ObjectEnd = createToken({ name: "CloseBracket", pattern: /}/ });
@@ -31,8 +31,13 @@ function matchQuotedString(text: string, startOffset: number) {
   if (execResult !== null) {
     const fullMatch = execResult[0];
     // compute the payload
-    const matchWithOutQuotes = fullMatch.substring(1, fullMatch.length - 1);
-    // const matchWithOutQuotes = unquotify_string(fullMatch);
+    // const matchWithOutQuotes = fullMatch.substring(1, fullMatch.length - 1);
+    // const matchWithOutQuotes = JSON.stringify(
+    //   fullMatch.substring(1, fullMatch.length - 1)
+    // );
+    const matchWithOutQuotes = stripQuotes(
+      fullMatch.substring(1, fullMatch.length - 1)
+    );
     // attach the payload
 
     // @ts-expect-error

@@ -10,6 +10,7 @@ import {
 export function createReferenceList(
   project: Partial<XcodeProject>
 ): Record<string, string> {
+  const strict = false;
   const objects: Record<string, any> = project?.objects ?? {};
 
   const referenceCache: Record<string, string> = {};
@@ -19,15 +20,19 @@ export function createReferenceList(
       if (obj.buildConfigurationList === id) {
         let name = obj.name ?? obj.path ?? obj.productName;
         if (!name) {
-          // NOTE(EvanBacon): I have no idea what I'm doing...
-          // this is for the case where the build configuration list is pointing to the main `PBXProject` object (no name).
-          // We locate the proxy (which may or may not be related) and use the remoteInfo property.
-          const proxy = Object.values(objects).find(
-            (obj: any) =>
-              obj.isa === "PBXContainerItemProxy" &&
-              obj.containerPortal === innerId
-          );
-          name = proxy?.remoteInfo;
+          name = objects[obj.targets?.[0]]?.name;
+
+          if (!name) {
+            // NOTE(EvanBacon): I have no idea what I'm doing...
+            // this is for the case where the build configuration list is pointing to the main `PBXProject` object (no name).
+            // We locate the proxy (which may or may not be related) and use the remoteInfo property.
+            const proxy = Object.values(objects).find(
+              (obj: any) =>
+                obj.isa === "PBXContainerItemProxy" &&
+                obj.containerPortal === innerId
+            );
+            name = proxy?.remoteInfo;
+          }
         }
 
         return `Build configuration list for ${obj.isa} "${name}"`;
@@ -60,6 +65,9 @@ export function createReferenceList(
     id: string,
     object: Record<string, any>
   ): string | null {
+    if (!object?.isa) {
+      return null;
+    }
     if (id in referenceCache) {
       return referenceCache[id];
     }
@@ -69,7 +77,7 @@ export function createReferenceList(
       referenceCache[id] = getXCConfigurationListComment(id);
     } else if (isPBXProject(object)) {
       referenceCache[id] = "Project object";
-    } else if (object.isa.endsWith("BuildPhase")) {
+    } else if (object.isa?.endsWith("BuildPhase")) {
       referenceCache[id] = getBuildPhaseName(object) ?? "";
     } else {
       referenceCache[id] = object.name ?? object.path ?? object.isa ?? null;
@@ -78,13 +86,18 @@ export function createReferenceList(
   }
 
   Object.entries(objects).forEach(([id, object]) => {
+    if (id === project.rootObject) {
+      return;
+    }
+
     if (!getCommentForObject(id, object)) {
-      throw new Error(
-        "Failed to find comment reference for ID: " +
-          id +
-          ", isa: " +
-          object.isa
-      );
+      if (strict)
+        throw new Error(
+          "Failed to find comment reference for ID: " +
+            id +
+            ", isa: " +
+            object.isa
+        );
     }
   });
 
@@ -98,6 +111,7 @@ function isPBXProject(val: any): val is PBXProject {
 export function isPBXBuildFile(val: any): val is PBXBuildFile {
   return val?.isa === "PBXBuildFile";
 }
+
 export function isPBXFileReference(val: any): val is PBXFileReference {
   return val?.isa === "PBXFileReference";
 }
@@ -110,12 +124,7 @@ function getBuildPhaseName(buildPhase: any) {
   return buildPhase.name ?? getDefaultBuildPhaseName(buildPhase.isa);
 }
 
+/** Return the default name for a build phase object based on the `isa` */
 function getDefaultBuildPhaseName(isa: string): string | null {
-  return (
-    {
-      PBXSourcesBuildPhase: "Sources",
-      PBXFrameworksBuildPhase: "Frameworks",
-      PBXResourcesBuildPhase: "Resources",
-    }[isa] ?? null
-  );
+  return isa.match(/PBX([a-zA-Z]+)BuildPhase/)?.[1] ?? null;
 }

@@ -1,8 +1,4 @@
-export enum SourceTree {
-  DeveloperDir = "DEVELOPER_DIR",
-  Group = "<group>",
-  Sdkroot = "SDKROOT",
-}
+export type SourceTree = "DEVELOPER_DIR" | "<group>" | "SDKROOT";
 
 /** Elements: http://www.monobjc.net/xcode-project-file-format.html */
 export enum ISA {
@@ -30,6 +26,21 @@ export enum ISA {
   XCConfigurationList = "XCConfigurationList",
 }
 
+export type ProductType =
+  | "com.apple.product-type.application"
+  | "com.apple.product-type.app-extension"
+  | "com.apple.product-type.bundle"
+  | "com.apple.product-type.tool"
+  | "com.apple.product-type.library.dynamic"
+  | "com.apple.product-type.framework"
+  | "com.apple.product-type.library.static"
+  | "com.apple.product-type.bundle.unit-test"
+  | "com.apple.product-type.application.watchapp"
+  | "com.apple.product-type.application.watchapp2"
+  | "com.apple.product-type.application.on-demand-install-capable"
+  | "com.apple.product-type.watchkit-extension"
+  | "com.apple.product-type.watchkit2-extension";
+
 interface Object<TISA extends ISA> {
   /** custom */
   _id?: string;
@@ -47,13 +58,19 @@ export interface XcodeProject {
 export interface PBXFileReference extends Object<ISA.PBXFileReference> {
   isa: ISA.PBXFileReference;
   children?: string[];
-  fileEncoding?: string;
+  basename: string;
   lastKnownFileType?: string;
-  explicitFileType?: string;
+  group?: string;
   path?: string;
+  fileEncoding?: number;
+  defaultEncoding?: number;
   sourceTree: SourceTree;
-  name?: string;
-  includeInIndex?: string;
+  includeInIndex?: number;
+  explicitFileType?: unknown;
+  settings?: object;
+  uuid?: string;
+  fileRef: string;
+  target?: string;
 }
 
 export interface PBXShellScriptBuildPhase
@@ -95,7 +112,7 @@ export interface PBXNativeTarget extends PBXTarget<ISA.PBXNativeTarget> {
   name: string;
   productName: string;
   productReference: string;
-  productType: string;
+  productType: ProductType;
 }
 
 export interface PBXBuildFile extends Object<ISA.PBXBuildFile> {

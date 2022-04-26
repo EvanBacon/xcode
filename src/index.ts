@@ -1,7 +1,7 @@
-import * as parser from "./lib/parser/parser";
-import { XcodeProject } from "./lib/types";
-import { ContextVisitor } from "./lib/visitor/contextVisitor";
-import { Writer } from "./lib/writer";
+import * as parser from "./parser/parser";
+import { XcodeProject } from "./types";
+import { ContextVisitor } from "./visitor/contextVisitor";
+import { Writer } from "./writer";
 
 /** @returns a JSON representation of the given `pbxproj` file in string format. */
 export function parse(text: string): Partial<XcodeProject> {
@@ -16,4 +16,4 @@ export function write(project: Partial<XcodeProject>): string {
   return new Writer(project).getResults();
 }
 
-export * from "./lib/types";
+export * from "./types";
