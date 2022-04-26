@@ -7,7 +7,7 @@ export enum SourceTree {
 /** Elements: http://www.monobjc.net/xcode-project-file-format.html */
 export enum ISA {
   PBXBuildFile = "PBXBuildFile",
-  /*-*/ PBXBuildPhase = "PBXBuildPhase",
+  PBXBuildPhase = "PBXBuildPhase",
   /*-*/ PBXAppleScriptBuildPhase = "PBXAppleScriptBuildPhase",
   /*-*/ PBXCopyFilesBuildPhase = "PBXCopyFilesBuildPhase",
   /*-*/ PBXFrameworksBuildPhase = "PBXFrameworksBuildPhase",
@@ -38,7 +38,7 @@ interface Object<TISA extends ISA> {
 
 export interface XcodeProject {
   archiveVersion: string;
-  classes: unknown;
+  classes: Record<string, any>;
   objectVersion: string;
   objects: Record<string, Object<any>>;
   rootObject: string;

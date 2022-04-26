@@ -43,7 +43,7 @@ export class ContextVisitor extends BaseVisitor {
   }
 
   identifier(ctx: any) {
-    console.log("id:", ctx);
+    // console.log("id:", ctx);
     if (ctx.QuotedString) {
       return ctx.QuotedString[0].payload ?? ctx.QuotedString[0].image;
     } else if (ctx.StringLiteral) {
