@@ -1,4 +1,4 @@
-# pbxproj-json
+# xcparse
 
 > This project is a _work in progress_ / _proof of concept_
 
@@ -13,6 +13,7 @@ Here is a diagram of the grammar used for parsing:
 The most popular solution for parsing pbxproj files is a very old package by Cordova called [xcode](https://www.npmjs.com/package/xcode).
 
 **But `xcode` has some major issues:**
+
 - Inaccurate parsing: strings can be quoted incorrectly very often, lists often don't work.
 - Outdated: values for App Clips, iMessage Sticker packs, etc are missing.
 - Untyped: TypeScript is a crutch I proudly support.
@@ -37,7 +38,8 @@ We support the following types: `Object`, `Array`, `Data`, `String`. Notably, we
 
 # TODO
 
-- [ ] Writing isn't implemented lol.
+- [x] Reading.
+- [x] Writing.
+- [ ] Escaping scripts and header search paths.
+- [ ] Generating UUIDs.
 - [ ] The API would probably be implemented using [unist](https://github.com/syntax-tree/unist)
-
-
