@@ -40,6 +40,6 @@ We support the following types: `Object`, `Array`, `Data`, `String`. Notably, we
 
 - [x] Reading.
 - [x] Writing.
-- [ ] Escaping scripts and header search paths.
+- [x] Escaping scripts and header search paths.
 - [ ] Generating UUIDs.
 - [ ] The API would probably be implemented using [unist](https://github.com/syntax-tree/unist)
