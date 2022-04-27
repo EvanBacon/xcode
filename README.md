@@ -1,6 +1,6 @@
 # xcparse
 
-> This project is a _work in progress_ / _proof of concept_
+> This project is a ~~_work in progress_ / _proof of concept_~~ seemingly spec compliant `pbxproj` parser.
 
 > Website https://xcode-seven.vercel.app/
 
