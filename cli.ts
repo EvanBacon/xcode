@@ -1,4 +1,4 @@
-import { parse, write } from "./src";
+import { parse, build } from "./src";
 import fs from "fs";
 import path from "path";
 import { inspect } from "util";
@@ -13,4 +13,4 @@ const project = parse(pbxproj);
 
 console.log(inspect(project, { depth: 6, colors: true }));
 
-console.log(write(project));
+console.log(build(project));

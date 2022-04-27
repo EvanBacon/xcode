@@ -11,8 +11,8 @@ export function parse(text: string): Partial<XcodeProject> {
   return visitor.context;
 }
 
-/** @returns a string representation of the given `pbxproj` in JSON format. */
-export function write(project: Partial<XcodeProject>): string {
+/** @returns a string representation of the given `pbxproj` in Apple's [Old-Style Plist](http://www.opensource.apple.com/source/CF/CF-744.19/CFOldStylePList.c) `string` format. */
+export function build(project: Partial<XcodeProject>): string {
   return new Writer(project).getResults();
 }
 
