@@ -1,4 +1,4 @@
-export type SourceTree = "DEVELOPER_DIR" | "<group>" | "SDKROOT";
+export type SourceTree = "BUILT_PRODUCTS_DIR" | "DEVELOPER_DIR" | "<group>" | "<absolute>" | "SDKROOT";
 
 /** Elements: http://www.monobjc.net/xcode-project-file-format.html */
 export enum ISA {
