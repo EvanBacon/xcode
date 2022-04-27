@@ -27,7 +27,38 @@ The most popular solution for parsing pbxproj files is a very old package by Cor
 - Slow: PEG.js is not very fast ([benchmark](https://chevrotain.io/performance/)).
 - Feature Incomplete: Missing the `Data` type (`<xx xx xx>`).
 
-### Solution
+## Format Comparison
+
+Consider the following [output from the `xcode` package](https://github.com/apache/cordova-node-xcode/blob/8b98cabc5978359db88dc9ff2d4c015cba40f150/test/fixtures/full-project.json#L429-L435):
+
+```json
+{
+    "307D28A1123043350040C0FA_comment": "PhoneGapBuildSettings.xcconfig",
+    "308D052E1370CCF300D202BF": {
+        "isa": "PBXFileReference",
+        "lastKnownFileType": "image.png",
+        "path": "\"icon-72.png\"",
+        "sourceTree": "\"<group>\""
+    }
+}
+```
+
+That same object would look like this in `xcparse`:
+
+```json
+{
+    "308D052E1370CCF300D202BF": {
+        "isa": "PBXFileReference",
+        "lastKnownFileType": "image.png",
+        "path": "icon-72.png",
+        "sourceTree": "<group>"
+    }
+}
+```
+
+Notice how you don't need to strip or reapply quotes, you also don't need to filter out comments because the default visitor ignores comments in favor of regenerating them dynamically like Xcode does.
+
+## Solution
 
 - Unlike the [xcode](https://www.npmjs.com/package/xcode) package which uses PEG.js, this implementation uses [Chevrotain](https://chevrotain.io/).
 - This project support the Data type `<xx xx xx>`.

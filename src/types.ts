@@ -31,7 +31,11 @@ export type ProductType =
   | "com.apple.product-type.app-extension"
   | "com.apple.product-type.bundle"
   | "com.apple.product-type.tool"
+  | "com.apple.product-type.kernel-extension.iokit"
   | "com.apple.product-type.library.dynamic"
+  | "com.apple.product-type.in-app-purchase-content"
+  | "com.apple.product-type.kernel-extension"
+  | "com.apple.product-type.bundle.ui-testing"
   | "com.apple.product-type.framework"
   | "com.apple.product-type.library.static"
   | "com.apple.product-type.bundle.unit-test"
@@ -42,8 +46,6 @@ export type ProductType =
   | "com.apple.product-type.watchkit2-extension";
 
 interface Object<TISA extends ISA> {
-  /** custom */
-  _id?: string;
   isa: TISA;
 }
 
@@ -113,6 +115,8 @@ export interface PBXNativeTarget extends PBXTarget<ISA.PBXNativeTarget> {
   productName: string;
   productReference: string;
   productType: ProductType;
+  /** @example `$(HOME)/bin` */
+  productInstallPath?: string;
 }
 
 export interface PBXBuildFile extends Object<ISA.PBXBuildFile> {
@@ -122,6 +126,7 @@ export interface PBXBuildFile extends Object<ISA.PBXBuildFile> {
 export interface PBXContainerItemProxy
   extends Object<ISA.PBXContainerItemProxy> {
   containerPortal: string;
+  /** @example `1` */
   proxyType: string;
   remoteGlobalIDString: string;
   remoteInfo: string;
@@ -156,10 +161,14 @@ export interface XCBuildConfiguration extends Object<ISA.XCBuildConfiguration> {
 
 export interface PBXGroup extends Object<ISA.PBXGroup> {
   children: string[];
-  indentWidth: string;
   sourceTree: SourceTree;
-  tabWidth: string;
-  usesTabs: string;
+
+  /** @example `4` `2` */
+  indentWidth?: string;
+  /** @example `4` `2` */
+  tabWidth?: string;
+  /** @example `0` */
+  usesTabs?: string;
 }
 
 export interface PBXProject extends Object<ISA.PBXProject> {
@@ -167,8 +176,9 @@ export interface PBXProject extends Object<ISA.PBXProject> {
   buildConfigurationList: string;
   compatibilityVersion: string;
   developmentRegion: string;
+  /** @example `0` */
   hasScannedForEncodings: string;
-  knownRegions: string[];
+  knownRegions: ('en' | 'Base' | string)[];
   mainGroup: string;
   productRefGroup: string;
   projectDirPath: string;
@@ -177,14 +187,17 @@ export interface PBXProject extends Object<ISA.PBXProject> {
 }
 
 export interface Attributes {
+  /** @example `1240` */
   LastUpgradeCheck: string;
+  /** @example `1240` */
+  LastSwiftUpdateCheck?: string;
   TargetAttributes: Record<string, TargetAttribute>;
 }
 
 export type TargetAttribute =
   | {
       CreatedOnToolsVersion: string;
-      TestTargetID: string;
+      TestTargetID?: string;
     }
   | {
       LastSwiftMigration: string;
@@ -194,6 +207,8 @@ export interface XCBuildConfiguration extends Object<ISA.XCBuildConfiguration> {
   buildSettings: BuildSettings;
   name: string;
 }
+
+export type BoolString = 'YES' | 'NO' | 'YES_ERROR' | 'YES_AGGRESSIVE';
 
 export interface BuildSettings {
   BUNDLE_LOADER: string;
@@ -210,15 +225,22 @@ export interface BuildSettings {
   OTHER_LDFLAGS: string[];
   SWIFT_OPTIMIZATION_LEVEL?: string;
   SWIFT_VERSION: string;
-  VERSIONING_SYSTEM: string;
-  ALWAYS_SEARCH_USER_PATHS: string;
+  
+  ALWAYS_SEARCH_USER_PATHS?: BoolString;
+  CLANG_ANALYZER_NONNULL?: BoolString;
+
   CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED: string;
-  CLANG_CXX_LANGUAGE_STANDARD: string;
-  CLANG_CXX_LIBRARY: string;
-  CLANG_ENABLE_MODULES: string;
-  CLANG_ENABLE_OBJC_ARC: string;
-  CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING: string;
-  CLANG_WARN_BOOL_CONVERSION: string;
+  
+  CLANG_CXX_LANGUAGE_STANDARD: string | "gnu++0x" | "gnu++14";
+  CLANG_CXX_LIBRARY: string | "libc++";
+  VERSIONING_SYSTEM?: "apple-generic" | string;
+
+  CLANG_ENABLE_MODULES?: BoolString;
+  CLANG_ENABLE_OBJC_ARC?: BoolString;
+  CLANG_ENABLE_OBJC_WEAK?: BoolString;
+
+  CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING?: BoolString;
+  CLANG_WARN_BOOL_CONVERSION?: BoolString;
   CLANG_WARN_COMMA: string;
   CLANG_WARN_CONSTANT_CONVERSION: string;
   CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS: string;
@@ -236,7 +258,7 @@ export interface BuildSettings {
   CLANG_WARN_SUSPICIOUS_MOVE: string;
   CLANG_WARN_UNREACHABLE_CODE: string;
   CLANG_WARN__DUPLICATE_METHOD_MATCH: string;
-  "CODE_SIGN_IDENTITY[sdk=iphoneos*]": string;
+  "CODE_SIGN_IDENTITY[sdk=iphoneos*]": string | 'iPhone Developer';
   ENABLE_STRICT_OBJC_MSGSEND: string;
   ENABLE_TESTABILITY?: string;
   GCC_C_LANGUAGE_STANDARD: string;
@@ -252,9 +274,12 @@ export interface BuildSettings {
   GCC_WARN_UNUSED_FUNCTION: string;
   GCC_WARN_UNUSED_VARIABLE: string;
   LIBRARY_SEARCH_PATHS: string[];
+  PREBINDING?: BoolString;
   MTL_ENABLE_DEBUG_INFO: string;
-  ONLY_ACTIVE_ARCH?: string;
+  ONLY_ACTIVE_ARCH?: BoolString;
   SDKROOT: string;
   ENABLE_NS_ASSERTIONS?: string;
   VALIDATE_PRODUCT?: string;
+  DEBUG_INFORMATION_FORMAT?: 'dwarf' | 'dwarf-with-dsym' | string;
+
 }
