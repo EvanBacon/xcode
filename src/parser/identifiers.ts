@@ -1,4 +1,4 @@
-import { createToken, Lexer } from "chevrotain";
+import { createToken, Lexer } from "./chevrotain";
 
 import { stripQuotes } from "../unicode";
 

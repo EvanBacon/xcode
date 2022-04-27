@@ -1,25 +1,24 @@
-import { CstParser } from "chevrotain";
-import * as chevrotain from "chevrotain";
-import { tokens, lexer } from "./lexer";
+import { createSyntaxDiagramsCode, CstNode, CstParser, tokenMatcher } from './chevrotain';
 import {
-  StringLiteral,
-  DataLiteral,
-  Colon,
-  Terminator,
-  Comment,
-  ObjectStart,
-  ObjectEnd,
-  ArrayStart,
   ArrayEnd,
+  ArrayStart,
+  Colon,
+  Comment,
+  DataLiteral,
+  ObjectEnd,
+  ObjectStart,
   QuotedString,
   Separator,
-} from "./identifiers";
+  StringLiteral,
+  Terminator,
+} from './identifiers';
+import { lexer, tokens } from './lexer';
 
 export class CommentCstParser extends CstParser {
   LA(howMuch: any) {
     // Skip Comments during regular parsing as we wish to auto-magically insert them
     // into our CST
-    while (chevrotain.tokenMatcher(super.LA(howMuch), Comment)) {
+    while (tokenMatcher(super.LA(howMuch), Comment)) {
       // @ts-expect-error
       super.consumeToken();
     }
@@ -36,7 +35,7 @@ export class CommentCstParser extends CstParser {
 
     // After every Token (terminal) is successfully consumed
     // We will add all the comment that appeared before it to the CST (Parse Tree)
-    while (chevrotain.tokenMatcher(prevToken, Comment)) {
+    while (tokenMatcher(prevToken, Comment)) {
       // @ts-expect-error
       super.cstPostTerminal(Comment.name, prevToken);
       lookBehindIdx--;
@@ -112,18 +111,18 @@ export class PbxprojParser extends CommentCstParser {
 const parser = new PbxprojParser();
 export const BaseVisitor = parser.getBaseCstVisitorConstructorWithDefaults();
 export const serializedGrammar = parser.getSerializedGastProductions();
-export const htmlText = chevrotain.createSyntaxDiagramsCode(serializedGrammar);
+export const htmlText = createSyntaxDiagramsCode(serializedGrammar);
 
-export function parse(text: string): chevrotain.CstNode {
+export function parse(text: string): CstNode {
   const lexingResult = lexer.tokenize(text);
-  if (lexingResult.errors.length > 0) {
+  if (lexingResult.errors.length) {
     throw new Error(`Parsing errors: ${lexingResult.errors[0].message}`);
   }
 
   parser.input = lexingResult.tokens;
   const parsingResult = parser.head();
 
-  if (parser.errors.length > 0) {
+  if (parser.errors.length) {
     throw new Error(`Parsing errors: ${parser.errors[0].message}`);
   }
 

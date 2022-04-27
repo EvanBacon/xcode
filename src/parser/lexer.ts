@@ -1,11 +1,8 @@
-import * as chevrotain from "chevrotain";
-
-import identifiers from "./identifiers";
-
-const Lexer = chevrotain.Lexer;
+import { Lexer, TokenType } from './chevrotain';
+import identifiers from './identifiers';
 
 // the vocabulary will be exported and used in the Parser definition.
-export const tokenVocabulary: { [key: string]: chevrotain.TokenType } = {};
+export const tokenVocabulary: Record<string, TokenType> = {};
 
 // The order of tokens is important
 export const tokens = [...identifiers];
