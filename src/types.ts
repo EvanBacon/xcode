@@ -1,4 +1,10 @@
-export type SourceTree = "BUILT_PRODUCTS_DIR" | "DEVELOPER_DIR" | "SOURCE_ROOT" | "SDKROOT" | "<group>" | "<absolute>";
+export type SourceTree =
+  | "BUILT_PRODUCTS_DIR"
+  | "DEVELOPER_DIR"
+  | "SOURCE_ROOT"
+  | "SDKROOT"
+  | "<group>"
+  | "<absolute>";
 
 /** Elements: http://www.monobjc.net/xcode-project-file-format.html */
 export enum ISA {
@@ -24,6 +30,12 @@ export enum ISA {
   PBXTargetDependency = "PBXTargetDependency",
   XCBuildConfiguration = "XCBuildConfiguration",
   XCConfigurationList = "XCConfigurationList",
+
+  // ??
+  PBXBuildRule = "PBXBuildRule",
+  PBXReferenceProxy = "PBXReferenceProxy",
+  PBXRezBuildPhase = "PBXRezBuildPhase",
+  XCVersionGroup = "XCVersionGroup",
 }
 
 export type ProductType =
@@ -57,6 +69,94 @@ export interface XcodeProject {
   rootObject: string;
 }
 
+/** Abstract parent for custom build phases. */
+
+export interface PBXBuildPhase<TISA extends ISA = ISA.PBXBuildPhase>
+  extends Object<TISA> {
+  /** @example `Embed App Extensions` */
+  name?: string;
+  /** @example `2147483647` */
+  buildActionMask: string;
+  /** List of UUIDs */
+  files: string[];
+  /** Boolean number 0-1. */
+  runOnlyForDeploymentPostprocessing: string;
+}
+
+export interface PBXCopyFilesBuildPhase
+  extends PBXBuildPhase<ISA.PBXCopyFilesBuildPhase> {
+  dstPath: string;
+  /** @example `13` */
+  dstSubfolderSpec: string;
+}
+
+/** Sources compilation */
+export interface PBXSourcesBuildPhase
+  extends PBXBuildPhase<ISA.PBXSourcesBuildPhase> {}
+export interface PBXResourcesBuildPhase
+  extends PBXBuildPhase<ISA.PBXResourcesBuildPhase> {}
+export interface PBXHeadersBuildPhase
+  extends PBXBuildPhase<ISA.PBXHeadersBuildPhase> {}
+export interface PBXAppleScriptBuildPhase
+  extends PBXBuildPhase<ISA.PBXAppleScriptBuildPhase> {}
+
+// Discovered in Cocoa-Application.pbxproj
+export interface PBXRezBuildPhase extends PBXBuildPhase<ISA.PBXRezBuildPhase> {}
+
+export interface PBXShellScriptBuildPhase
+  extends PBXBuildPhase<ISA.PBXShellScriptBuildPhase> {
+  inputPaths: string[];
+  outputPaths: string[];
+  shellPath: string;
+  shellScript: string;
+  inputFileListPaths?: any[];
+  outputFileListPaths?: any[];
+  showEnvVarsInLog?: string;
+}
+
+export interface PBXFrameworksBuildPhase
+  extends PBXBuildPhase<ISA.PBXFrameworksBuildPhase> {}
+
+export interface PBXBuildRule extends Object<ISA.PBXBuildRule> {
+  compilerSpec: "com.apple.compilers.proxy.script" | string;
+  /** @example `*.css` */
+  filePatterns?: string;
+  fileType: string | "pattern.proxy" | "wrapper.xcclassmodel";
+  isEditable: number;
+
+  inputFiles?: string[];
+
+  /** @example `["${INPUT_FILE_BASE}.css.c"]` */
+  outputFiles: string[];
+  outputFilesCompilerFlags?: string[];
+
+  script?: string;
+}
+
+// Discovered in Cocoa-Application.pbxproj
+export interface PBXReferenceProxy extends Object<ISA.PBXReferenceProxy> {
+  fileType: "wrapper.application" | string;
+  /** @example `ReferencedProject.app` */
+  path: string;
+  /** UUID */
+  remoteRef: string;
+  sourceTree: SourceTree;
+}
+
+// Discovered in Cocoa-Application.pbxproj
+export interface XCVersionGroup extends Object<ISA.XCVersionGroup> {
+  /** List of UUIDs (appears to be UUIDs for `PBXBuildFile`s of type `xcdatamodel`) */
+  children: string[];
+  /** UUID for a `PBXBuildFile` (should also be included in the `children` array). */
+  currentVersion: string[];
+  /** @example `CPDocument.xcdatamodeld` */
+  name: string;
+  /** @example `Cocoa Application/CPDocument.xcdatamodeld` */
+  path: string;
+  sourceTree: SourceTree;
+  versionGroupType: "wrapper.xcdatamodel" | string;
+}
+
 export interface PBXFileReference extends Object<ISA.PBXFileReference> {
   isa: ISA.PBXFileReference;
   children?: string[];
@@ -73,28 +173,6 @@ export interface PBXFileReference extends Object<ISA.PBXFileReference> {
   uuid?: string;
   fileRef: string;
   target?: string;
-}
-
-export interface PBXShellScriptBuildPhase
-  extends Object<ISA.PBXShellScriptBuildPhase> {
-  buildActionMask: string;
-  files: any[];
-  inputPaths: string[];
-  name: string;
-  outputPaths: string[];
-  runOnlyForDeploymentPostprocessing: string;
-  shellPath: string;
-  shellScript: string;
-  inputFileListPaths?: any[];
-  outputFileListPaths?: any[];
-  showEnvVarsInLog?: string;
-}
-
-export interface PBXFrameworksBuildPhase
-  extends Object<ISA.PBXFrameworksBuildPhase> {
-  buildActionMask: string;
-  files: string[];
-  runOnlyForDeploymentPostprocessing: string;
 }
 
 /** This is the element for a build target that aggregates several others. */
@@ -178,7 +256,7 @@ export interface PBXProject extends Object<ISA.PBXProject> {
   developmentRegion: string;
   /** @example `0` */
   hasScannedForEncodings: string;
-  knownRegions: ('en' | 'Base' | string)[];
+  knownRegions: ("en" | "Base" | string)[];
   mainGroup: string;
   productRefGroup: string;
   projectDirPath: string;
@@ -208,7 +286,7 @@ export interface XCBuildConfiguration extends Object<ISA.XCBuildConfiguration> {
   name: string;
 }
 
-export type BoolString = 'YES' | 'NO' | 'YES_ERROR' | 'YES_AGGRESSIVE';
+export type BoolString = "YES" | "NO" | "YES_ERROR" | "YES_AGGRESSIVE";
 
 export interface BuildSettings {
   BUNDLE_LOADER: string;
@@ -225,12 +303,12 @@ export interface BuildSettings {
   OTHER_LDFLAGS: string[];
   SWIFT_OPTIMIZATION_LEVEL?: string;
   SWIFT_VERSION: string;
-  
+
   ALWAYS_SEARCH_USER_PATHS?: BoolString;
   CLANG_ANALYZER_NONNULL?: BoolString;
 
   CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED: string;
-  
+
   CLANG_CXX_LANGUAGE_STANDARD: string | "gnu++0x" | "gnu++14";
   CLANG_CXX_LIBRARY: string | "libc++";
   VERSIONING_SYSTEM?: "apple-generic" | string;
@@ -258,7 +336,7 @@ export interface BuildSettings {
   CLANG_WARN_SUSPICIOUS_MOVE: string;
   CLANG_WARN_UNREACHABLE_CODE: string;
   CLANG_WARN__DUPLICATE_METHOD_MATCH: string;
-  "CODE_SIGN_IDENTITY[sdk=iphoneos*]": string | 'iPhone Developer';
+  "CODE_SIGN_IDENTITY[sdk=iphoneos*]": string | "iPhone Developer";
   ENABLE_STRICT_OBJC_MSGSEND: string;
   ENABLE_TESTABILITY?: string;
   GCC_C_LANGUAGE_STANDARD: string;
@@ -280,6 +358,5 @@ export interface BuildSettings {
   SDKROOT: string;
   ENABLE_NS_ASSERTIONS?: string;
   VALIDATE_PRODUCT?: string;
-  DEBUG_INFORMATION_FORMAT?: 'dwarf' | 'dwarf-with-dsym' | string;
-
+  DEBUG_INFORMATION_FORMAT?: "dwarf" | "dwarf-with-dsym" | string;
 }
