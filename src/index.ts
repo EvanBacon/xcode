@@ -1,12 +1,12 @@
 import * as parser from "./parser/parser";
 import { XcodeProject } from "./types";
-import { ContextVisitor } from "./visitor/contextVisitor";
+import { JsonVisitor } from "./visitor/JsonVisitor";
 import { Writer } from "./writer";
 
 /** @returns a JSON representation of the given `pbxproj` file in string format. */
 export function parse(text: string): Partial<XcodeProject> {
   const cst = parser.parse(text);
-  const visitor = new ContextVisitor();
+  const visitor = new JsonVisitor();
   visitor.visit(cst);
   return visitor.context;
 }

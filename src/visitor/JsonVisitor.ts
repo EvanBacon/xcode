@@ -2,7 +2,7 @@ import { BaseVisitor } from "../parser/parser";
 import { XcodeProject } from "../types";
 
 /** Converts a CST for `pbxproj` into a JSON representation. */
-export class ContextVisitor extends BaseVisitor {
+export class JsonVisitor extends BaseVisitor {
   context: Partial<XcodeProject> = {};
 
   constructor() {
@@ -43,7 +43,6 @@ export class ContextVisitor extends BaseVisitor {
   }
 
   identifier(ctx: any) {
-    // console.log("id:", ctx);
     if (ctx.QuotedString) {
       return ctx.QuotedString[0].payload ?? ctx.QuotedString[0].image;
     } else if (ctx.StringLiteral) {
