@@ -1,11 +1,3 @@
-export type SourceTree =
-  | "BUILT_PRODUCTS_DIR"
-  | "DEVELOPER_DIR"
-  | "SOURCE_ROOT"
-  | "SDKROOT"
-  | "<group>"
-  | "<absolute>";
-
 /** Elements: http://www.monobjc.net/xcode-project-file-format.html */
 export enum ISA {
   PBXBuildFile = "PBXBuildFile",
@@ -299,8 +291,9 @@ export interface PBXProject extends Object<ISA.PBXProject> {
   attributes: Attributes;
   /** XCConfigurationList UUID */
   buildConfigurationList: string;
-  /** Xcode compatibility version. */
+  /** Xcode compatibility version. @example `Xcode 3.2` */
   compatibilityVersion: string;
+  /** @example `English` */
   developmentRegion?: string;
   /** @example `0` */
   hasScannedForEncodings?: string;
@@ -329,6 +322,7 @@ export type TargetAttribute =
   | {
       CreatedOnToolsVersion: string;
       TestTargetID?: string;
+      ProvisioningStyle?: "Automatic" | "Manual";
     }
   | {
       LastSwiftMigration: string;
@@ -414,3 +408,11 @@ export interface BuildSettings {
   VALIDATE_PRODUCT?: string;
   DEBUG_INFORMATION_FORMAT?: "dwarf" | "dwarf-with-dsym" | string;
 }
+
+export type SourceTree =
+  | "BUILT_PRODUCTS_DIR"
+  | "DEVELOPER_DIR"
+  | "SOURCE_ROOT"
+  | "SDKROOT"
+  | "<group>"
+  | "<absolute>";

@@ -8,7 +8,6 @@
 yarn add xcparse
 ```
 
-
 > Website https://xcode-seven.vercel.app/
 
 Here is a diagram of the grammar used for parsing:
@@ -33,13 +32,13 @@ Consider the following [output from the `xcode` package](https://github.com/apac
 
 ```json
 {
-    "307D28A1123043350040C0FA_comment": "PhoneGapBuildSettings.xcconfig",
-    "308D052E1370CCF300D202BF": {
-        "isa": "PBXFileReference",
-        "lastKnownFileType": "image.png",
-        "path": "\"icon-72.png\"",
-        "sourceTree": "\"<group>\""
-    }
+  "307D28A1123043350040C0FA_comment": "PhoneGapBuildSettings.xcconfig",
+  "308D052E1370CCF300D202BF": {
+    "isa": "PBXFileReference",
+    "lastKnownFileType": "image.png",
+    "path": "\"icon-72.png\"",
+    "sourceTree": "\"<group>\""
+  }
 }
 ```
 
@@ -47,12 +46,12 @@ That same object would look like this in `xcparse`:
 
 ```json
 {
-    "308D052E1370CCF300D202BF": {
-        "isa": "PBXFileReference",
-        "lastKnownFileType": "image.png",
-        "path": "icon-72.png",
-        "sourceTree": "<group>"
-    }
+  "308D052E1370CCF300D202BF": {
+    "isa": "PBXFileReference",
+    "lastKnownFileType": "image.png",
+    "path": "icon-72.png",
+    "sourceTree": "<group>"
+  }
 }
 ```
 
@@ -86,27 +85,24 @@ We support the following types: `Object`, `Array`, `Data`, `String`. Notably, we
 
 # Docs
 
-Docs are in the works. For now, you can refer to the types and the estimated [`pbxproj` spec][spec].
+Docs are in the works. For now, you can refer to the [types](./src/types.ts) and the estimated [`pbxproj` spec][spec].
 
 The API will change in the future, for now we have two methods:
 
 ```ts
-import { 
-    /** Given a stringified `pbxproj`, return a JSON representation of the object. */
-    parse, 
-    /** Given a JSON representation of a `pbxproj`, return a `.pbxproj` string that can be parsed by Xcode. */
-    build 
-} from 'xctrace'
+import {
+  /** Given a stringified `pbxproj`, return a JSON representation of the object. */
+  parse,
+  /** Given a JSON representation of a `pbxproj`, return a `.pbxproj` string that can be parsed by Xcode. */
+  build,
+} from "xctrace";
 
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
-const pbxproj = parse(fs.readFileSync('/path/to/project.pbxproj'));
+const pbxproj = parse(fs.readFileSync("/path/to/project.pbxproj"));
 
 const pbxprojString = build(pbxproj);
-
 ```
-
-
 
 [spec]: http://www.monobjc.net/xcode-project-file-format.html
