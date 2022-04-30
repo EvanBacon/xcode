@@ -1,4 +1,11 @@
-import { createSyntaxDiagramsCode, CstNode, CstParser, tokenMatcher } from './chevrotain';
+import {
+  createSyntaxDiagramsCode,
+  ParserMethod,
+  IRuleConfig,
+  CstNode,
+  CstParser,
+  tokenMatcher,
+} from "./chevrotain";
 import {
   ArrayEnd,
   ArrayStart,
@@ -11,10 +18,36 @@ import {
   Separator,
   StringLiteral,
   Terminator,
-} from './identifiers';
-import { lexer, tokens } from './lexer';
+} from "./identifiers";
+import { lexer, tokens } from "./lexer";
 
 export class CommentCstParser extends CstParser {
+  protected RULE<F extends () => void>(
+    name: string,
+    implementation: F,
+    config?: IRuleConfig<CstNode>
+  ): ParserMethod<Parameters<F>, CstNode> {
+    return super.RULE(
+      name,
+      () => {
+        const start = this.LA(1).startOffset;
+        const ruleResult = implementation();
+        const end = this.LA(0);
+
+        if (ruleResult !== undefined) {
+          // @ts-ignore
+          ruleResult.position = {
+            start: start,
+            end: end,
+          };
+        }
+
+        return ruleResult;
+      },
+      config
+    );
+  }
+
   LA(howMuch: any) {
     // Skip Comments during regular parsing as we wish to auto-magically insert them
     // into our CST

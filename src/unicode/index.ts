@@ -2,7 +2,7 @@ import { NEXT_STEP_MAPPING } from "./NextStepMapping";
 import { QUOTE_MAP, QUOTE_REGEXP, UNQUOTE_MAP } from "./QuoteMaps";
 
 export function addQuotes(string: string): string {
-  return string.replace(QUOTE_REGEXP, (sub) => {
+  return String(string).replace(QUOTE_REGEXP, (sub) => {
     return QUOTE_MAP[sub];
   });
 }

@@ -43,10 +43,13 @@ export class JsonVisitor extends BaseVisitor {
   }
 
   identifier(ctx: any) {
+    // console.log(ctx);
     if (ctx.QuotedString) {
       return ctx.QuotedString[0].payload ?? ctx.QuotedString[0].image;
     } else if (ctx.StringLiteral) {
-      return ctx.StringLiteral[0].payload ?? ctx.StringLiteral[0].image;
+      const literal =
+        ctx.StringLiteral[0].payload ?? ctx.StringLiteral[0].image;
+      return parseType(literal);
     }
     throw new Error("unhandled: " + ctx);
   }
@@ -63,4 +66,26 @@ export class JsonVisitor extends BaseVisitor {
     }
     throw new Error("unhandled: " + ctx);
   }
+}
+
+function parseType(literal: string): number | string {
+  if (
+    // Try decimal
+    /^[+-]?([0-9]+\.?[0-9]*|\.[0-9]+)$/.test(literal)
+  ) {
+    try {
+      const num = parseFloat(literal);
+      if (!isNaN(num)) return num;
+    } catch {}
+  } else if (
+    // Try integer
+    /^\d+$/.test(literal)
+  ) {
+    try {
+      const num = parseInt(literal, 10);
+      if (!isNaN(num)) return num;
+    } catch {}
+  }
+  // Return whatever is left
+  return literal;
 }
