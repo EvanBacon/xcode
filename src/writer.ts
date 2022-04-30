@@ -2,7 +2,7 @@ import {
   createReferenceList,
   isPBXBuildFile,
   isPBXFileReference,
-} from "./referenceBuilder";
+} from "./comments";
 import { PBXBuildFile, PBXFileReference, XcodeProject } from "./types";
 import { addQuotes } from "./unicode";
 

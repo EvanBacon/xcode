@@ -38,7 +38,7 @@ export enum ISA {
   XCVersionGroup = "XCVersionGroup",
 }
 
-export type ProductType =
+export type PBXProductType =
   | "com.apple.product-type.application"
   | "com.apple.product-type.app-extension"
   | "com.apple.product-type.bundle"
@@ -69,6 +69,21 @@ export interface XcodeProject {
   rootObject: string;
 }
 
+/** Object for referencing localized resources. */
+export interface PBXVariantGroup extends Object<ISA.PBXVariantGroup> {
+  /** UUID list */
+  children: string[];
+  /** file name */
+  name: string;
+  /** Variant group source tree */
+  sourceTree: SourceTree;
+}
+
+export interface PBXFileElement extends Object<ISA.PBXFileElement> {
+  sourceTree: SourceTree;
+  path: string;
+  name: string;
+}
 /** Abstract parent for custom build phases. */
 
 export interface PBXBuildPhase<TISA extends ISA = ISA.PBXBuildPhase>
@@ -83,11 +98,25 @@ export interface PBXBuildPhase<TISA extends ISA = ISA.PBXBuildPhase>
   runOnlyForDeploymentPostprocessing: string;
 }
 
+export enum SubFolder {
+  absolutePath = "0",
+  productsDirectory = "16",
+  wrapper = "1",
+  executables = "6",
+  resources = "7",
+  javaResources = "15",
+  frameworks = "10",
+  sharedFrameworks = "11",
+  sharedSupport = "12",
+  plugins = "13",
+  // other,
+}
+
 export interface PBXCopyFilesBuildPhase
   extends PBXBuildPhase<ISA.PBXCopyFilesBuildPhase> {
   dstPath: string;
   /** @example `13` */
-  dstSubfolderSpec: string;
+  dstSubfolderSpec: SubFolder;
 }
 
 /** Sources compilation */
@@ -108,7 +137,7 @@ export interface PBXShellScriptBuildPhase
   inputPaths: string[];
   outputPaths: string[];
   shellPath: string;
-  shellScript: string;
+  shellScript?: string;
   inputFileListPaths?: any[];
   outputFileListPaths?: any[];
   showEnvVarsInLog?: string;
@@ -164,11 +193,11 @@ export interface PBXFileReference extends Object<ISA.PBXFileReference> {
   lastKnownFileType?: string;
   group?: string;
   path?: string;
-  fileEncoding?: number;
-  defaultEncoding?: number;
+  fileEncoding?: string;
+  defaultEncoding?: string;
   sourceTree: SourceTree;
-  includeInIndex?: number;
-  explicitFileType?: unknown;
+  includeInIndex?: string;
+  explicitFileType?: string;
   settings?: object;
   uuid?: string;
   fileRef: string;
@@ -177,37 +206,52 @@ export interface PBXFileReference extends Object<ISA.PBXFileReference> {
 
 /** This is the element for a build target that aggregates several others. */
 export interface PBXAggregateTarget extends PBXTarget<ISA.PBXAggregateTarget> {
+  /** UUID */
   buildConfigurationList: string;
+  /** UUID List */
   buildPhases: string[];
+  /** UUID List */
   dependencies: string[];
   name: string;
-  productName: string;
+  productName?: string;
+  /** UUID */
+  productReference?: string;
+  productType?: PBXProductType;
 }
 
 export interface PBXNativeTarget extends PBXTarget<ISA.PBXNativeTarget> {
+  /** Target build configuration list. */
   buildConfigurationList: string;
   buildPhases: string[];
   buildRules: any[];
   dependencies: string[];
   name: string;
-  productName: string;
-  productReference: string;
-  productType: ProductType;
+  productName?: string;
+  /** UUID */
+  productReference?: string;
+  productType: PBXProductType;
   /** @example `$(HOME)/bin` */
   productInstallPath?: string;
 }
 
 export interface PBXBuildFile extends Object<ISA.PBXBuildFile> {
   fileRef: string;
+  settings?: Record<string, any>;
+}
+
+export enum ProxyType {
+  targetReference = "1",
+  // other
 }
 
 export interface PBXContainerItemProxy
   extends Object<ISA.PBXContainerItemProxy> {
   containerPortal: string;
   /** @example `1` */
-  proxyType: string;
+  proxyType: ProxyType;
+  /** UUID */
   remoteGlobalIDString: string;
-  remoteInfo: string;
+  remoteInfo?: string;
 }
 
 /** This element is an abstract parent for specialized targets. */
@@ -232,8 +276,10 @@ export interface XCConfigurationList extends Object<ISA.XCConfigurationList> {
 }
 
 export interface XCBuildConfiguration extends Object<ISA.XCBuildConfiguration> {
+  /** UUID pointing to reference. */
   baseConfigurationReference: string;
   buildSettings: BuildSettings;
+  /** configuration name. */
   name: string;
 }
 
@@ -251,15 +297,22 @@ export interface PBXGroup extends Object<ISA.PBXGroup> {
 
 export interface PBXProject extends Object<ISA.PBXProject> {
   attributes: Attributes;
+  /** XCConfigurationList UUID */
   buildConfigurationList: string;
+  /** Xcode compatibility version. */
   compatibilityVersion: string;
-  developmentRegion: string;
+  developmentRegion?: string;
   /** @example `0` */
-  hasScannedForEncodings: string;
+  hasScannedForEncodings?: string;
+  /** Known regions for localized files. */
   knownRegions: ("en" | "Base" | string)[];
+  /** Object is a UUID for a `PBXGroup`. */
   mainGroup: string;
-  productRefGroup: string;
+  /** Object is a UUID for a `PBXGroup`. */
+  productRefGroup?: string;
+  /** Relative path for the project. */
   projectDirPath: string;
+  /** Relative root path for the project. */
   projectRoot: string;
   targets: string[];
 }
@@ -301,8 +354,8 @@ export interface BuildSettings {
   INFOPLIST_FILE: string;
   LD_RUNPATH_SEARCH_PATHS: string;
   OTHER_LDFLAGS: string[];
-  SWIFT_OPTIMIZATION_LEVEL?: string;
-  SWIFT_VERSION: string;
+  SWIFT_OPTIMIZATION_LEVEL?: string | "-O";
+  SWIFT_VERSION: string | "4.2";
 
   ALWAYS_SEARCH_USER_PATHS?: BoolString;
   CLANG_ANALYZER_NONNULL?: BoolString;
@@ -340,20 +393,21 @@ export interface BuildSettings {
   ENABLE_STRICT_OBJC_MSGSEND: string;
   ENABLE_TESTABILITY?: string;
   GCC_C_LANGUAGE_STANDARD: string;
-  GCC_DYNAMIC_NO_PIC?: string;
-  GCC_NO_COMMON_BLOCKS: string;
+  GCC_DYNAMIC_NO_PIC?: BoolString;
+  GCC_NO_COMMON_BLOCKS: BoolString;
   GCC_OPTIMIZATION_LEVEL?: string;
   GCC_PREPROCESSOR_DEFINITIONS?: string[];
   GCC_SYMBOLS_PRIVATE_EXTERN?: string;
-  GCC_WARN_64_TO_32_BIT_CONVERSION: string;
-  GCC_WARN_ABOUT_RETURN_TYPE: string;
-  GCC_WARN_UNDECLARED_SELECTOR: string;
-  GCC_WARN_UNINITIALIZED_AUTOS: string;
-  GCC_WARN_UNUSED_FUNCTION: string;
-  GCC_WARN_UNUSED_VARIABLE: string;
+  GCC_WARN_64_TO_32_BIT_CONVERSION: BoolString;
+  GCC_WARN_ABOUT_RETURN_TYPE: BoolString;
+  GCC_WARN_UNDECLARED_SELECTOR: BoolString;
+  GCC_WARN_UNINITIALIZED_AUTOS: BoolString;
+  GCC_WARN_UNUSED_FUNCTION: BoolString;
+  GCC_WARN_UNUSED_VARIABLE: BoolString;
   LIBRARY_SEARCH_PATHS: string[];
   PREBINDING?: BoolString;
-  MTL_ENABLE_DEBUG_INFO: string;
+  MTL_ENABLE_DEBUG_INFO: BoolString;
+  MTL_FAST_MATH: BoolString;
   ONLY_ACTIVE_ARCH?: BoolString;
   SDKROOT: string;
   ENABLE_NS_ASSERTIONS?: string;
