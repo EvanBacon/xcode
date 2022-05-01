@@ -105,4 +105,11 @@ const pbxproj = parse(fs.readFileSync("/path/to/project.pbxproj"));
 const pbxprojString = build(pbxproj);
 ```
 
+- `PBXVariantGroup` is a localized `PBXGroup`.
+
 [spec]: http://www.monobjc.net/xcode-project-file-format.html
+
+# Attribution
+
+- [Best guess API doc][spec].
+- [CocoaPods/Xcodeproj](https://github.com/CocoaPods/Xcodeproj/).

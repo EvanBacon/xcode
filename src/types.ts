@@ -13,11 +13,12 @@ export enum ISA {
   PBXFileElement = "PBXFileElement",
   /*-*/ PBXFileReference = "PBXFileReference",
   /*-*/ PBXGroup = "PBXGroup",
-  /*-*/ PBXVariantGroup = "PBXVariantGroup",
+  /*---*/ PBXVariantGroup = "PBXVariantGroup",
+  /*---*/ XCVersionGroup = "XCVersionGroup",
   PBXTarget = "PBXTarget",
+  /*-*/ PBXNativeTarget = "PBXNativeTarget",
   /*-*/ PBXAggregateTarget = "PBXAggregateTarget",
   /*-*/ PBXLegacyTarget = "PBXLegacyTarget",
-  /*-*/ PBXNativeTarget = "PBXNativeTarget",
   PBXProject = "PBXProject",
   PBXTargetDependency = "PBXTargetDependency",
   XCBuildConfiguration = "XCBuildConfiguration",
@@ -27,27 +28,67 @@ export enum ISA {
   PBXBuildRule = "PBXBuildRule",
   PBXReferenceProxy = "PBXReferenceProxy",
   PBXRezBuildPhase = "PBXRezBuildPhase",
-  XCVersionGroup = "XCVersionGroup",
 }
 
+/** Indicates the relationship between a path and the project/system. */
+export type SourceTree =
+  // Paths are relative to the built products directory.
+  | "BUILT_PRODUCTS_DIR"
+  // Paths are relative to the developer directory.
+  | "DEVELOPER_DIR"
+  // Paths are relative to the project.
+  | "SOURCE_ROOT"
+  // Paths are relative to the SDK directory.
+  | "SDKROOT"
+  // Paths are relative to the group.
+  | "<group>"
+  // Source is an absolute path.
+  | "<absolute>";
+
+/** UTI for product types. */
 export type PBXProductType =
   | "com.apple.product-type.application"
-  | "com.apple.product-type.app-extension"
-  | "com.apple.product-type.bundle"
-  | "com.apple.product-type.tool"
-  | "com.apple.product-type.kernel-extension.iokit"
-  | "com.apple.product-type.library.dynamic"
-  | "com.apple.product-type.in-app-purchase-content"
-  | "com.apple.product-type.kernel-extension"
-  | "com.apple.product-type.bundle.ui-testing"
+  | "com.apple.product-type.application.on-demand-install-capable"
   | "com.apple.product-type.framework"
+  | "com.apple.product-type.library.dynamic"
   | "com.apple.product-type.library.static"
+  | "com.apple.product-type.bundle"
   | "com.apple.product-type.bundle.unit-test"
+  | "com.apple.product-type.bundle.ui-testing"
+  | "com.apple.product-type.app-extension"
+  | "com.apple.product-type.tool"
   | "com.apple.product-type.application.watchapp"
   | "com.apple.product-type.application.watchapp2"
-  | "com.apple.product-type.application.on-demand-install-capable"
+  | "com.apple.product-type.application.watchapp2-container"
   | "com.apple.product-type.watchkit-extension"
-  | "com.apple.product-type.watchkit2-extension";
+  | "com.apple.product-type.watchkit2-extension"
+  | "com.apple.product-type.tv-app-extension"
+  | "com.apple.product-type.application.messages"
+  | "com.apple.product-type.app-extension.messages"
+  | "com.apple.product-type.app-extension.messages-sticker-pack"
+  | "com.apple.product-type.xpc-service"
+  | "com.apple.product-type.kernel-extension.iokit"
+  | "com.apple.product-type.in-app-purchase-content"
+  | "com.apple.product-type.kernel-extension";
+
+export type BoolString = "YES" | "NO" | "YES_ERROR" | "YES_AGGRESSIVE";
+
+type UUID = string;
+
+// `PBXCopyFilesBuildPhase` destinations.
+export enum SubFolder {
+  absolutePath = 0,
+  productsDirectory = 16,
+  wrapper = 1,
+  executables = 6,
+  resources = 7,
+  javaResources = 15,
+  frameworks = 10,
+  sharedFrameworks = 11,
+  sharedSupport = 12,
+  plugins = 13,
+  // other,
+}
 
 interface Object<TISA extends ISA> {
   isa: TISA;
@@ -61,179 +102,299 @@ export interface XcodeProject {
   rootObject: string;
 }
 
-/** Object for referencing localized resources. */
-export interface PBXVariantGroup extends Object<ISA.PBXVariantGroup> {
-  /** UUID list */
-  children: string[];
-  /** file name */
-  name: string;
-  /** Variant group source tree */
+export interface PBXFileElement<TISA extends ISA = ISA.PBXFileElement>
+  extends Object<TISA> {
+  /** `path` is relative to the position defined in `sourceTree`. */
   sourceTree: SourceTree;
+  /**
+   * Name of group. If `path` is defined, this property will not be.
+   *
+   * @example `CPDocument.xcdatamodeld`
+   */
+  name?: string;
+  /**
+   * Path in file system relative to `sourceTree`.
+   * This is only used if the group is linked to a directory in the file system.
+   *
+   * @example `Cocoa Application/CPDocument.xcdatamodeld`
+   */
+  path?: string;
 }
 
-export interface PBXFileElement extends Object<ISA.PBXFileElement> {
-  sourceTree: SourceTree;
-  path: string;
-  name: string;
+export interface PBXFileReference extends PBXFileElement<ISA.PBXFileReference> {
+  /** Used by Xcode to generate 'products'. */
+  explicitFileType?: string;
+  /** Only present when `explicitFileType` is not present. */
+  lastKnownFileType?: string;
+
+  /** Of type `0` or `1`. */
+  includeInIndex?: NumericBoolean;
+
+  /** A number representing the encoding format. */
+  fileEncoding?: number;
+
+  /** Indicates the type of language highlighting to use in Xcode. @example `xcode.lang.swift` */
+  xcLanguageSpecificationIdentifier?:
+    | "xcode.lang.otd"
+    | "xcode.lang.c"
+    | "xcode.lang.cpp"
+    | "xcode.lang.objc"
+    | "xcode.lang.objcpp"
+    | "xcode.lang.swift"
+    | string;
+
+  /** Indicates the structure of a plist file. */
+  plistStructureDefinitionIdentifier?: string;
+
+  /** @example `4` `2` */
+  indentWidth?: string;
+  /** @example `4` `2` */
+  tabWidth?: string;
+  /** @example `0` */
+  usesTabs?: NumericBoolean;
+  /**
+   * Should Xcode wrap lines.
+   *
+   * @example `1`
+   */
+  wrapsLines?: NumericBoolean;
+  /** Indicating if Xcode should save a file with a new line at the end. */
+  lineEnding?: NumericBoolean;
 }
+
+/** A group that contains other groups and files. */
+
+export interface PBXGroup<TISA extends ISA = ISA.PBXGroup>
+  extends PBXFileElement<TISA> {
+  /** List of UUIDs for objects of type `<PBXGroup|PBXReferenceProxy|PBXFileReference>` */
+  children: UUID[];
+  /** @example `4` `2` */
+  indentWidth?: number;
+  /** @example `4` `2` */
+  tabWidth?: number;
+  /** @example `0` */
+  usesTabs?: NumericBoolean;
+  /**
+   * Should Xcode wrap lines.
+   *
+   * @example `1`
+   */
+  wrapsLines?: NumericBoolean;
+}
+
+/** Object for referencing localized resources. */
+export interface PBXVariantGroup extends PBXGroup<ISA.PBXVariantGroup> {}
+
+export interface XCVersionGroup extends PBXGroup<ISA.XCVersionGroup> {
+  /** UUID for a `PBXBuildFile` (should also be included in the `children` array). */
+  currentVersion: UUID[];
+
+  versionGroupType: "wrapper.xcdatamodel" | string;
+}
+
 /** Abstract parent for custom build phases. */
 
 export interface PBXBuildPhase<TISA extends ISA = ISA.PBXBuildPhase>
   extends Object<TISA> {
-  /** @example `Embed App Extensions` */
-  name?: string;
   /** @example `2147483647` */
-  buildActionMask: string;
-  /** List of UUIDs */
-  files: string[];
-  /** Boolean number 0-1. */
-  runOnlyForDeploymentPostprocessing: string;
+  buildActionMask: number | 2147483647 | 8 | 12;
+  /** List of UUIDs for objects of type `PBXBuildFile` that should be processed in the phase. */
+  files: UUID[];
+  /**
+   * If the phase should be processed before deployment.
+   *
+   * In Xcode this is displayed as:
+   * - 'Copy only when installing' for `PBXCopyFilesBuildPhase`
+   * - 'Run script only when installing' for `PBXShellScriptBuildPhase`
+   */
+  runOnlyForDeploymentPostprocessing: NumericBoolean;
+
+  /**
+   * If the phase should be force processed on every build, including incremental builds.
+   *
+   * In Xcode this is displayed as:
+   * - 'Based on dependency analysis' for `PBXShellScriptBuildPhase`
+   */
+  alwaysOutOfDate?: 1;
 }
 
-export enum SubFolder {
-  absolutePath = "0",
-  productsDirectory = "16",
-  wrapper = "1",
-  executables = "6",
-  resources = "7",
-  javaResources = "15",
-  frameworks = "10",
-  sharedFrameworks = "11",
-  sharedSupport = "12",
-  plugins = "13",
-  // other,
-}
-
+/**
+ * Copies files to the bundle.
+ *
+ * - 'Copy Files' in Xcode.
+ * - Can be used multiple times per target.
+ */
 export interface PBXCopyFilesBuildPhase
   extends PBXBuildPhase<ISA.PBXCopyFilesBuildPhase> {
+  /** @example `Embed App Extensions` */
+  name?: string;
+  /** Subpath for evaluated `dstSubfolderSpec` folder. */
   dstPath: string;
-  /** @example `13` */
+  /**
+   * Path where the files are copied to.
+   * @example `13`
+   */
   dstSubfolderSpec: SubFolder;
 }
 
-/** Sources compilation */
+/**
+ * Compiles files.
+ *
+ * - 'Compile Sources' in Xcode.
+ * - Can only be used once per target.
+ */
 export interface PBXSourcesBuildPhase
   extends PBXBuildPhase<ISA.PBXSourcesBuildPhase> {}
+
+/**
+ * An Xcode-managed version of `PBXCopyFilesBuildPhase`.
+ *
+ * - 'Copy Bundle Resources' in Xcode.
+ * - Can only be used once per target.
+ */
 export interface PBXResourcesBuildPhase
   extends PBXBuildPhase<ISA.PBXResourcesBuildPhase> {}
+
+/**
+ * Copies headers.
+ *
+ * - 'Copy Headers' in Xcode.
+ * - Can only be used once per target.
+ */
 export interface PBXHeadersBuildPhase
   extends PBXBuildPhase<ISA.PBXHeadersBuildPhase> {}
+
+/**
+ *
+ * - ?? in Xcode.
+ * - ??
+ */
 export interface PBXAppleScriptBuildPhase
   extends PBXBuildPhase<ISA.PBXAppleScriptBuildPhase> {}
 
-// Discovered in Cocoa-Application.pbxproj
+/**
+ * - 'Build Carbon Resources' in Xcode.
+ * - Can be used multiple times per target.
+ */
 export interface PBXRezBuildPhase extends PBXBuildPhase<ISA.PBXRezBuildPhase> {}
 
-export interface PBXShellScriptBuildPhase
-  extends PBXBuildPhase<ISA.PBXShellScriptBuildPhase> {
-  inputPaths: string[];
-  outputPaths: string[];
-  shellPath: string;
-  shellScript?: string;
-  inputFileListPaths?: any[];
-  outputFileListPaths?: any[];
-  showEnvVarsInLog?: string;
-}
-
+/**
+ * - 'Link Binary With Libraries' in Xcode.
+ * - Can only be used once per target.
+ */
 export interface PBXFrameworksBuildPhase
   extends PBXBuildPhase<ISA.PBXFrameworksBuildPhase> {}
 
+/**
+ * Runs a shell script.
+ *
+ * - 'Run Script' in Xcode.
+ * - Can be used multiple times per target.
+ */
+export interface PBXShellScriptBuildPhase
+  extends PBXBuildPhase<ISA.PBXShellScriptBuildPhase> {
+  /** @example `Embed App Extensions` */
+  name?: string;
+  inputPaths: string[];
+  outputPaths: string[];
+  /** Path to script interpreter. @example `/bin/sh` */
+  shellPath: string;
+  /** Script to run, defaults to a comment. */
+  shellScript?: string;
+  inputFileListPaths?: string[];
+  outputFileListPaths?: string[];
+  /** If the environment variables should be printed in the build log of `xcodebuild`. */
+  showEnvVarsInLog?: NumericBoolean;
+
+  dependencyFile?: string;
+}
+
 export interface PBXBuildRule extends Object<ISA.PBXBuildRule> {
+  name?: string;
+
+  /** Indicates which compiler to use. */
   compilerSpec: "com.apple.compilers.proxy.script" | string;
-  /** @example `*.css` */
+  /** Discovered dependency file. */
+  dependencyFile?: string;
+  /** Type of files that should be processed by the rule. */
+  fileType?: string | "pattern.proxy" | "wrapper.xcclassmodel";
+  /**
+   * Used to target files by a pattern. An alternate query to `fileType`.
+   * @example `*.css`
+   */
   filePatterns?: string;
-  fileType: string | "pattern.proxy" | "wrapper.xcclassmodel";
-  isEditable: number;
+  /** If the rule can be edited. */
+  isEditable: NumericBoolean;
 
-  inputFiles?: string[];
+  /** List of UUIDs for objects of type `PBXFileReference` for input to the rule. */
+  inputFiles?: UUID[];
 
-  /** @example `["${INPUT_FILE_BASE}.css.c"]` */
-  outputFiles: string[];
+  /**
+   * List of UUIDs for objects of type `PBXFileReference` for output to the rule.
+   *
+   * @example `["${INPUT_FILE_BASE}.css.c"]`
+   */
+  outputFiles: UUID[];
   outputFilesCompilerFlags?: string[];
 
+  runOncePerArchitecture?: NumericBoolean;
+
+  /** This attribute is present if `compilerSpec: 'com.apple.compilers.proxy.script'`. */
   script?: string;
 }
 
 // Discovered in Cocoa-Application.pbxproj
-export interface PBXReferenceProxy extends Object<ISA.PBXReferenceProxy> {
+export interface PBXReferenceProxy
+  extends PBXFileElement<ISA.PBXReferenceProxy> {
+  /** Type of the referenced file. */
   fileType: "wrapper.application" | string;
-  /** @example `ReferencedProject.app` */
-  path: string;
-  /** UUID */
-  remoteRef: string;
-  sourceTree: SourceTree;
+
+  /** UUID to an object of type `PBXContainerItemProxy`. */
+  remoteRef: UUID;
 }
 
-// Discovered in Cocoa-Application.pbxproj
-export interface XCVersionGroup extends Object<ISA.XCVersionGroup> {
-  /** List of UUIDs (appears to be UUIDs for `PBXBuildFile`s of type `xcdatamodel`) */
-  children: string[];
-  /** UUID for a `PBXBuildFile` (should also be included in the `children` array). */
-  currentVersion: string[];
-  /** @example `CPDocument.xcdatamodeld` */
-  name: string;
-  /** @example `Cocoa Application/CPDocument.xcdatamodeld` */
-  path: string;
-  sourceTree: SourceTree;
-  versionGroupType: "wrapper.xcdatamodel" | string;
-}
+export type NumericBoolean = 0 | 1;
 
-export interface PBXFileReference extends Object<ISA.PBXFileReference> {
-  isa: ISA.PBXFileReference;
-  children?: string[];
-  basename: string;
-  lastKnownFileType?: string;
-  group?: string;
-  path?: string;
-  fileEncoding?: string;
-  defaultEncoding?: string;
-  sourceTree: SourceTree;
-  includeInIndex?: string;
-  explicitFileType?: string;
-  settings?: object;
-  uuid?: string;
-  fileRef: string;
-  target?: string;
+/** Legacy target for use with external build tools. */
+export interface PBXLegacyTarget extends PBXTarget<ISA.PBXLegacyTarget> {
+  buildWorkingDirectory: string;
+  buildArgumentsString: string;
+  passBuildSettingsInEnvironment: NumericBoolean;
+  buildToolPath: string;
 }
 
 /** This is the element for a build target that aggregates several others. */
-export interface PBXAggregateTarget extends PBXTarget<ISA.PBXAggregateTarget> {
-  /** UUID */
-  buildConfigurationList: string;
-  /** UUID List */
-  buildPhases: string[];
-  /** UUID List */
-  dependencies: string[];
-  name: string;
-  productName?: string;
-  /** UUID */
-  productReference?: string;
-  productType?: PBXProductType;
-}
+export interface PBXAggregateTarget extends PBXTarget<ISA.PBXAggregateTarget> {}
 
+/** A target used in Xcode */
 export interface PBXNativeTarget extends PBXTarget<ISA.PBXNativeTarget> {
-  /** Target build configuration list. */
-  buildConfigurationList: string;
-  buildPhases: string[];
-  buildRules: any[];
-  dependencies: string[];
-  name: string;
-  productName?: string;
-  /** UUID */
-  productReference?: string;
+  /** List of UUIDs for objects of type `PBXBuildRule` */
+  buildRules: UUID[];
+  /** Build product type ID. */
   productType: PBXProductType;
+  /** UUID */
+  productReference?: UUID;
   /** @example `$(HOME)/bin` */
   productInstallPath?: string;
+  /** List of UUID for object of type `XCSwiftPackageProductDependency` */
+  packageProductDependencies?: UUID[];
 }
 
+/** Info about build settings for a file in a `PBXBuildPhase`. */
 export interface PBXBuildFile extends Object<ISA.PBXBuildFile> {
-  fileRef: string;
+  /** UUID for an object of type <PBXFileReference|PBXGroup|PBXVariantGroup|XCVersionGroup|PBXReferenceProxy> */
+  fileRef: UUID;
   settings?: Record<string, any>;
+
+  /** UUID for a `XCSwiftPackageProductDependency` (Swift Package) file. */
+  productRef?: UUID;
+
+  platformFilter?: string;
 }
 
 export enum ProxyType {
-  targetReference = "1",
-  // other
+  targetReference = 1,
+  reference = 2,
 }
 
 export interface PBXContainerItemProxy
@@ -242,7 +403,7 @@ export interface PBXContainerItemProxy
   /** @example `1` */
   proxyType: ProxyType;
   /** UUID */
-  remoteGlobalIDString: string;
+  remoteGlobalIDString: UUID;
   remoteInfo?: string;
 }
 
@@ -253,56 +414,74 @@ export interface PBXTarget<
     | ISA.PBXLegacyTarget
     | ISA.PBXNativeTarget
 > extends Object<TTargetIsa> {
-  target: string;
-  targetProxy: string;
+  name: string;
+  productName?: string;
+  /** UUID for object of type `XCConfigurationList`. */
+  buildConfigurationList: UUID;
+  /** List of UUIDs for objects of type `PBXTargetDependency`. */
+  dependencies: UUID[];
+  /** List of `PBXBuildPhase` UUIDs. UUIDs pointing to objects of type `<PBXShellScriptBuildPhase|PBXCopyFilesBuildPhase>` can only appear once at most. */
+  buildPhases: UUID[];
 }
 export interface PBXTargetDependency extends Object<ISA.PBXTargetDependency> {
-  target: string;
-  targetProxy: string;
+  /** Target UUID for object of type `PBXTarget` that must be built for the dependency. */
+  target: UUID;
+  /** UUID for an object of type `PBXContainerItemProxy` that must be built for the dependency. Used for cross workspace projects. */
+  targetProxy: UUID;
+
+  /** Name of the target, rarely used. */
+  name?: string;
+
+  platformFilter?: string;
+  platformFilters?: string[];
+
+  productRef?: string;
 }
 
 export interface XCConfigurationList extends Object<ISA.XCConfigurationList> {
-  buildConfigurations: string[];
-  defaultConfigurationIsVisible: string;
+  /** List of UUIDs to objects of type `XCBuildConfiguration` */
+  buildConfigurations: UUID[];
+  defaultConfigurationIsVisible: NumericBoolean;
   defaultConfigurationName: string;
 }
 
 export interface XCBuildConfiguration extends Object<ISA.XCBuildConfiguration> {
-  /** UUID pointing to reference. */
-  baseConfigurationReference: string;
+  /** UUID pointing to reference configuration file of type `.xcconfig`. */
+  baseConfigurationReference: UUID;
   buildSettings: BuildSettings;
   /** configuration name. */
   name: string;
 }
 
-export interface PBXGroup extends Object<ISA.PBXGroup> {
-  children: string[];
-  sourceTree: SourceTree;
-
-  /** @example `4` `2` */
-  indentWidth?: string;
-  /** @example `4` `2` */
-  tabWidth?: string;
-  /** @example `0` */
-  usesTabs?: string;
-}
+// const COMPATIBILITY_VERSION_BY_OBJECT_VERSION = Object.freeze({
+//   55: 'Xcode 13.0',
+//   54: 'Xcode 12.0',
+//   53: 'Xcode 11.4',
+//   52: 'Xcode 11.0',
+//   51: 'Xcode 10.0',
+//   50: 'Xcode 9.3',
+//   48: 'Xcode 8.0',
+//   47: 'Xcode 6.3',
+//   46: 'Xcode 3.2',
+//   45: 'Xcode 3.1',
+// })
 
 export interface PBXProject extends Object<ISA.PBXProject> {
   attributes: Attributes;
   /** XCConfigurationList UUID */
-  buildConfigurationList: string;
+  buildConfigurationList: UUID;
   /** Xcode compatibility version. @example `Xcode 3.2` */
   compatibilityVersion: string;
   /** @example `English` */
   developmentRegion?: string;
   /** @example `0` */
-  hasScannedForEncodings?: string;
+  hasScannedForEncodings?: NumericBoolean;
   /** Known regions for localized files. */
   knownRegions: ("en" | "Base" | string)[];
   /** Object is a UUID for a `PBXGroup`. */
-  mainGroup: string;
+  mainGroup: UUID;
   /** Object is a UUID for a `PBXGroup`. */
-  productRefGroup?: string;
+  productRefGroup?: UUID;
   /** Relative path for the project. */
   projectDirPath: string;
   /** Relative root path for the project. */
@@ -332,8 +511,6 @@ export interface XCBuildConfiguration extends Object<ISA.XCBuildConfiguration> {
   buildSettings: BuildSettings;
   name: string;
 }
-
-export type BoolString = "YES" | "NO" | "YES_ERROR" | "YES_AGGRESSIVE";
 
 export interface BuildSettings {
   BUNDLE_LOADER: string;
@@ -404,15 +581,7 @@ export interface BuildSettings {
   MTL_FAST_MATH: BoolString;
   ONLY_ACTIVE_ARCH?: BoolString;
   SDKROOT: string;
-  ENABLE_NS_ASSERTIONS?: string;
+  ENABLE_NS_ASSERTIONS?: BoolString;
   VALIDATE_PRODUCT?: string;
   DEBUG_INFORMATION_FORMAT?: "dwarf" | "dwarf-with-dsym" | string;
 }
-
-export type SourceTree =
-  | "BUILT_PRODUCTS_DIR"
-  | "DEVELOPER_DIR"
-  | "SOURCE_ROOT"
-  | "SDKROOT"
-  | "<group>"
-  | "<absolute>";
