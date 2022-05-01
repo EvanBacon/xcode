@@ -1,5 +1,4 @@
 import {
-  createSyntaxDiagramsCode,
   ParserMethod,
   IRuleConfig,
   CstNode,
@@ -143,8 +142,6 @@ export class PbxprojParser extends CommentCstParser {
 
 const parser = new PbxprojParser();
 export const BaseVisitor = parser.getBaseCstVisitorConstructorWithDefaults();
-export const serializedGrammar = parser.getSerializedGastProductions();
-export const htmlText = createSyntaxDiagramsCode(serializedGrammar);
 
 export function parse(text: string): CstNode {
   const lexingResult = lexer.tokenize(text);
