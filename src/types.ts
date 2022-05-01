@@ -90,7 +90,7 @@ export enum SubFolder {
   // other,
 }
 
-interface Object<TISA extends ISA> {
+export interface ObjectPrimitive<TISA extends ISA> {
   isa: TISA;
 }
 
@@ -98,12 +98,12 @@ export interface XcodeProject {
   archiveVersion: string;
   classes: Record<string, any>;
   objectVersion: string;
-  objects: Record<string, Object<any>>;
+  objects: Record<string, ObjectPrimitive<any>>;
   rootObject: string;
 }
 
 export interface PBXFileElement<TISA extends ISA = ISA.PBXFileElement>
-  extends Object<TISA> {
+  extends ObjectPrimitive<TISA> {
   /** `path` is relative to the position defined in `sourceTree`. */
   sourceTree: SourceTree;
   /**
@@ -195,7 +195,7 @@ export interface XCVersionGroup extends PBXGroup<ISA.XCVersionGroup> {
 /** Abstract parent for custom build phases. */
 
 export interface PBXBuildPhase<TISA extends ISA = ISA.PBXBuildPhase>
-  extends Object<TISA> {
+  extends ObjectPrimitive<TISA> {
   /** @example `2147483647` */
   buildActionMask: number | 2147483647 | 8 | 12;
   /** List of UUIDs for objects of type `PBXBuildFile` that should be processed in the phase. */
@@ -309,7 +309,7 @@ export interface PBXShellScriptBuildPhase
   dependencyFile?: string;
 }
 
-export interface PBXBuildRule extends Object<ISA.PBXBuildRule> {
+export interface PBXBuildRule extends ObjectPrimitive<ISA.PBXBuildRule> {
   name?: string;
 
   /** Indicates which compiler to use. */
@@ -381,7 +381,7 @@ export interface PBXNativeTarget extends PBXTarget<ISA.PBXNativeTarget> {
 }
 
 /** Info about build settings for a file in a `PBXBuildPhase`. */
-export interface PBXBuildFile extends Object<ISA.PBXBuildFile> {
+export interface PBXBuildFile extends ObjectPrimitive<ISA.PBXBuildFile> {
   /** UUID for an object of type <PBXFileReference|PBXGroup|PBXVariantGroup|XCVersionGroup|PBXReferenceProxy> */
   fileRef: UUID;
   settings?: Record<string, any>;
@@ -398,7 +398,7 @@ export enum ProxyType {
 }
 
 export interface PBXContainerItemProxy
-  extends Object<ISA.PBXContainerItemProxy> {
+  extends ObjectPrimitive<ISA.PBXContainerItemProxy> {
   containerPortal: string;
   /** @example `1` */
   proxyType: ProxyType;
@@ -413,7 +413,7 @@ export interface PBXTarget<
     | ISA.PBXAggregateTarget
     | ISA.PBXLegacyTarget
     | ISA.PBXNativeTarget
-> extends Object<TTargetIsa> {
+> extends ObjectPrimitive<TTargetIsa> {
   name: string;
   productName?: string;
   /** UUID for object of type `XCConfigurationList`. */
@@ -423,7 +423,8 @@ export interface PBXTarget<
   /** List of `PBXBuildPhase` UUIDs. UUIDs pointing to objects of type `<PBXShellScriptBuildPhase|PBXCopyFilesBuildPhase>` can only appear once at most. */
   buildPhases: UUID[];
 }
-export interface PBXTargetDependency extends Object<ISA.PBXTargetDependency> {
+export interface PBXTargetDependency
+  extends ObjectPrimitive<ISA.PBXTargetDependency> {
   /** Target UUID for object of type `PBXTarget` that must be built for the dependency. */
   target: UUID;
   /** UUID for an object of type `PBXContainerItemProxy` that must be built for the dependency. Used for cross workspace projects. */
@@ -438,14 +439,16 @@ export interface PBXTargetDependency extends Object<ISA.PBXTargetDependency> {
   productRef?: string;
 }
 
-export interface XCConfigurationList extends Object<ISA.XCConfigurationList> {
+export interface XCConfigurationList
+  extends ObjectPrimitive<ISA.XCConfigurationList> {
   /** List of UUIDs to objects of type `XCBuildConfiguration` */
   buildConfigurations: UUID[];
   defaultConfigurationIsVisible: NumericBoolean;
   defaultConfigurationName: string;
 }
 
-export interface XCBuildConfiguration extends Object<ISA.XCBuildConfiguration> {
+export interface XCBuildConfiguration
+  extends ObjectPrimitive<ISA.XCBuildConfiguration> {
   /** UUID pointing to reference configuration file of type `.xcconfig`. */
   baseConfigurationReference: UUID;
   buildSettings: BuildSettings;
@@ -466,7 +469,7 @@ export interface XCBuildConfiguration extends Object<ISA.XCBuildConfiguration> {
 //   45: 'Xcode 3.1',
 // })
 
-export interface PBXProject extends Object<ISA.PBXProject> {
+export interface PBXProject extends ObjectPrimitive<ISA.PBXProject> {
   attributes: Attributes;
   /** XCConfigurationList UUID */
   buildConfigurationList: UUID;
@@ -486,10 +489,16 @@ export interface PBXProject extends Object<ISA.PBXProject> {
   projectDirPath: string;
   /** Relative root path for the project. */
   projectRoot: string;
-  targets: string[];
+  /** List of UUIDs for targets. */
+  targets: UUID[];
+
+  /** List of UUIDs for `XCRemoteSwiftPackageReference` */
+  packageReferences?: UUID[];
 }
 
 export interface Attributes {
+  CLASSPREFIX?: string;
+  ORGANIZATIONNAME?: string;
   /** @example `1240` */
   LastUpgradeCheck: string;
   /** @example `1240` */
@@ -507,7 +516,8 @@ export type TargetAttribute =
       LastSwiftMigration: string;
     };
 
-export interface XCBuildConfiguration extends Object<ISA.XCBuildConfiguration> {
+export interface XCBuildConfiguration
+  extends ObjectPrimitive<ISA.XCBuildConfiguration> {
   buildSettings: BuildSettings;
   name: string;
 }
