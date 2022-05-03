@@ -4,8 +4,7 @@
   "exclude": ["**/__mocks__/*", "**/__tests__/*"],
   "compilerOptions": {
     "outDir": "./build",
-    "moduleResolution": "node",
-    "lib": ["dom"],
+    
     "allowJs": true,
     "sourceMap": true,
     "declaration": true,
@@ -14,7 +13,6 @@
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
     "strictFunctionTypes": true,
-    "skipLibCheck": true, 
     "noImplicitAny": true,
     "noImplicitThis": true,
     "noImplicitReturns": true,

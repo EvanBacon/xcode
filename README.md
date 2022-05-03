@@ -79,9 +79,10 @@ We support the following types: `Object`, `Array`, `Data`, `String`. Notably, we
 - [x] Writing.
 - [x] Escaping scripts and header search paths.
 - [x] Use a fork of chevrotain -- it's [way too large](https://packagephobia.com/result?p=chevrotain@10.1.2) for what it offers.
-- [ ] Generating UUIDs.
-- [ ] The API would probably be implemented using [unist](https://github.com/syntax-tree/unist)
-- [ ] Docs
+- [x] Generating UUIDs.
+- [x] Reference-type API.
+- [ ] Build setting parsing.
+- [ ] Docs.
 
 # Docs
 
