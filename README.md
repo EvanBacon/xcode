@@ -28,15 +28,27 @@ The most popular solution for parsing pbxproj files is a very old package by Cor
 
 ## Format Comparison
 
-Consider the following [output from the `xcode` package](https://github.com/apache/cordova-node-xcode/blob/8b98cabc5978359db88dc9ff2d4c015cba40f150/test/fixtures/full-project.json#L429-L435):
+Consider the following format comparison.
 
+**Input `.pbxproj`**
+
+```diff
+307D28A1123043350040C0FA /* app-icon.png */ = {
+  isa = PBXFileReference;
+  lastKnownFileType = image.png;
+  path = "app-icon.png";
+  sourceTree = "<group>";
+};
+```
+
+**`xcode` output (old)**
 ```json
 {
-  "307D28A1123043350040C0FA_comment": "PhoneGapBuildSettings.xcconfig",
+  "307D28A1123043350040C0FA_comment": "app-icon.png",
   "308D052E1370CCF300D202BF": {
     "isa": "PBXFileReference",
     "lastKnownFileType": "image.png",
-    "path": "\"icon-72.png\"",
+    "path": "\"app-icon.png\"",
     "sourceTree": "\"<group>\""
   }
 }
@@ -44,12 +56,13 @@ Consider the following [output from the `xcode` package](https://github.com/apac
 
 That same object would look like this in `xcparse`:
 
+**`xcparse` output (NEW)**
 ```json
 {
   "308D052E1370CCF300D202BF": {
     "isa": "PBXFileReference",
     "lastKnownFileType": "image.png",
-    "path": "icon-72.png",
+    "path": "app-icon.png",
     "sourceTree": "<group>"
   }
 }
