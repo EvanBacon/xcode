@@ -120,6 +120,32 @@ const pbxprojString = build(pbxproj);
 
 - `PBXVariantGroup` is a localized `PBXGroup`.
 
+## File Path Resolution
+
+Files will have an attribute `sourceTree` which indicates how the file path should be resolved.
+ 
+- `BUILT_PRODUCTS_DIR`: Paths are relative to the built products directory.
+- `DEVELOPER_DIR`: Paths are relative to the developer directory.
+- `SOURCE_ROOT`: Paths are relative to the project.
+- `SDKROOT`: Paths are relative to the SDK directory.
+- `<group>`: Paths are relative to the group.
+- `<absolute>`: Source is an absolute path.
+
+For example, a file object like:
+
+```json
+{
+  "isa": "PBXFileReference", 
+  "name": "AppDelegate.m",
+  "path": "multitarget/AppDelegate.m",
+  "sourceTree": "<group>"
+}
+```
+
+Indicates that the `path` "multitarget/AppDelegate.m" is relative to `sourceTree` "<group>". We need to check the containing `PBXGroup`'s `path` (only defined when the group is linked to a directory in the file system). Groups can live inside of other groups so this process is recursive.
+
+
+
 [spec]: http://www.monobjc.net/xcode-project-file-format.html
 
 # Attribution
