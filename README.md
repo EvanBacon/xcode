@@ -144,7 +144,23 @@ For example, a file object like:
 
 Indicates that the `path` "multitarget/AppDelegate.m" is relative to `sourceTree` "<group>". We need to check the containing `PBXGroup`'s `path` (only defined when the group is linked to a directory in the file system). Groups can live inside of other groups so this process is recursive.
 
+  
+## Versioning
+  
+Certain values loosely map to each other. For instance the top-level `objectVersion` (which indicates the versioning used for the objects in the top-level `objects` dictionary), maps to the `rootObject` -> `PBXProject`'s `compatibilityVersion` string. Here is an up-to-date mapping (May 2022):
 
+| `PBXProject.compatibilityVersion` | `XcodeProject.objectVersion` |
+| --------------------------------- | ---------------------------- |
+| `'Xcode 13.0'`                    | `55`                         |
+| `'Xcode 12.0'`                    | `54`                         |
+| `'Xcode 11.4'`                    | `53`                         |
+| `'Xcode 11.0'`                    | `52`                         |
+| `'Xcode 10.0'`                    | `51`                         |
+| `'Xcode 9.3'`                     | `50`                         |
+| `'Xcode 8.0'`                     | `48`                         |
+| `'Xcode 6.3'`                     | `47`                         |
+| `'Xcode 3.2'`                     | `46`                         |
+| `'Xcode 3.1'`                     | `45`                         |
 
 [spec]: http://www.monobjc.net/xcode-project-file-format.html
 
