@@ -3,7 +3,7 @@ import { AbstractObject } from "./AbstractObject";
 import { XCBuildConfiguration } from "./XCBuildConfiguration";
 import { XCConfigurationList } from "./XCConfigurationList";
 
-import type { PickRequired, SansIsa } from "../util.types";
+import type { PickRequired, SansIsa } from "./utils/util.types";
 import type {
   AnyBuildPhase,
   PBXAppleScriptBuildPhase,

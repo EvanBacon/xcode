@@ -1,7 +1,7 @@
 import * as json from "../json/types";
 import { AbstractObject } from "./AbstractObject";
 
-import type { SansIsa } from "../util.types";
+import type { SansIsa } from "./utils/util.types";
 import type { XcodeProject } from "./XcodeProject";
 import type { PBXFileReference } from "./PBXFileReference";
 export class XCBuildConfiguration extends AbstractObject<

@@ -1,7 +1,7 @@
 import * as json from "../json/types";
 import { AbstractTarget } from "./AbstractTarget";
 
-import type { PickRequired, SansIsa } from "../util.types";
+import type { PickRequired, SansIsa } from "./utils/util.types";
 import type { XcodeProject } from "./XcodeProject";
 import type { AnyBuildPhase } from "./PBXSourcesBuildPhase";
 import type { PBXTargetDependency } from "./PBXTargetDependency";

@@ -1,7 +1,7 @@
 import assert from "assert";
 import * as json from "../json/types";
 import { AbstractObject } from "./AbstractObject";
-import type { SansIsa } from "../util.types";
+import type { SansIsa } from "./utils/util.types";
 import { XcodeProject } from "./XcodeProject";
 import { PBXFileReference } from "./PBXFileReference";
 import type { PBXProject } from "./PBXProject";

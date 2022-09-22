@@ -7,7 +7,7 @@ import { parse } from "../json";
 import * as json from "../json/types";
 import { AbstractObject } from "./AbstractObject";
 
-import type { ValueOf } from "../util.types";
+import type { ValueOf } from "./utils/util.types";
 import type { PBXGroup } from "./AbstractGroup";
 import type { PBXAggregateTarget } from "./PBXAggregateTarget";
 import type { PBXBuildFile } from "./PBXBuildFile";

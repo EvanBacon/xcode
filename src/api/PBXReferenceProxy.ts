@@ -2,7 +2,7 @@ import * as json from "../json/types";
 import { AbstractObject } from "./AbstractObject";
 import { PBXBuildFile } from "./PBXBuildFile";
 
-import type { PickRequired, SansIsa } from "../util.types";
+import type { PickRequired, SansIsa } from "./utils/util.types";
 import type { XcodeProject } from "./XcodeProject";
 import type { PBXContainerItemProxy } from "./PBXContainerItemProxy";
 

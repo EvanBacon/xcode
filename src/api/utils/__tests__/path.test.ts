@@ -1,6 +1,6 @@
 import { PBXFileReference, XcodeProject } from "../..";
 import { getFullPath, getRealPath, getSourceTreeRealPath } from "../paths";
-import AFNetworkingFixture from "../../../__tests__/fixtures/AFNetworking";
+import AFNetworkingFixture from "../../../json/__tests__/fixtures/AFNetworking";
 
 describe(getFullPath, () => {
   const xcodeProject = new XcodeProject(

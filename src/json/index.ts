@@ -1,5 +1,5 @@
 import * as parser from "./parser/parser";
-import { XcodeProject } from "./json.types";
+import { XcodeProject } from "./types";
 import { JsonVisitor } from "./visitor/JsonVisitor";
 import { Writer } from "./writer";
 
@@ -16,4 +16,4 @@ export function build(project: Partial<XcodeProject>): string {
   return new Writer(project).getResults();
 }
 
-export * from "./json.types";
+export * from "./types";

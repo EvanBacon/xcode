@@ -3,7 +3,7 @@ import util from "util";
 
 import * as json from "../json/types";
 import type { PBXProject } from "./PBXProject";
-import type { EntriesAnyValue, OnlyValuesOfType } from "../util.types";
+import type { EntriesAnyValue, OnlyValuesOfType } from "./utils/util.types";
 import type { XcodeProject } from "./XcodeProject";
 
 const debug = require("debug")("xcparse:models") as typeof console.log;
