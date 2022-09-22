@@ -144,8 +144,8 @@ export class AbstractGroup<
     return getParents(this);
   }
 
-  isReferencing(id: string): boolean {
-    return !!this.props.children.find((child) => child.uuid === id);
+  isReferencing(uuid: string): boolean {
+    return !!this.props.children.find((child) => child.uuid === uuid);
   }
 
   removeReference(uuid: string) {

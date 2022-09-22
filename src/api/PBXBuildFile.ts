@@ -43,8 +43,10 @@ export class PBXBuildFile extends AbstractObject<
     };
   }
 
-  isReferencing(id: string): boolean {
-    return [this.props.fileRef?.uuid, this.props.productRef?.uuid].includes(id);
+  isReferencing(uuid: string): boolean {
+    return [this.props.fileRef?.uuid, this.props.productRef?.uuid].includes(
+      uuid
+    );
   }
 
   getDisplayName() {

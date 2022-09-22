@@ -12,7 +12,7 @@ type OrArray<T> = T | T[];
 
 export interface ReferenceCapableObject {
   getReferrers(): AbstractObject[];
-  isReferencing(id: string): boolean;
+  isReferencing(uuid: string): boolean;
 }
 
 export abstract class AbstractObject<
@@ -61,7 +61,6 @@ export abstract class AbstractObject<
 
     debug(`Inflating model (uuid: ${uuid}, isa: ${props.isa})`);
 
-    // this.inflate(props);
     this.setupDefaults(props);
   }
 
@@ -116,7 +115,8 @@ export abstract class AbstractObject<
     return this.isa.replace(/^(PBX|XC)/, "");
   }
 
-  isReferencing(id: string): boolean {
+  /** @returns `true` if the provided UUID is used somewhere in the props. */
+  isReferencing(uuid: string): boolean {
     return false;
   }
 
@@ -159,6 +159,7 @@ export abstract class AbstractObject<
     return json as TJSON;
   }
 
+  /** abstract method for removing a UUID from any props that might be referencing it. */
   removeReference(uuid: string) {}
 
   removeFromProject() {

@@ -61,8 +61,8 @@ export class AbstractBuildPhase<
     return !!this.getBuildFile(file);
   }
 
-  isReferencing(id: string): boolean {
-    return !!this.props.files.find((file: any) => file.uuid === id);
+  isReferencing(uuid: string): boolean {
+    return !!this.props.files.find((file: any) => file.uuid === uuid);
   }
 
   removeFileReference(file: PBXFileReference) {
