@@ -694,6 +694,7 @@ export interface BuildSettings {
   CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER?: BoolString;
   CLANG_WARN_UNGUARDED_AVAILABILITY?: string;
   CODE_SIGN_STYLE?: string;
+  SWIFT_ACTIVE_COMPILATION_CONDITIONS?: string;
   GENERATE_INFOPLIST_FILE?: BoolString;
   INFOPLIST_KEY_CFBundleDisplayName?: string;
   INFOPLIST_KEY_NSHumanReadableCopyright?: "";
