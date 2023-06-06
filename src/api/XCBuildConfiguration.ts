@@ -4,18 +4,21 @@ import { AbstractObject } from "./AbstractObject";
 import type { SansIsa } from "./utils/util.types";
 import type { XcodeProject } from "./XcodeProject";
 import type { PBXFileReference } from "./PBXFileReference";
-export class XCBuildConfiguration extends AbstractObject<
-  json.XCBuildConfiguration<PBXFileReference>
-> {
+
+export type XCBuildConfigurationModel =
+  json.XCBuildConfiguration<PBXFileReference>;
+
+export class XCBuildConfiguration extends AbstractObject<XCBuildConfigurationModel> {
   static isa = json.ISA.XCBuildConfiguration as const;
   static is(object: any): object is XCBuildConfiguration {
     return object.isa === XCBuildConfiguration.isa;
   }
+
   static create(
     project: XcodeProject,
-    opts: SansIsa<json.XCBuildConfiguration>
+    opts: SansIsa<XCBuildConfigurationModel>
   ) {
-    return project.createModel<json.XCBuildConfiguration>({
+    return project.createModel<XCBuildConfigurationModel>({
       isa: json.ISA.XCBuildConfiguration,
       ...opts,
     }) as XCBuildConfiguration;

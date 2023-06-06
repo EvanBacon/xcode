@@ -10,16 +10,16 @@ import type { PBXTargetDependency } from "./PBXTargetDependency";
 import type { XCConfigurationList } from "./XCConfigurationList";
 import type { XCSwiftPackageProductDependency } from "./XCSwiftPackageProductDependency";
 
-export class PBXNativeTarget extends AbstractTarget<
-  json.PBXNativeTarget<
-    XCConfigurationList,
-    PBXTargetDependency,
-    AnyBuildPhase,
-    PBXBuildRule,
-    PBXFileReference,
-    XCSwiftPackageProductDependency
-  >
-> {
+export type PBXNativeTargetModel = json.PBXNativeTarget<
+  XCConfigurationList,
+  PBXTargetDependency,
+  AnyBuildPhase,
+  PBXBuildRule,
+  PBXFileReference,
+  XCSwiftPackageProductDependency
+>;
+
+export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
   static isa = json.ISA.PBXNativeTarget as const;
   static is(object: any): object is PBXNativeTarget {
     return object.isa === PBXNativeTarget.isa;
@@ -28,11 +28,11 @@ export class PBXNativeTarget extends AbstractTarget<
   static create(
     project: XcodeProject,
     opts: PickRequired<
-      SansIsa<json.PBXNativeTarget>,
+      SansIsa<PBXNativeTargetModel>,
       "name" | "productType" | "buildConfigurationList"
     >
   ) {
-    return project.createModel<json.PBXNativeTarget>({
+    return project.createModel<PBXNativeTargetModel>({
       isa: json.ISA.PBXNativeTarget,
       buildPhases: [],
       buildRules: [],

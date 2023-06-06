@@ -7,18 +7,20 @@ import type { XcodeProject } from "./XcodeProject";
 import type { PBXFileReference } from "./PBXFileReference";
 import type { PBXReferenceProxy } from "./PBXReferenceProxy";
 
-export class XCVersionGroup extends AbstractGroup<
-  json.XCVersionGroup<PBXGroup | PBXReferenceProxy | PBXFileReference>
-> {
+export type XCVersionGroupModel = json.XCVersionGroup<
+  PBXGroup | PBXReferenceProxy | PBXFileReference
+>;
+
+export class XCVersionGroup extends AbstractGroup<XCVersionGroupModel> {
   static isa = json.ISA.XCVersionGroup as const;
   static is(object: any): object is XCVersionGroup {
     return object.isa === XCVersionGroup.isa;
   }
   static create(
     project: XcodeProject,
-    opts: PickRequired<SansIsa<json.XCVersionGroup>, "currentVersion">
+    opts: PickRequired<SansIsa<XCVersionGroupModel>, "currentVersion">
   ) {
-    return project.createModel<json.XCVersionGroup>({
+    return project.createModel<XCVersionGroupModel>({
       isa: XCVersionGroup.isa,
       children: [],
       sourceTree: "<group>",

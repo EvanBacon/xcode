@@ -1,7 +1,13 @@
 import * as json from "../json/types";
 import { AbstractObject } from "./AbstractObject";
-import { XCBuildConfiguration } from "./XCBuildConfiguration";
-import { XCConfigurationList } from "./XCConfigurationList";
+import {
+  XCBuildConfiguration,
+  XCBuildConfigurationModel,
+} from "./XCBuildConfiguration";
+import {
+  XCConfigurationList,
+  XCConfigurationListModel,
+} from "./XCConfigurationList";
 
 import type { PickRequired, SansIsa } from "./utils/util.types";
 import type {
@@ -28,16 +34,16 @@ export class AbstractTarget<
 > extends AbstractObject<TJSON> {
   createConfigurationList(
     listOptions: PickRequired<
-      Omit<json.XCConfigurationList, "isa" | "buildConfigurations">,
+      Omit<XCConfigurationListModel, "isa" | "buildConfigurations">,
       "defaultConfigurationName"
     >,
-    configurations: Omit<json.XCBuildConfiguration, "isa">[]
+    configurations: Omit<XCBuildConfigurationModel, "isa">[]
   ) {
     const objects = configurations.map((config) =>
       XCBuildConfiguration.create(this.getXcodeProject(), config)
     );
     const list = XCConfigurationList.create(this.getXcodeProject(), {
-      buildConfigurations: objects.map((value) => value.uuid),
+      buildConfigurations: objects,
       ...listOptions,
     });
 
@@ -64,6 +70,7 @@ export class AbstractTarget<
       isa: buildPhaseKlass.isa,
       ...props,
     });
+
     this.props.buildPhases.push(phase);
     return phase;
   }

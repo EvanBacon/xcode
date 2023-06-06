@@ -3,7 +3,7 @@ import path from "path";
 import { PROJECT_DEFAULT_BUILD_SETTINGS } from "./utils/constants";
 import * as json from "../json/types";
 import { AbstractObject } from "./AbstractObject";
-import { PBXNativeTarget } from "./PBXNativeTarget";
+import { PBXNativeTarget, PBXNativeTargetModel } from "./PBXNativeTarget";
 import { XCBuildConfiguration } from "./XCBuildConfiguration";
 
 import type { PickRequired, SansIsa } from "./utils/util.types";
@@ -13,22 +13,23 @@ import type { PBXAggregateTarget } from "./PBXAggregateTarget";
 import type { PBXLegacyTarget } from "./PBXLegacyTarget";
 import type { XCConfigurationList } from "./XCConfigurationList";
 import type { XCRemoteSwiftPackageReference } from "./XCRemoteSwiftPackageReference";
-export class PBXProject extends AbstractObject<
-  json.PBXProject<
-    XCConfigurationList,
-    PBXGroup,
-    PBXGroup,
-    /* any target */
-    PBXAggregateTarget | PBXLegacyTarget | PBXNativeTarget,
-    XCRemoteSwiftPackageReference
-  >
-> {
+
+export type PBXProjectModel = json.PBXProject<
+  XCConfigurationList,
+  PBXGroup,
+  PBXGroup,
+  /* any target */
+  PBXAggregateTarget | PBXLegacyTarget | PBXNativeTarget,
+  XCRemoteSwiftPackageReference
+>;
+
+export class PBXProject extends AbstractObject<PBXProjectModel> {
   static isa = json.ISA.PBXProject as const;
   static is(object: any): object is PBXProject {
     return object.isa === PBXProject.isa;
   }
-  static create(project: XcodeProject, opts: SansIsa<json.PBXProject>) {
-    return project.createModel<json.PBXProject>({
+  static create(project: XcodeProject, opts: SansIsa<PBXProjectModel>) {
+    return project.createModel<PBXProjectModel>({
       isa: PBXProject.isa,
       ...opts,
     }) as PBXProject;
@@ -56,15 +57,7 @@ export class PBXProject extends AbstractObject<
     };
   }
 
-  protected setupDefaults(
-    props: json.PBXProject<
-      XCConfigurationList,
-      PBXGroup,
-      PBXGroup,
-      PBXAggregateTarget | PBXLegacyTarget | PBXNativeTarget,
-      XCRemoteSwiftPackageReference
-    >
-  ): void {
+  protected setupDefaults(props: PBXProjectModel): void {
     if (!props.compatibilityVersion) {
       props.compatibilityVersion = "Xcode 3.2";
     }
@@ -139,7 +132,7 @@ export class PBXProject extends AbstractObject<
 
   createNativeTarget(
     json: PickRequired<
-      SansIsa<json.PBXNativeTarget>,
+      SansIsa<PBXNativeTargetModel>,
       "name" | "productType" | "buildConfigurationList"
     >
   ) {

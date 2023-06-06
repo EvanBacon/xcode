@@ -6,9 +6,10 @@ import type { PickRequired, SansIsa } from "./utils/util.types";
 import type { XcodeProject } from "./XcodeProject";
 import type { PBXContainerItemProxy } from "./PBXContainerItemProxy";
 
-export class PBXReferenceProxy extends AbstractObject<
-  json.PBXReferenceProxy<PBXContainerItemProxy>
-> {
+export type PBXReferenceProxyModel =
+  json.PBXReferenceProxy<PBXContainerItemProxy>;
+
+export class PBXReferenceProxy extends AbstractObject<PBXReferenceProxyModel> {
   static isa = json.ISA.PBXReferenceProxy as const;
   static is(object: any): object is PBXReferenceProxy {
     return object.isa === PBXReferenceProxy.isa;
@@ -16,11 +17,11 @@ export class PBXReferenceProxy extends AbstractObject<
   static create(
     project: XcodeProject,
     opts: PickRequired<
-      SansIsa<json.PBXReferenceProxy>,
+      SansIsa<PBXReferenceProxyModel>,
       "remoteRef" | "fileType"
     >
   ) {
-    return project.createModel<json.PBXReferenceProxy>({
+    return project.createModel<PBXReferenceProxyModel>({
       isa: PBXReferenceProxy.isa,
       sourceTree: "<group>",
       ...opts,

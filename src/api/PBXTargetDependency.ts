@@ -7,14 +7,15 @@ import type { PBXAggregateTarget } from "./PBXAggregateTarget";
 import type { PBXContainerItemProxy } from "./PBXContainerItemProxy";
 import type { PBXLegacyTarget } from "./PBXLegacyTarget";
 import type { PBXNativeTarget } from "./PBXNativeTarget";
-export class PBXTargetDependency extends AbstractObject<
-  json.PBXTargetDependency<
-    /* any target */
-    PBXAggregateTarget | PBXLegacyTarget | PBXNativeTarget,
-    /** targetProxy */
-    PBXContainerItemProxy
-  >
-> {
+
+export type PBXTargetDependencyModel = json.PBXTargetDependency<
+  /* any target */
+  PBXAggregateTarget | PBXLegacyTarget | PBXNativeTarget,
+  /** targetProxy */
+  PBXContainerItemProxy
+>;
+
+export class PBXTargetDependency extends AbstractObject<PBXTargetDependencyModel> {
   static isa = json.ISA.PBXTargetDependency as const;
 
   static is(object: any): object is PBXTargetDependency {
@@ -23,9 +24,9 @@ export class PBXTargetDependency extends AbstractObject<
 
   static create(
     project: XcodeProject,
-    opts: SansIsa<json.PBXTargetDependency>
+    opts: SansIsa<PBXTargetDependencyModel>
   ) {
-    return project.createModel<json.PBXTargetDependency>({
+    return project.createModel<PBXTargetDependencyModel>({
       isa: PBXTargetDependency.isa,
       ...opts,
     }) as PBXTargetDependency;

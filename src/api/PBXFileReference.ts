@@ -25,7 +25,7 @@ const debug = require("debug")("xcparse:models") as typeof console.log;
 
 function getPossibleDefaultSourceTree(
   fileReference: Pick<
-    json.PBXFileReference,
+    PBXFileReferenceModel,
     "lastKnownFileType" | "explicitFileType"
   >
 ): json.SourceTree {
@@ -78,17 +78,20 @@ function setPathWithSourceTree(
     object.props.path = nPath;
   }
 }
-export class PBXFileReference extends AbstractObject<json.PBXFileReference> {
+
+export type PBXFileReferenceModel = json.PBXFileReference;
+
+export class PBXFileReference extends AbstractObject<PBXFileReferenceModel> {
   static isa = json.ISA.PBXFileReference as const;
   static is(object: any): object is PBXFileReference {
     return object.isa === PBXFileReference.isa;
   }
   static create(
     project: XcodeProject,
-    opts: PickRequired<SansIsa<json.PBXFileReference>, "path">
+    opts: PickRequired<SansIsa<PBXFileReferenceModel>, "path">
   ) {
     // @ts-expect-error
-    return project.createModel<json.PBXFileReference>({
+    return project.createModel<PBXFileReferenceModel>({
       isa: PBXFileReference.isa,
       ...opts,
     }) as PBXFileReference;

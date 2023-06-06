@@ -7,23 +7,23 @@ import { PBXFileReference } from "./PBXFileReference";
 import type { PBXProject } from "./PBXProject";
 import type { PBXReferenceProxy } from "./PBXReferenceProxy";
 
-export class PBXContainerItemProxy extends AbstractObject<
-  json.PBXContainerItemProxy<
-    /** containerPortal */
-    PBXReferenceProxy | PBXProject,
-    /** remoteGlobalIDString */
-    json.UUID
-  >
-> {
+export type PBXContainerItemProxyModel = json.PBXContainerItemProxy<
+  /** containerPortal */
+  PBXReferenceProxy | PBXProject,
+  /** remoteGlobalIDString */
+  json.UUID
+>;
+
+export class PBXContainerItemProxy extends AbstractObject<PBXContainerItemProxyModel> {
   static isa = json.ISA.PBXContainerItemProxy as const;
   static is(object: any): object is PBXContainerItemProxy {
     return object.isa === PBXContainerItemProxy.isa;
   }
   static create(
     project: XcodeProject,
-    opts: SansIsa<json.PBXContainerItemProxy>
+    opts: SansIsa<PBXContainerItemProxyModel>
   ) {
-    return project.createModel<json.PBXContainerItemProxy>({
+    return project.createModel<PBXContainerItemProxyModel>({
       isa: PBXContainerItemProxy.isa,
       ...opts,
     }) as PBXContainerItemProxy;

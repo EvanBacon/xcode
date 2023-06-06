@@ -1,6 +1,6 @@
 import * as json from "../json/types";
 import { AbstractObject } from "./AbstractObject";
-import { PBXBuildFile } from "./PBXBuildFile";
+import { PBXBuildFile, PBXBuildFileModel } from "./PBXBuildFile";
 
 import type { PickRequired, SansIsa } from "./utils/util.types";
 import type { PBXGroup } from "./AbstractGroup";
@@ -17,6 +17,7 @@ type AnyFileReference =
   | PBXVariantGroup
   | XCVersionGroup
   | PBXReferenceProxy;
+
 export class AbstractBuildPhase<
   TJSON extends json.AbstractBuildPhase<any, PBXBuildFile>
 > extends AbstractObject<TJSON> {
@@ -24,13 +25,13 @@ export class AbstractBuildPhase<
     return { files: [String] };
   }
 
-  createFile(json: PickRequired<SansIsa<json.PBXBuildFile>, "fileRef">) {
+  createFile(json: PickRequired<SansIsa<PBXBuildFileModel>, "fileRef">) {
     const file = PBXBuildFile.create(this.getXcodeProject(), json);
     this.props.files.push(file);
     return file;
   }
 
-  ensureFile(json: PickRequired<SansIsa<json.PBXBuildFile>, "fileRef">) {
+  ensureFile(json: PickRequired<SansIsa<PBXBuildFileModel>, "fileRef">) {
     const existing = this.getBuildFile(json.fileRef);
     if (existing) {
       return existing;

@@ -88,6 +88,10 @@ export abstract class AbstractObject<
         // @ts-expect-error
         this.props[key] = jsonValue
           .map((uuid: string) => {
+            if (typeof uuid !== "string") {
+              // Perhaps the model was already inflated.
+              return uuid;
+            }
             try {
               return this.getXcodeProject().getObject(uuid);
             } catch (error) {
@@ -101,6 +105,10 @@ export abstract class AbstractObject<
           })
           .filter(Boolean);
       } else if (jsonValue != null) {
+        if (jsonValue instanceof AbstractObject) {
+          this.props[key] = this.getXcodeProject().getObject(jsonValue.uuid);
+          continue;
+        }
         assert(
           typeof this.props[key] === "string",
           `'${String(
@@ -108,10 +116,18 @@ export abstract class AbstractObject<
           )}' MUST be of type string (UUID) but instead found type: ${typeof jsonValue}`
         );
 
-        this.props[key] = this.getXcodeProject().getObject(
-          // @ts-expect-error
-          jsonValue
-        );
+        try {
+          this.props[key] = this.getXcodeProject().getObject(
+            // @ts-expect-error
+            jsonValue
+          );
+        } catch (error) {
+          console.warn(
+            `[Malformed Xcode project]: Found orphaned reference: ${
+              this.uuid
+            } > ${this.isa}.${String(key)} > ${jsonValue}`
+          );
+        }
       }
     }
   }

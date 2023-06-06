@@ -5,9 +5,10 @@ import type { SansIsa } from "./utils/util.types";
 import type { XcodeProject } from "./XcodeProject";
 import type { XCRemoteSwiftPackageReference } from "./XCRemoteSwiftPackageReference";
 
-export class XCSwiftPackageProductDependency extends AbstractObject<
-  json.XCSwiftPackageProductDependency<XCRemoteSwiftPackageReference>
-> {
+export type XCSwiftPackageProductDependencyModel =
+  json.XCSwiftPackageProductDependency<XCRemoteSwiftPackageReference>;
+
+export class XCSwiftPackageProductDependency extends AbstractObject<XCSwiftPackageProductDependencyModel> {
   static isa = json.ISA.XCSwiftPackageProductDependency as const;
 
   static is(object: any): object is XCSwiftPackageProductDependency {
@@ -16,9 +17,9 @@ export class XCSwiftPackageProductDependency extends AbstractObject<
 
   static create(
     project: XcodeProject,
-    opts: SansIsa<json.XCSwiftPackageProductDependency>
+    opts: SansIsa<XCSwiftPackageProductDependencyModel>
   ) {
-    return project.createModel<json.XCSwiftPackageProductDependency>({
+    return project.createModel<XCSwiftPackageProductDependencyModel>({
       isa: XCSwiftPackageProductDependency.isa,
       ...opts,
     }) as XCSwiftPackageProductDependency;

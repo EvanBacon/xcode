@@ -10,16 +10,16 @@ import type { PBXVariantGroup } from "./PBXVariantGroup";
 import type { XCSwiftPackageProductDependency } from "./XCSwiftPackageProductDependency";
 import type { XCVersionGroup } from "./XCVersionGroup";
 
-export class PBXBuildFile extends AbstractObject<
-  json.PBXBuildFile<
-    | PBXFileReference
-    | PBXGroup
-    | PBXVariantGroup
-    | XCVersionGroup
-    | PBXReferenceProxy,
-    XCSwiftPackageProductDependency
-  >
-> {
+export type PBXBuildFileModel = json.PBXBuildFile<
+  | PBXFileReference
+  | PBXGroup
+  | PBXVariantGroup
+  | XCVersionGroup
+  | PBXReferenceProxy,
+  XCSwiftPackageProductDependency
+>;
+
+export class PBXBuildFile extends AbstractObject<PBXBuildFileModel> {
   static isa = json.ISA.PBXBuildFile as const;
 
   static is(object: any): object is PBXBuildFile {
@@ -28,9 +28,9 @@ export class PBXBuildFile extends AbstractObject<
 
   static create(
     project: XcodeProject,
-    opts: PickRequired<SansIsa<json.PBXBuildFile>, "fileRef">
+    opts: PickRequired<SansIsa<PBXBuildFileModel>, "fileRef">
   ) {
-    return project.createModel<json.PBXBuildFile>({
+    return project.createModel<PBXBuildFileModel>({
       isa: PBXBuildFile.isa,
       ...opts,
     }) as PBXBuildFile;

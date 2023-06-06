@@ -4,15 +4,18 @@ import type { XcodeProject } from "./XcodeProject";
 import type { PBXFileReference } from "./PBXFileReference";
 import { AbstractObject } from "./AbstractObject";
 
-export class PBXBuildRule extends AbstractObject<
-  json.PBXBuildRule<PBXFileReference, PBXFileReference>
-> {
+export type PBXBuildRuleModel = json.PBXBuildRule<
+  PBXFileReference,
+  PBXFileReference
+>;
+
+export class PBXBuildRule extends AbstractObject<PBXBuildRuleModel> {
   static isa = json.ISA.PBXBuildRule as const;
   static is(object: any): object is PBXBuildRule {
     return object.isa === PBXBuildRule.isa;
   }
-  static create(project: XcodeProject, opts: SansIsa<json.PBXBuildRule>) {
-    return project.createModel<json.PBXBuildRule>({
+  static create(project: XcodeProject, opts: SansIsa<PBXBuildRuleModel>) {
+    return project.createModel<PBXBuildRuleModel>({
       isa: PBXBuildRule.isa,
       ...opts,
     }) as PBXBuildRule;

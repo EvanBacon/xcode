@@ -7,13 +7,13 @@ import type { AnyBuildPhase } from "./PBXSourcesBuildPhase";
 import type { PBXTargetDependency } from "./PBXTargetDependency";
 import type { XCConfigurationList } from "./XCConfigurationList";
 
-export class PBXAggregateTarget extends AbstractTarget<
-  json.PBXAggregateTarget<
-    XCConfigurationList,
-    PBXTargetDependency,
-    AnyBuildPhase
-  >
-> {
+export type PBXAggregateTargetModel = json.PBXAggregateTarget<
+  XCConfigurationList,
+  PBXTargetDependency,
+  AnyBuildPhase
+>;
+
+export class PBXAggregateTarget extends AbstractTarget<PBXAggregateTargetModel> {
   static isa = json.ISA.PBXAggregateTarget as const;
   static is(object: any): object is PBXAggregateTarget {
     return object.isa === PBXAggregateTarget.isa;
@@ -21,11 +21,11 @@ export class PBXAggregateTarget extends AbstractTarget<
   static create(
     project: XcodeProject,
     opts: PickRequired<
-      SansIsa<json.PBXNativeTarget>,
+      SansIsa<PBXAggregateTargetModel>,
       "name" | "buildConfigurationList"
     >
   ) {
-    return project.createModel<json.PBXAggregateTarget>({
+    return project.createModel<PBXAggregateTargetModel>({
       isa: PBXAggregateTarget.isa,
       buildPhases: [],
       dependencies: [],

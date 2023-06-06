@@ -700,6 +700,7 @@ export interface BuildSettings {
   ASSETCATALOG_COMPILER_APPICON_NAME?: string;
   CURRENT_PROJECT_VERSION?: string | number;
   ENABLE_BITCODE?: string;
+  /** Path to the Info.plist file on disk, relative to root. */
   INFOPLIST_FILE: string;
   LD_RUNPATH_SEARCH_PATHS?: string;
   OTHER_LDFLAGS?: string[];

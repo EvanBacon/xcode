@@ -7,18 +7,20 @@ import type { XcodeProject } from "./XcodeProject";
 import type { PBXFileReference } from "./PBXFileReference";
 import type { PBXReferenceProxy } from "./PBXReferenceProxy";
 
-export class PBXVariantGroup extends AbstractGroup<
-  json.PBXVariantGroup<PBXGroup | PBXReferenceProxy | PBXFileReference>
-> {
+export type PBXVariantGroupModel = json.PBXVariantGroup<
+  PBXGroup | PBXReferenceProxy | PBXFileReference
+>;
+
+export class PBXVariantGroup extends AbstractGroup<PBXVariantGroupModel> {
   static isa = json.ISA.PBXVariantGroup as const;
   static is(object: any): object is PBXVariantGroup {
     return object.isa === PBXVariantGroup.isa;
   }
   static create(
     project: XcodeProject,
-    opts: Partial<SansIsa<json.PBXVariantGroup>>
+    opts: Partial<SansIsa<PBXVariantGroupModel>>
   ) {
-    return project.createModel<json.PBXVariantGroup>({
+    return project.createModel<PBXVariantGroupModel>({
       isa: PBXVariantGroup.isa,
       children: [],
       sourceTree: "<group>",

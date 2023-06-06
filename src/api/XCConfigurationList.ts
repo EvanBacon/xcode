@@ -5,9 +5,10 @@ import type { PickRequired, SansIsa } from "./utils/util.types";
 import type { XcodeProject } from "./XcodeProject";
 import type { XCBuildConfiguration } from "./XCBuildConfiguration";
 
-export class XCConfigurationList extends AbstractObject<
-  json.XCConfigurationList<XCBuildConfiguration>
-> {
+export type XCConfigurationListModel =
+  json.XCConfigurationList<XCBuildConfiguration>;
+
+export class XCConfigurationList extends AbstractObject<XCConfigurationListModel> {
   static isa = json.ISA.XCConfigurationList as const;
 
   static is(object: any): object is XCConfigurationList {
@@ -17,11 +18,11 @@ export class XCConfigurationList extends AbstractObject<
   static create(
     project: XcodeProject,
     opts: PickRequired<
-      SansIsa<json.XCConfigurationList>,
+      SansIsa<XCConfigurationListModel>,
       "defaultConfigurationName" | "buildConfigurations"
     >
   ) {
-    return project.createModel<json.XCConfigurationList>({
+    return project.createModel<XCConfigurationListModel>({
       isa: XCConfigurationList.isa,
       defaultConfigurationIsVisible: 0,
       ...opts,
