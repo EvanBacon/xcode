@@ -38,6 +38,7 @@ export const FILE_TYPES_BY_EXTENSION: Record<string, json.FileType> =
     xctest: "wrapper.cfbundle",
     xib: "file.xib",
     zip: "archive.zip",
+    intentdefinition: "file.intentdefinition",
   });
 
 export const PRODUCT_UTI_EXTENSIONS = Object.freeze({

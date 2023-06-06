@@ -259,6 +259,7 @@ export type FileType =
   | "wrapper.pb-project"
   | "wrapper.cfbundle"
   | "file.xib"
+  | "file.intentdefinition"
   | "archive.zip";
 
 export interface XCVersionGroup<TChild = UUID, TCurrentVersion = UUID>
@@ -688,6 +689,7 @@ export interface XCBuildConfiguration
 }
 
 export interface BuildSettings {
+  ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME?: string;
   BUNDLE_LOADER?: string;
   IPHONEOS_DEPLOYMENT_TARGET: string;
   PRODUCT_BUNDLE_IDENTIFIER: string;
