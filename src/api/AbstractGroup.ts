@@ -5,7 +5,7 @@ import { PRODUCT_UTI_EXTENSIONS } from "./utils/constants";
 import * as json from "../json/types";
 import { getParent, getParents } from "./utils/paths";
 import { AbstractObject } from "./AbstractObject";
-import { PBXFileReference } from "./PBXFileReference";
+import { PBXFileReference, PBXFileReferenceModel } from "./PBXFileReference";
 
 import type { PickRequired, SansIsa } from "./utils/util.types";
 import type { XcodeProject } from "./XcodeProject";
@@ -32,7 +32,7 @@ export class AbstractGroup<
     }
   }
 
-  createGroup(opts: SansIsa<Partial<json.PBXGroup>>) {
+  createGroup(opts: SansIsa<Partial<TJSON>>) {
     assert(opts.path || opts.name, "A group must have a path or name");
     const group: PBXGroup = PBXGroup.create(this.getXcodeProject(), {
       ...opts,
@@ -70,7 +70,10 @@ export class AbstractGroup<
       if (!recursive) {
         return null;
       }
-      child = this.createGroup({ path: childName! });
+      // @ts-expect-error: IDK
+      child = this.createGroup({
+        path: childName!,
+      });
     }
 
     if (!path.length) {
@@ -160,7 +163,7 @@ export class AbstractGroup<
   }
 
   createFile(
-    opts: SansIsa<PickRequired<json.PBXFileReference, "path">>
+    opts: SansIsa<PickRequired<PBXFileReferenceModel, "path">>
   ): PBXFileReference {
     const fileReference = PBXFileReference.create(this.getXcodeProject(), opts);
     this.props.children.push(fileReference);
@@ -180,18 +183,18 @@ export class AbstractGroup<
   }
 }
 
-export class PBXGroup extends AbstractGroup<
-  json.PBXGroup<
-    json.ISA.PBXGroup,
-    PBXGroup | PBXReferenceProxy | PBXFileReference
-  >
-> {
+export type PBXGroupModel = json.PBXGroup<
+  json.ISA.PBXGroup,
+  PBXGroup | PBXReferenceProxy | PBXFileReference
+>;
+
+export class PBXGroup extends AbstractGroup<PBXGroupModel> {
   static isa = json.ISA.PBXGroup as const;
   static is(object: any): object is PBXGroup {
     return object.isa === PBXGroup.isa;
   }
-  static create(project: XcodeProject, opts: Partial<SansIsa<json.PBXGroup>>) {
-    return project.createModel<json.PBXGroup>({
+  static create(project: XcodeProject, opts: Partial<SansIsa<PBXGroupModel>>) {
+    return project.createModel<PBXGroupModel>({
       isa: PBXGroup.isa,
       children: [],
       sourceTree: "<group>",
