@@ -96,7 +96,7 @@ import {
   parse,
   /** Given a JSON representation of a `pbxproj`, return a `.pbxproj` string that can be parsed by Xcode. */
   build,
-} from "xctrace";
+} from "xctrace/json";
 
 import fs from "fs";
 import path from "path";
