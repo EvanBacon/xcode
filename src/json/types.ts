@@ -689,6 +689,7 @@ export interface XCBuildConfiguration
 }
 
 export interface BuildSettings {
+  ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME?: string;
   ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME?: string;
   BUNDLE_LOADER?: string;
   IPHONEOS_DEPLOYMENT_TARGET: string;
