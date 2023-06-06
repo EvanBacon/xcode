@@ -39,8 +39,11 @@ function addBuildPhase(target: PBXNativeTarget) {
   });
   target.createBuildPhase(PBXResourcesBuildPhase, {
     files: [
+      // @ts-expect-error
       "Images.xcassets",
+      // @ts-expect-error
       "SplashScreen.storyboard",
+      // @ts-expect-error
       "Supporting/Expo.plist",
     ],
     // dstSubfolderSpec: 16

@@ -178,7 +178,6 @@ export class XcodeProject extends Map<json.UUID, AnyModel> {
     const json = JSON.parse(JSON.stringify(props));
     assert(json.objects, "objects is required");
     assert(json.rootObject, "rootObject is required");
-    assert(json.objects, "objects is required");
 
     this.internalJsonObjects = json.objects;
     this.archiveVersion = json.archiveVersion ?? 1;
@@ -200,11 +199,21 @@ export class XcodeProject extends Map<json.UUID, AnyModel> {
   }
 
   getObject(uuid: string) {
+    const obj = this._getObjectOptional(uuid);
+    if (obj) {
+      return obj;
+    }
+    throw new Error(`object with uuid '${uuid}' not found.`);
+  }
+
+  private _getObjectOptional(uuid: string) {
     if (this.has(uuid)) {
       return this.get(uuid);
     }
     const obj = this.internalJsonObjects[uuid];
-    assert(obj, `object not found in project 'objects' JSON. (uuid: ${uuid})`);
+    if (!obj) {
+      return null;
+    }
     // Clear out so we known this model has already been inflated.
     delete this.internalJsonObjects[uuid];
 

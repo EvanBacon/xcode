@@ -86,9 +86,20 @@ export abstract class AbstractObject<
         );
 
         // @ts-expect-error
-        this.props[key] = jsonValue.map((uuid: string) =>
-          this.getXcodeProject().getObject(uuid)
-        );
+        this.props[key] = jsonValue
+          .map((uuid: string) => {
+            try {
+              return this.getXcodeProject().getObject(uuid);
+            } catch (error) {
+              console.warn(
+                `[Malformed Xcode project]: Found orphaned reference: ${
+                  this.uuid
+                } > ${this.isa}.${String(key)} > ${uuid}`
+              );
+              return null;
+            }
+          })
+          .filter(Boolean);
       } else if (jsonValue != null) {
         assert(
           typeof this.props[key] === "string",
