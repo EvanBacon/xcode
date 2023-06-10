@@ -1,11 +1,11 @@
-# xcparse
+# `@bacons/xcode`
 
-[![install size](https://packagephobia.com/badge?p=xcparse)](https://packagephobia.com/result?p=xcparse)
+[![install size](https://packagephobia.com/badge?p=@bacons/xcode)](https://packagephobia.com/result?p=@bacons/xcode)
 
 > This project is a ~~_work in progress_ / _proof of concept_~~ seemingly spec compliant `pbxproj` parser. The API is subject to breaking changes.
 
 ```
-yarn add xcparse
+yarn add @bacons/xcode
 ```
 
 > Website https://xcode-seven.vercel.app/
@@ -55,9 +55,9 @@ Consider the following format comparison.
 }
 ```
 
-That same object would look like this in `xcparse`:
+That same object would look like this in `@bacons/xcode`:
 
-**`xcparse` output (NEW)**
+**`@bacons/xcode` output (NEW)**
 
 ```json
 {
@@ -71,6 +71,46 @@ That same object would look like this in `xcparse`:
 ```
 
 Notice how you don't need to strip or reapply quotes, you also don't need to filter out comments because the default visitor ignores comments in favor of regenerating them dynamically like Xcode does.
+
+
+## API
+
+There's an experimental mutable-graph layer which makes it much easier to work with pbxproj. 
+
+```ts
+import {
+  PBXAggregateTarget,
+  PBXFrameworksBuildPhase,
+  PBXLegacyTarget,
+  PBXNativeTarget,
+  XcodeProject,
+} from "@bacons/xcode";
+
+const project = XcodeProject.open("/path/to/project.pbxproj");
+
+// Get all targets:
+project.rootObject.props.targets
+```
+
+Create a Swift file:
+
+```ts
+import {PBXBuildFile,PBXFileReference } from '@bacons/xcode'; 
+import path from 'path';
+
+// Get `project` from XcodeProject.
+
+const file = PBXBuildFile.create(project, {
+  fileRef: PBXFileReference.create(project, {
+    path: "MyFile.swift",
+    sourceTree: "<group>",
+  }),
+})
+
+// The file and fileRef will now be injected in the pbxproj `objects` dict.
+```
+
+
 
 ## Solution
 
@@ -111,7 +151,7 @@ import {
   parse,
   /** Given a JSON representation of a `pbxproj`, return a `.pbxproj` string that can be parsed by Xcode. */
   build,
-} from "xctrace/json";
+} from "@bacons/xcode/json";
 
 import fs from "fs";
 import path from "path";
