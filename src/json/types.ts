@@ -234,12 +234,17 @@ export type FileType =
   | "compiled.mach-o.dylib"
   | "text.plist.entitlements"
   | "wrapper.framework"
+  | "sourcecode.javascript"
+  | "text.json"
+  | "text.html"
+  | "text.css"
   | "image.gif"
   | "text.xml"
   | "sourcecode.c.h"
   | "sourcecode.cpp.h"
   | "sourcecode.c.objc"
   | "text"
+  | "folder"
   | "wrapper.cfbundle"
   | "sourcecode.module"
   | "video.quicktime"
@@ -677,6 +682,7 @@ export type TargetAttribute =
       CreatedOnToolsVersion: string;
       TestTargetID?: string;
       ProvisioningStyle?: "Automatic" | "Manual";
+      DevelopmentTeam?: string;
     }
   | {
       LastSwiftMigration: string;
@@ -698,10 +704,17 @@ export interface BuildSettings {
   GENERATE_INFOPLIST_FILE?: BoolString;
   INFOPLIST_KEY_CFBundleDisplayName?: string;
   INFOPLIST_KEY_NSHumanReadableCopyright?: "";
+  INFOPLIST_KEY_UIApplicationSceneManifest_Generation?: BoolString;
+  INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents?: BoolString;
+  INFOPLIST_KEY_UILaunchScreen_Generation?: BoolString;
+  INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad?: string;
+  INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone?: string;
+
   MARKETING_VERSION?: number | string;
   SKIP_INSTALL?: BoolString;
   SWIFT_EMIT_LOC_STRINGS?: BoolString;
   TARGETED_DEVICE_FAMILY?: string;
+  ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES?: BoolString;
   ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME?: string;
   ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME?: string;
   BUNDLE_LOADER?: string;
@@ -710,6 +723,7 @@ export interface BuildSettings {
   PRODUCT_NAME?: string;
   TEST_HOST?: string;
   COPY_PHASE_STRIP?: string;
+  DEVELOPMENT_TEAM?: string;
   ASSETCATALOG_COMPILER_APPICON_NAME?: string;
   CURRENT_PROJECT_VERSION?: string | number;
   ENABLE_BITCODE?: string;
@@ -729,9 +743,12 @@ export interface BuildSettings {
   CLANG_CXX_LIBRARY?: string | "libc++";
   VERSIONING_SYSTEM?: "apple-generic" | string;
 
+  DEVELOPMENT_ASSET_PATHS?: string;
+  ENABLE_PREVIEWS?: BoolString;
   CLANG_ENABLE_MODULES?: BoolString;
   CLANG_ENABLE_OBJC_ARC?: BoolString;
   CLANG_ENABLE_OBJC_WEAK?: BoolString;
+  CODE_SIGN_ENTITLEMENTS?: string;
 
   CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING?: BoolString;
   CLANG_WARN_BOOL_CONVERSION?: BoolString;

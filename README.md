@@ -42,6 +42,7 @@ Consider the following format comparison.
 ```
 
 **`xcode` output (old)**
+
 ```json
 {
   "307D28A1123043350040C0FA_comment": "app-icon.png",
@@ -57,6 +58,7 @@ Consider the following format comparison.
 That same object would look like this in `xcparse`:
 
 **`xcparse` output (NEW)**
+
 ```json
 {
   "308D052E1370CCF300D202BF": {
@@ -124,7 +126,7 @@ const pbxprojString = build(pbxproj);
 ## File Path Resolution
 
 Files will have an attribute `sourceTree` which indicates how the file path should be resolved.
- 
+
 - `BUILT_PRODUCTS_DIR`: Paths are relative to the built products directory.
 - `DEVELOPER_DIR`: Paths are relative to the developer directory.
 - `SOURCE_ROOT`: Paths are relative to the project.
@@ -136,7 +138,7 @@ For example, a file object like:
 
 ```json
 {
-  "isa": "PBXFileReference", 
+  "isa": "PBXFileReference",
   "name": "AppDelegate.m",
   "path": "multitarget/AppDelegate.m",
   "sourceTree": "<group>"
@@ -145,13 +147,14 @@ For example, a file object like:
 
 Indicates that the `path` "multitarget/AppDelegate.m" is relative to `sourceTree` "<group>". We need to check the containing `PBXGroup`'s `path` (only defined when the group is linked to a directory in the file system). Groups can live inside of other groups so this process is recursive.
 
-  
 ## Versioning
-  
+
 Certain values loosely map to each other. For instance the top-level `objectVersion` (which indicates the versioning used for the objects in the top-level `objects` dictionary), maps to the `rootObject` -> `PBXProject`'s `compatibilityVersion` string. Here is an up-to-date mapping (May 2022):
 
 | `PBXProject.compatibilityVersion` | `XcodeProject.objectVersion` |
 | --------------------------------- | ---------------------------- |
+| `'Xcode 15.0'`                    | `60`                         |
+| `'Xcode 14.0'`                    | `56`                         |
 | `'Xcode 13.0'`                    | `55`                         |
 | `'Xcode 12.0'`                    | `54`                         |
 | `'Xcode 11.4'`                    | `53`                         |

@@ -39,6 +39,10 @@ export const FILE_TYPES_BY_EXTENSION: Record<string, json.FileType> =
     xib: "file.xib",
     zip: "archive.zip",
     intentdefinition: "file.intentdefinition",
+    js: "sourcecode.javascript",
+    json: "text.json",
+    html: "text.html",
+    css: "text.css",
   });
 
 export const PRODUCT_UTI_EXTENSIONS = Object.freeze({
