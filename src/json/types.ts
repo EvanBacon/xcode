@@ -709,7 +709,87 @@ export interface BuildSettings {
   INFOPLIST_KEY_UILaunchScreen_Generation?: BoolString;
   INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad?: string;
   INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone?: string;
+  INFOPLIST_KEY_UISupportedInterfaceOrientations?: string;
+  /** bundle identifier of the main application target. */
+  INFOPLIST_KEY_WKCompanionAppBundleIdentifier?: string;
 
+  // INFOPLIST_KEY_MetalCaptureEnabled
+  // INFOPLIST_KEY_WKWatchOnly
+  // INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp
+  // INFOPLIST_KEY_WKExtensionDelegateClassName
+  // INFOPLIST_KEY_WKCompanionAppBundleIdentifier
+  // INFOPLIST_KEY_CLKComplicationPrincipalClass
+  // INFOPLIST_KEY_UISupportsDocumentBrowser
+  // INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone
+  // INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad
+  // INFOPLIST_KEY_UIStatusBarStyle
+  // INFOPLIST_KEY_UIStatusBarHidden
+  // INFOPLIST_KEY_UIRequiresFullScreen
+  // INFOPLIST_KEY_UIApplicationSceneManifest_Generation
+  // INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents
+  // INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace
+  // INFOPLIST_KEY_UIUserInterfaceStyle
+  // INFOPLIST_KEY_UISupportedInterfaceOrientations
+  // INFOPLIST_KEY_UIRequiredDeviceCapabilities
+  // INFOPLIST_KEY_UIMainStoryboardFile
+  // INFOPLIST_KEY_UILaunchStoryboardName
+  // INFOPLIST_KEY_UILaunchScreen_Generation
+  // INFOPLIST_KEY_NSMainStoryboardFile
+  // INFOPLIST_KEY_NSMainNibFile
+  // INFOPLIST_KEY_LSUIElement
+  // INFOPLIST_KEY_LSBackgroundOnly
+  // INFOPLIST_KEY_OSBundleUsageDescription
+  // INFOPLIST_KEY_NSVoIPUsageDescription
+  // INFOPLIST_KEY_NSVideoSubscriberAccountUsageDescription
+  // INFOPLIST_KEY_NSUserTrackingUsageDescription
+  // INFOPLIST_KEY_NSSystemExtensionUsageDescription
+  // INFOPLIST_KEY_NSSystemAdministrationUsageDescription
+  // INFOPLIST_KEY_NSSpeechRecognitionUsageDescription
+  // INFOPLIST_KEY_NSSiriUsageDescription
+  // INFOPLIST_KEY_NSSensorKitUsageDescription
+  // INFOPLIST_KEY_NSSensorKitPrivacyPolicyURL
+  // INFOPLIST_KEY_NSRemovableVolumesUsageDescription
+  // INFOPLIST_KEY_NSRemindersUsageDescription
+  // INFOPLIST_KEY_NSPhotoLibraryUsageDescription
+  // INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription
+  // INFOPLIST_KEY_NSNetworkVolumesUsageDescription
+  // INFOPLIST_KEY_NSNearbyInteractionUsageDescription
+  // INFOPLIST_KEY_NSNearbyInteractionAllowOnceUsageDescription
+  // INFOPLIST_KEY_NSMotionUsageDescription
+  // INFOPLIST_KEY_NSMicrophoneUsageDescription
+  // INFOPLIST_KEY_NSLocationWhenInUseUsageDescription
+  // INFOPLIST_KEY_NSLocationUsageDescription
+  // INFOPLIST_KEY_NSLocationTemporaryUsageDescription
+  // INFOPLIST_KEY_NSLocationAlwaysUsageDescription
+  // INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription
+  // INFOPLIST_KEY_NSLocalNetworkUsageDescription
+  // INFOPLIST_KEY_NSHomeKitUsageDescription
+  // INFOPLIST_KEY_NSHealthUpdateUsageDescription
+  // INFOPLIST_KEY_NSHealthShareUsageDescription
+  // INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription
+  // INFOPLIST_KEY_NSGKFriendListUsageDescription
+  // INFOPLIST_KEY_NSFocusStatusUsageDescription
+  // INFOPLIST_KEY_NSFileProviderPresenceUsageDescription
+  // INFOPLIST_KEY_NSFileProviderDomainUsageDescription
+  // INFOPLIST_KEY_NSFallDetectionUsageDescription
+  // INFOPLIST_KEY_NSFaceIDUsageDescription
+  // INFOPLIST_KEY_NSDownloadsFolderUsageDescription
+  // INFOPLIST_KEY_NSDocumentsFolderUsageDescription
+  // INFOPLIST_KEY_NSDesktopFolderUsageDescription
+  // INFOPLIST_KEY_NSContactsUsageDescription
+  // INFOPLIST_KEY_NSCameraUsageDescription
+  // INFOPLIST_KEY_NSCalendarsUsageDescription
+  // INFOPLIST_KEY_NSBluetoothWhileInUseUsageDescription
+  // INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription
+  // INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription
+  // INFOPLIST_KEY_NSAppleMusicUsageDescription
+  // INFOPLIST_KEY_NSAppleEventsUsageDescription
+  // INFOPLIST_KEY_NFCReaderUsageDescription
+  // INFOPLIST_KEY_NSPrincipalClass
+  // INFOPLIST_KEY_NSHumanReadableCopyright
+  // INFOPLIST_KEY_LSApplicationCategoryType
+
+  WATCHOS_DEPLOYMENT_TARGET?: string;
   MARKETING_VERSION?: number | string;
   SKIP_INSTALL?: BoolString;
   SWIFT_EMIT_LOC_STRINGS?: BoolString;
@@ -770,6 +850,7 @@ export interface BuildSettings {
   CLANG_WARN_UNREACHABLE_CODE?: string;
   CLANG_WARN__DUPLICATE_METHOD_MATCH?: string;
   "CODE_SIGN_IDENTITY[sdk=iphoneos*]"?: string | "iPhone Developer";
+  "INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]"?: BoolString;
   ENABLE_STRICT_OBJC_MSGSEND?: string;
   ENABLE_TESTABILITY?: string;
   GCC_C_LANGUAGE_STANDARD?: string;
@@ -793,4 +874,12 @@ export interface BuildSettings {
   ENABLE_NS_ASSERTIONS?: BoolString;
   VALIDATE_PRODUCT?: string;
   DEBUG_INFORMATION_FORMAT?: "dwarf" | "dwarf-with-dsym" | string;
+
+  /** `"iphoneos iphonesimulator macosx xros xrsimulator"` */
+  SUPPORTED_PLATFORMS?: string;
+
+  SUPPORTS_MACCATALYST?: BoolString;
+  SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD?: BoolString;
+  SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD?: BoolString;
+  ENABLE_HARDENED_RUNTIME?: BoolString;
 }
