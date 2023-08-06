@@ -76,10 +76,11 @@ export class PBXProject extends AbstractObject<PBXProjectModel> {
     if (!props.projectRoot) {
       props.projectRoot = "";
     }
-    if (props.attributes) {
+    if (!props.attributes) {
       props.attributes = {
         LastSwiftUpdateCheck: "1300",
         LastUpgradeCheck: "1300",
+        TargetAttributes: {},
       };
     }
   }
