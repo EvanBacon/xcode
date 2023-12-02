@@ -1,5 +1,7 @@
 import path from "node:path";
 import os from "node:os";
+import fs from "node:fs";
+import plist from "@expo/plist";
 
 import type { XCConfigurationList } from "./XCConfigurationList";
 import type { PBXNativeTarget } from "./PBXNativeTarget";
@@ -35,16 +37,21 @@ export class XCBuildConfiguration extends AbstractObject<XCBuildConfigurationMod
   }
 
   /** @returns the resolved absolute file path for the `INFOPLIST_FILE` build setting if it exists. `null` if the setting does not exist. */
-  getInfoPlistFile(): string | null {
-    const fileRef = this.props.buildSettings.INFOPLIST_FILE;
+  getInfoPlistFilePath(): string | null {
+    const fileRef = this.resolveBuildSetting("INFOPLIST_FILE");
     if (fileRef == null) {
       return null;
     }
     const root = this.getXcodeProject().getProjectRoot();
     // TODO: Maybe interpolate
     // TODO: Maybe add root projectRoot, currently this is always `""` in my fixtures.
-
     return path.join(root, fileRef);
+  }
+
+  getInfoPlist() {
+    const filePath = this.getInfoPlistFilePath();
+    if (!filePath) return null;
+    return plist.parse(fs.readFileSync(filePath, "utf8"));
   }
 
   /** @returns a list of targets which refer to this build configuration. */
@@ -69,9 +76,9 @@ export class XCBuildConfiguration extends AbstractObject<XCBuildConfigurationMod
    * Build settings can include environment variables (often defined by `xcodebuild`) and additional commands to mutate the value, e.g. `$(FOO:lower)` -> `process.env.FOO.toLowerCase()`
    *
    * @returns a resolved build setting with all commands and references interpolated out. */
-  resolveBuildSetting(
-    buildSetting: keyof json.BuildSettings
-  ): json.BuildSettings[keyof json.BuildSettings] {
+  resolveBuildSetting<TSetting extends keyof json.BuildSettings>(
+    buildSetting: TSetting
+  ): json.BuildSettings[TSetting] {
     const resolver = (sub: string) => {
       if (!(sub in this.props.buildSettings)) {
         if (sub in process.env) {
