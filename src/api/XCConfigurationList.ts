@@ -43,4 +43,8 @@ export class XCConfigurationList extends AbstractObject<XCConfigurationListModel
       this.props.buildConfigurations.splice(index, 1);
     }
   }
+
+  isReferencing(uuid: string): boolean {
+    return this.props.buildConfigurations.some((child) => child.uuid === uuid);
+  }
 }

@@ -37,7 +37,22 @@ it(`creates with models`, () => {
   );
 });
 
+it(`gets referrers`, () => {
+  const xcproj = XcodeProject.open(WORKING_FIXTURE);
+  const obj = xcproj.getObject(
+    "298D7C431BC2C79500FD3B3E"
+  ) as XCBuildConfiguration;
+
+  expect(obj.getReferrers().map((o) => o.uuid)).toEqual([
+    "298D7C451BC2C79600FD3B3E",
+  ]);
+});
+
 describe(`resolve settings`, () => {
+  afterEach(() => {
+    console.warn = originalWarn;
+  });
+
   function getFixture(buildSettings: Partial<json.BuildSettings> = {}) {
     const xcproj = XcodeProject.open(WORKING_FIXTURE);
 
@@ -77,5 +92,16 @@ describe(`resolve settings`, () => {
     expect(
       config.resolveBuildSetting("ASSETCATALOG_COMPILER_APPICON_NAME")
     ).toBe("evan/hello");
+  });
+  it(`resolves TARGET_NAME using magic`, () => {
+    console.warn = jest.fn();
+
+    const xcproj = XcodeProject.open(WORKING_FIXTURE);
+    const config = xcproj.getObject("298D7C431BC2C79500FD3B3E");
+
+    expect(config.resolveBuildSetting("PRODUCT_NAME")).toBe(
+      "AFNetworking iOS Tests"
+    );
+    expect(console.warn).not.toBeCalled();
   });
 });

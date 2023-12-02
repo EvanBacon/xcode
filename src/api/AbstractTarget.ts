@@ -92,6 +92,15 @@ export class AbstractTarget<
     return v as InstanceType<TBuildPhase> | null;
   }
 
+  isReferencing(uuid: string): boolean {
+    if (this.props.buildConfigurationList.uuid === uuid) return true;
+    if (this.props.dependencies.some((dep) => dep.uuid === uuid)) return true;
+    if (this.props.buildPhases.some((phase) => phase.uuid === uuid))
+      return true;
+
+    return false;
+  }
+
   protected getObjectProps(): any {
     return {
       buildConfigurationList: String,

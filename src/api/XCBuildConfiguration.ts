@@ -1,5 +1,9 @@
 import path from "node:path";
+import os from "node:os";
 
+import type { XCConfigurationList } from "./XCConfigurationList";
+import type { PBXNativeTarget } from "./PBXNativeTarget";
+import { uniqueBy } from "./utils/array";
 import * as json from "../json/types";
 import { AbstractObject } from "./AbstractObject";
 import type { SansIsa } from "./utils/util.types";
@@ -43,6 +47,24 @@ export class XCBuildConfiguration extends AbstractObject<XCBuildConfigurationMod
     return path.join(root, fileRef);
   }
 
+  /** @returns a list of targets which refer to this build configuration. */
+  getTargetReferrers(): PBXNativeTarget[] {
+    const lists = this.getReferrers().filter(
+      (ref) => ref.isa === json.ISA.XCConfigurationList
+    ) as XCConfigurationList[];
+    const targets = lists
+      .map((list) => {
+        return list
+          .getReferrers()
+          .filter(
+            (ref) => ref.isa === json.ISA.PBXNativeTarget
+          ) as PBXNativeTarget[];
+      })
+      .flat();
+
+    return uniqueBy(targets, (item) => item.uuid);
+  }
+
   /**
    * Build settings can include environment variables (often defined by `xcodebuild`) and additional commands to mutate the value, e.g. `$(FOO:lower)` -> `process.env.FOO.toLowerCase()`
    *
@@ -68,9 +90,32 @@ export class XCBuildConfiguration extends AbstractObject<XCBuildConfigurationMod
           return DEF_APPLE_BUILD_VARIABLES[sub];
         }
 
-        console.warn(
-          `[XCBuildConfiguration][${this.props.name}]: Issue resolving build setting "${buildSetting}". Substitute value "${sub}" not found in build settings.`
-        );
+        // If the common value `TARGET_NAME` was used and we got here (no environment variable was found) then we'll just guess.
+        if (sub === "TARGET_NAME") {
+          const parentTarget = this.getTargetReferrers();
+          if (parentTarget.length > 0) {
+            if (parentTarget.length > 1) {
+              console.warn(
+                `[XCBuildConfiguration][${
+                  this.props.name
+                }]: Multiple targets found for build setting "${buildSetting}". Using first target "${
+                  parentTarget[0].props.name
+                }". Possible targets: ${parentTarget
+                  .map((target) => target.getDisplayName())
+                  .join(", ")}`
+              );
+            }
+            return parentTarget[0].props.name;
+          } else {
+            console.warn(
+              `[XCBuildConfiguration][${this.props.name}]: Issue resolving special build setting "${buildSetting}". Substitute value "${sub}" not found in build settings, environment variables, or from a referring PBXNativeTarget.`
+            );
+          }
+        } else {
+          console.warn(
+            `[XCBuildConfiguration][${this.props.name}]: Issue resolving build setting "${buildSetting}". Substitute value "${sub}" not found in build settings.`
+          );
+        }
       }
 
       if (Array.isArray(sub)) {
@@ -101,8 +146,6 @@ export class XCBuildConfiguration extends AbstractObject<XCBuildConfigurationMod
     };
   }
 }
-
-import os from "node:os";
 
 // https://opensource.apple.com/source/pb_makefiles/pb_makefiles-1005/platform-variables.make.auto.html
 const DEF_APPLE_BUILD_VARIABLES: Record<string, string> = {
