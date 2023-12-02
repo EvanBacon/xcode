@@ -4,7 +4,7 @@ import AFNetworkingFixture from "../../../json/__tests__/fixtures/AFNetworking";
 
 describe(getFullPath, () => {
   const xcodeProject = new XcodeProject(
-    "/foo/bar/AFNetworking.xcodeproj",
+    "/foo/bar/AFNetworking.xcodeproj/project.pbxproj",
     AFNetworkingFixture
   );
   it(`should return the full path`, () => {

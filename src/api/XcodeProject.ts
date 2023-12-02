@@ -193,9 +193,10 @@ export class XcodeProject extends Map<json.UUID, AnyModel> {
     this.ensureAllObjectsInflated();
   }
 
+  /** The directory containing the `*.xcodeproj/project.pbxproj` file, e.g. `/ios/` in React Native. */
   getProjectRoot() {
     // TODO: Not sure if this is right
-    return path.dirname(this.filePath);
+    return path.dirname(path.dirname(this.filePath));
   }
 
   getObject(uuid: string) {

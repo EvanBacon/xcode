@@ -829,6 +829,7 @@ export interface BuildSettings {
   CLANG_ENABLE_OBJC_ARC?: BoolString;
   CLANG_ENABLE_OBJC_WEAK?: BoolString;
   CODE_SIGN_ENTITLEMENTS?: string;
+  INSTALL_PATH?: string;
 
   CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING?: BoolString;
   CLANG_WARN_BOOL_CONVERSION?: BoolString;
