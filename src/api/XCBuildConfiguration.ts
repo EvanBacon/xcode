@@ -79,11 +79,11 @@ export class XCBuildConfiguration extends AbstractObject<XCBuildConfigurationMod
   resolveBuildSetting<TSetting extends keyof json.BuildSettings>(
     buildSetting: TSetting
   ): json.BuildSettings[TSetting] {
-    const resolver = (sub: string) => {
+    const resolver = (sub: string): string => {
       if (!(sub in this.props.buildSettings)) {
-        if (sub in process.env) {
+        if (process.env[sub] != null) {
           debug('Using environment variable substitution for "%s"', sub);
-          return process.env[sub];
+          return process.env[sub]!;
         } else if (
           // If the build settings aren't available then it means this process it being run outside of xcodebuild (likely)
           // so we'll fallback on defaults from a random HTML file I found on the internet.
@@ -137,9 +137,11 @@ export class XCBuildConfiguration extends AbstractObject<XCBuildConfigurationMod
 
     const setting = this.props.buildSettings[buildSetting];
     if (typeof setting === "string") {
+      // @ts-expect-error
       return resolveXcodeBuildSetting(setting, resolver);
     }
     if (Array.isArray(setting)) {
+      // @ts-expect-error
       return setting.map((s) => {
         return resolveXcodeBuildSetting(s, resolver);
       });
