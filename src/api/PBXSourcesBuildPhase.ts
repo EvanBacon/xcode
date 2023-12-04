@@ -169,6 +169,27 @@ export class PBXCopyFilesBuildPhase extends AbstractBuildPhase<
         if (!this.props.name) {
           this.props.name = "Embed App Clips";
         }
+      } else if (
+        // Is Extension appex CopyFilesBuildPhase
+        appExtFiles.some((ref) => {
+          return ref
+            .getTargetReferrers()
+            .some(
+              (target) =>
+                target.props.productType ===
+                "com.apple.product-type.extensionkit-extension"
+            );
+        })
+      ) {
+        if (!this.props.dstPath) {
+          this.props.dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+        }
+        if (!this.props.dstSubfolderSpec) {
+          this.props.dstSubfolderSpec = 16;
+        }
+        if (!this.props.name) {
+          this.props.name = "Embed ExtensionKit Extensions";
+        }
       } else {
         // Is iOS appex CopyFilesBuildPhase
 

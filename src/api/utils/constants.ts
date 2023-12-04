@@ -6,6 +6,7 @@ export const FILE_TYPES_BY_EXTENSION: Record<string, json.FileType> =
     a: "archive.ar",
     apns: "text",
     app: "wrapper.application",
+    // NOTE: This could also be `wrapper.extensionkit-extension`
     appex: "wrapper.app-extension",
     bundle: "wrapper.plug-in",
     cpp: "sourcecode.cpp.cpp",
@@ -70,6 +71,7 @@ export const SOURCETREE_BY_FILETYPE: Record<string, json.SourceTree> =
     "sourcecode.text-based-dylib-definition": "SDKROOT",
     "wrapper.framework": "SDKROOT",
     "wrapper.app-extension": "BUILT_PRODUCTS_DIR",
+    "wrapper.extensionkit-extension": "BUILT_PRODUCTS_DIR",
   });
 
 export const PROJECT_DEFAULT_BUILD_SETTINGS = Object.freeze({

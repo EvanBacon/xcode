@@ -61,6 +61,7 @@ export type SourceTree =
 /** UTI for product types. */
 export type PBXProductType =
   | "com.apple.product-type.application"
+  | "com.apple.product-type.extensionkit-extension"
   | "com.apple.product-type.application.on-demand-install-capable"
   | "com.apple.product-type.framework"
   | "com.apple.product-type.library.dynamic"
