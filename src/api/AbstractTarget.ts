@@ -112,4 +112,29 @@ export class AbstractTarget<
   getDefaultConfiguration() {
     return this.props.buildConfigurationList.getDefaultConfiguration();
   }
+
+  /** Set a build setting on all build configurations. */
+  setBuildSetting<TSetting extends keyof json.BuildSettings>(
+    key: TSetting,
+    value: json.BuildSettings[TSetting]
+  ) {
+    return this.props.buildConfigurationList.setBuildSetting(key, value);
+  }
+
+  /** Remove a build setting on all build configurations. */
+  removeBuildSetting<TSetting extends keyof json.BuildSettings>(key: TSetting) {
+    return this.props.buildConfigurationList.removeBuildSetting(key);
+  }
+
+  /** @returns build setting from the default build configuration. */
+  getDefaultBuildSetting<TSetting extends keyof json.BuildSettings>(
+    key: TSetting
+  ) {
+    return this.props.buildConfigurationList.getDefaultBuildSetting(key);
+  }
+
+  getAttributes() {
+    return this.getXcodeProject().rootObject.props.attributes
+      .TargetAttributes?.[this.uuid];
+  }
 }

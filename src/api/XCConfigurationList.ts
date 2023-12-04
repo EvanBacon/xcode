@@ -66,4 +66,29 @@ export class XCConfigurationList extends AbstractObject<XCConfigurationListModel
   isReferencing(uuid: string): boolean {
     return this.props.buildConfigurations.some((child) => child.uuid === uuid);
   }
+
+  /** Set a build setting on all build configurations. */
+  setBuildSetting<TSetting extends keyof json.BuildSettings>(
+    key: TSetting,
+    value: json.BuildSettings[TSetting]
+  ) {
+    this.props.buildConfigurations.forEach((config) => {
+      config.props.buildSettings[key] = value;
+    });
+    return value;
+  }
+
+  /** Remove a build setting on all build configurations. */
+  removeBuildSetting<TSetting extends keyof json.BuildSettings>(key: TSetting) {
+    this.props.buildConfigurations.forEach((config) => {
+      delete config.props.buildSettings[key];
+    });
+  }
+
+  /** @returns build setting from the default build configuration. */
+  getDefaultBuildSetting<TSetting extends keyof json.BuildSettings>(
+    key: TSetting
+  ) {
+    return this.getDefaultConfiguration().props.buildSettings[key];
+  }
 }
