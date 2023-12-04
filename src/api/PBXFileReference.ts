@@ -20,6 +20,7 @@ import type { XcodeProject } from "./XcodeProject";
 import { PBXContainerItemProxy } from "./PBXContainerItemProxy";
 import { PBXReferenceProxy } from "./PBXReferenceProxy";
 import { PBXTargetDependency } from "./PBXTargetDependency";
+import type { PBXNativeTarget } from "./PBXNativeTarget";
 
 const debug = require("debug")("xcparse:models") as typeof console.log;
 
@@ -272,4 +273,16 @@ export class PBXFileReference extends AbstractObject<PBXFileReferenceModel> {
       );
     }) as PBXReferenceProxy[];
   }
+
+  getTargetReferrers(): PBXNativeTarget[] {
+    return this.getReferrers().filter((ref) => {
+      return (
+        isPBXNativeTarget(ref) && ref.props.productReference?.uuid === this.uuid
+      );
+    }) as PBXNativeTarget[];
+  }
+}
+
+function isPBXNativeTarget(object: any): object is PBXNativeTarget {
+  return object.isa === json.ISA.PBXNativeTarget;
 }

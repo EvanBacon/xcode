@@ -69,6 +69,7 @@ export const SOURCETREE_BY_FILETYPE: Record<string, json.SourceTree> =
     "compiled.mach-o.dylib": "SDKROOT",
     "sourcecode.text-based-dylib-definition": "SDKROOT",
     "wrapper.framework": "SDKROOT",
+    "wrapper.app-extension": "BUILT_PRODUCTS_DIR",
   });
 
 export const PROJECT_DEFAULT_BUILD_SETTINGS = Object.freeze({

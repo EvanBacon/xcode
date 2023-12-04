@@ -42,6 +42,15 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
     }) as PBXNativeTarget;
   }
 
+  isReferencing(uuid: string): boolean {
+    if (this.props.buildRules.some((rule) => rule.uuid === uuid)) return true;
+    if (this.props.packageProductDependencies?.some((dep) => dep.uuid === uuid))
+      return true;
+    if (this.props.productReference?.uuid === uuid) return true;
+
+    return super.isReferencing(uuid);
+  }
+
   protected getObjectProps(): Partial<{
     buildRules: any;
     productType: any;
