@@ -108,4 +108,8 @@ export class AbstractTarget<
       buildPhases: [String],
     };
   }
+
+  getDefaultConfiguration() {
+    return this.props.buildConfigurationList.getDefaultConfiguration();
+  }
 }

@@ -35,6 +35,25 @@ export class XCConfigurationList extends AbstractObject<XCConfigurationListModel
     };
   }
 
+  /** Get the configuration for the `defaultConfigurationName` and assert if it isn't available. */
+  getDefaultConfiguration() {
+    const config = this.props.buildConfigurations.find(
+      (child) => child.props.name === this.props.defaultConfigurationName
+    );
+
+    if (!config) {
+      throw new Error(
+        `[XCConfigurationList][${this.uuid}]: ${
+          this.props.defaultConfigurationName
+        } not found in buildConfigurations. Available configurations: ${this.props.buildConfigurations
+          .map((config) => `${config.props.name} (${config.uuid})`)
+          .join(", ")})`
+      );
+    }
+
+    return config;
+  }
+
   removeReference(uuid: string) {
     const index = this.props.buildConfigurations.findIndex(
       (child) => child.uuid === uuid
