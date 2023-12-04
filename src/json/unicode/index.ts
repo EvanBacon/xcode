@@ -7,7 +7,7 @@ export function addQuotes(string: string): string {
   });
 }
 
-const OCTAL_DIGITS = "01234567".split("");
+const OCTAL_DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7"];
 
 const ESCAPE_PREFIXES = [
   ...OCTAL_DIGITS,
