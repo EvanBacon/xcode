@@ -23,7 +23,7 @@ import { PBXTargetDependency } from "./PBXTargetDependency";
 
 const debug = require("debug")("xcparse:models") as typeof console.log;
 
-function getPossibleDefaultSourceTree(
+export function getPossibleDefaultSourceTree(
   fileReference: Pick<
     PBXFileReferenceModel,
     "lastKnownFileType" | "explicitFileType"
@@ -33,7 +33,7 @@ function getPossibleDefaultSourceTree(
     ? SOURCETREE_BY_FILETYPE[fileReference.lastKnownFileType]
     : undefined;
 
-  if (fileReference.explicitFileType) {
+  if (!possibleSourceTree && fileReference.explicitFileType) {
     return "BUILT_PRODUCTS_DIR";
   }
 
@@ -109,8 +109,8 @@ export class PBXFileReference extends AbstractObject<PBXFileReferenceModel> {
     //   this.sourceTree = "SOURCE_ROOT";
     // }
 
-    if (!this.props.explicitFileType && !this.props.lastKnownFileType) {
-      this.setExplicitFileType();
+    if (!this.props.lastKnownFileType) {
+      this.setLastKnownFileType();
     }
 
     if (this.props.includeInIndex == null) {
@@ -121,6 +121,11 @@ export class PBXFileReference extends AbstractObject<PBXFileReferenceModel> {
     }
     if (!this.props.sourceTree) {
       this.props.sourceTree = getPossibleDefaultSourceTree(this.props);
+    }
+
+    // Clear the includeInIndex flag for framework files
+    if (this.props.path && path.extname(this.props.path) === ".framework") {
+      this.props.includeInIndex = undefined;
     }
   }
   getParent() {
@@ -162,8 +167,14 @@ export class PBXFileReference extends AbstractObject<PBXFileReferenceModel> {
     if (type) {
       this.props.explicitFileType = type;
     } else if (this.props.path) {
-      const extension = path.extname(this.props.path);
+      let extension = path.extname(this.props.path);
+      if (extension.startsWith(".")) {
+        extension = extension.substring(1);
+      }
       this.props.explicitFileType = FILE_TYPES_BY_EXTENSION[extension];
+      debug(
+        `setExplicitFileType (ext: ${extension}, type: ${this.props.explicitFileType})`
+      );
     }
 
     if (this.props.explicitFileType) {
