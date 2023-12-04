@@ -151,6 +151,47 @@ export class PBXProject extends AbstractObject<PBXProjectModel> {
     return null;
   }
 
+  /** Best effort helper method to return the main target for a given app type. */
+  getMainAppTarget(
+    type: "ios" | "macos" | "tvos" | "watchos" = "ios"
+  ): PBXNativeTarget | null {
+    const MAPPING: Record<string, keyof json.BuildSettings> = {
+      ios: "IPHONEOS_DEPLOYMENT_TARGET",
+      macos: "MACOSX_DEPLOYMENT_TARGET",
+      tvos: "TVOS_DEPLOYMENT_TARGET",
+      watchos: "WATCHOS_DEPLOYMENT_TARGET",
+    };
+
+    const targetBuildSetting = MAPPING[type];
+
+    const mainAppTarget = this.props.targets.filter((target) => {
+      if (
+        PBXNativeTarget.is(target) &&
+        target.props.productType === "com.apple.product-type.application"
+      ) {
+        const config = target.getDefaultConfiguration();
+        // WatchOS apps look very similar to iOS apps, but they have a different deployment target
+        return targetBuildSetting in config.props.buildSettings;
+      }
+      return false;
+    }) as PBXNativeTarget[];
+
+    if (mainAppTarget.length > 1) {
+      console.warn(
+        `Multiple main app targets found, using first one: ${mainAppTarget
+          .map((t) => t.getDisplayName())
+          .join(", ")}}`
+      );
+    }
+
+    const target = mainAppTarget[0];
+
+    if (!target) {
+      throw new Error("No main app target found");
+    }
+    return target;
+  }
+
   isReferencing(uuid: string): boolean {
     if (
       [

@@ -37,15 +37,31 @@ export class XCBuildConfiguration extends AbstractObject<XCBuildConfigurationMod
   }
 
   /** @returns the resolved absolute file path for the `INFOPLIST_FILE` build setting if it exists. `null` if the setting does not exist. */
-  getInfoPlistFilePath(): string | null {
-    const fileRef = this.resolveBuildSetting("INFOPLIST_FILE");
-    if (fileRef == null) {
+  private resolveFilePath(key: keyof json.BuildSettings): string | null {
+    const fileRef = this.resolveBuildSetting(key);
+    if (fileRef == null || typeof fileRef !== "string") {
       return null;
     }
     const root = this.getXcodeProject().getProjectRoot();
     // TODO: Maybe interpolate
     // TODO: Maybe add root projectRoot, currently this is always `""` in my fixtures.
     return path.join(root, fileRef);
+  }
+
+  /** @returns the resolved absolute file path for the `INFOPLIST_FILE` build setting if it exists. `null` if the setting does not exist. */
+  getEntitlementsFilePath(): string | null {
+    return this.resolveFilePath("CODE_SIGN_ENTITLEMENTS")!;
+  }
+
+  getEntitlements() {
+    const filePath = this.getEntitlementsFilePath();
+    if (!filePath) return null;
+    return plist.parse(fs.readFileSync(filePath, "utf8"));
+  }
+
+  /** @returns the resolved absolute file path for the `INFOPLIST_FILE` build setting if it exists. `null` if the setting does not exist. */
+  getInfoPlistFilePath(): string | null {
+    return this.resolveFilePath("INFOPLIST_FILE")!;
   }
 
   getInfoPlist() {
