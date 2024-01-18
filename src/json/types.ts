@@ -612,12 +612,14 @@ export interface PBXTargetDependency<TTarget = UUID, TTargetProxy = UUID>
   productRef?: string;
 }
 
+export type XCBuildConfigurationName = "Release" | "Debug" | (string & {});
+
 export interface XCConfigurationList<TBuildConfigurations = UUID>
   extends AbstractObject<ISA.XCConfigurationList> {
   /** List of UUIDs to objects of type `XCBuildConfiguration` */
   buildConfigurations: TBuildConfigurations[];
   defaultConfigurationIsVisible: BoolNumber;
-  defaultConfigurationName: "Release" | "Debug" | (string & {});
+  defaultConfigurationName: XCBuildConfigurationName;
 }
 
 export interface XCBuildConfiguration<TBaseConfigurationReference = UUID>
@@ -626,7 +628,7 @@ export interface XCBuildConfiguration<TBaseConfigurationReference = UUID>
   baseConfigurationReference?: TBaseConfigurationReference;
   buildSettings: BuildSettings;
   /** configuration name. */
-  name: "Release" | "Debug" | (string & {});
+  name: XCBuildConfigurationName;
 }
 
 export interface PBXProject<
@@ -691,7 +693,7 @@ export type TargetAttribute =
 export interface XCBuildConfiguration
   extends AbstractObject<ISA.XCBuildConfiguration> {
   buildSettings: BuildSettings;
-  name: string;
+  name: XCBuildConfigurationName;
 }
 
 export interface BuildSettings {
