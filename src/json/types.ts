@@ -617,7 +617,7 @@ export interface XCConfigurationList<TBuildConfigurations = UUID>
   /** List of UUIDs to objects of type `XCBuildConfiguration` */
   buildConfigurations: TBuildConfigurations[];
   defaultConfigurationIsVisible: BoolNumber;
-  defaultConfigurationName: string;
+  defaultConfigurationName: "Release" | "Debug" | (string & {});
 }
 
 export interface XCBuildConfiguration<TBaseConfigurationReference = UUID>
@@ -626,7 +626,7 @@ export interface XCBuildConfiguration<TBaseConfigurationReference = UUID>
   baseConfigurationReference?: TBaseConfigurationReference;
   buildSettings: BuildSettings;
   /** configuration name. */
-  name: string;
+  name: "Release" | "Debug" | (string & {});
 }
 
 export interface PBXProject<
@@ -700,7 +700,10 @@ export interface BuildSettings {
   CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER?: BoolString;
   CLANG_WARN_UNGUARDED_AVAILABILITY?: BoolString;
   CODE_SIGN_STYLE?: "Automatic" | (string & {});
-  SWIFT_ACTIVE_COMPILATION_CONDITIONS?: string;
+  SWIFT_ACTIVE_COMPILATION_CONDITIONS?:
+    | "DEBUG"
+    | "DEBUG $(inherited)"
+    | (string & {});
   GENERATE_INFOPLIST_FILE?: BoolString;
   INFOPLIST_KEY_CFBundleDisplayName?: string;
   INFOPLIST_KEY_NSHumanReadableCopyright?: "";
@@ -804,7 +807,7 @@ export interface BuildSettings {
   PRODUCT_BUNDLE_IDENTIFIER: string;
   PRODUCT_NAME?: string;
   TEST_HOST?: string;
-  COPY_PHASE_STRIP?: string;
+  COPY_PHASE_STRIP?: BoolString;
   DEVELOPMENT_TEAM?: string;
   ASSETCATALOG_COMPILER_APPICON_NAME?: string;
   CURRENT_PROJECT_VERSION?: string | number;
@@ -813,15 +816,19 @@ export interface BuildSettings {
   INFOPLIST_FILE: string;
   LD_RUNPATH_SEARCH_PATHS?: string;
   OTHER_LDFLAGS?: string[];
-  SWIFT_OPTIMIZATION_LEVEL?: "-O" | (string & {});
-  SWIFT_VERSION?: "4.2" | (string & {});
+  SWIFT_OPTIMIZATION_LEVEL?: "-O" | "-Onone" | "-Owholemodule" | (string & {});
+  SWIFT_VERSION?: "4.2" | "5" | (string & {});
 
   ALWAYS_SEARCH_USER_PATHS?: BoolString;
   CLANG_ANALYZER_NONNULL?: BoolString;
 
   CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED?: string;
 
-  CLANG_CXX_LANGUAGE_STANDARD?: "gnu++0x" | "gnu++14" | (string & {});
+  CLANG_CXX_LANGUAGE_STANDARD?:
+    | "gnu++0x"
+    | "gnu++14"
+    | "gnu++20"
+    | (string & {});
   CLANG_CXX_LIBRARY?: "libc++" | (string & {});
   VERSIONING_SYSTEM?: "apple-generic" | (string & {});
 
