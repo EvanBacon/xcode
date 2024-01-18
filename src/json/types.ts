@@ -698,8 +698,8 @@ export interface BuildSettings {
   CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION?: BoolString;
   CLANG_WARN_DOCUMENTATION_COMMENTS?: BoolString;
   CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER?: BoolString;
-  CLANG_WARN_UNGUARDED_AVAILABILITY?: string;
-  CODE_SIGN_STYLE?: string;
+  CLANG_WARN_UNGUARDED_AVAILABILITY?: BoolString;
+  CODE_SIGN_STYLE?: "Automatic" | (string & {});
   SWIFT_ACTIVE_COMPILATION_CONDITIONS?: string;
   GENERATE_INFOPLIST_FILE?: BoolString;
   INFOPLIST_KEY_CFBundleDisplayName?: string;
@@ -856,7 +856,7 @@ export interface BuildSettings {
   "INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]"?: BoolString;
   ENABLE_STRICT_OBJC_MSGSEND?: string;
   ENABLE_TESTABILITY?: string;
-  GCC_C_LANGUAGE_STANDARD?: string;
+  GCC_C_LANGUAGE_STANDARD?: "gnu11" | (string & {});
   GCC_DYNAMIC_NO_PIC?: BoolString;
   GCC_NO_COMMON_BLOCKS?: BoolString;
   GCC_OPTIMIZATION_LEVEL?: string;
