@@ -205,7 +205,7 @@ export interface PBXFileReference
     | "xcode.lang.objc"
     | "xcode.lang.objcpp"
     | "xcode.lang.swift"
-    | string;
+    | (string & {});
 
   /** Indicates the structure of a plist file. */
   plistStructureDefinitionIdentifier?: string;
@@ -414,11 +414,11 @@ export interface PBXBuildRule<TInputFile = UUID, TOutputFile = UUID>
   compilerSpec:
     | "com.apple.compilers.proxy.script"
     | "com.apple.build-tasks.copy-strings-file"
-    | string;
+    | (string & {});
   /** Discovered dependency file. */
   dependencyFile?: string;
   /** Type of files that should be processed by the rule. */
-  fileType?: string | "pattern.proxy" | "wrapper.xcclassmodel";
+  fileType?: "pattern.proxy" | "wrapper.xcclassmodel" | (string & {});
   /**
    * Used to target files by a pattern. An alternate query to `fileType`.
    * @example `"*.css"`
@@ -447,7 +447,7 @@ export interface PBXBuildRule<TInputFile = UUID, TOutputFile = UUID>
 export interface PBXReferenceProxy<TRemoteRef = UUID>
   extends AbstractFileObject<ISA.PBXReferenceProxy> {
   /** Type of the referenced file. */
-  fileType: "wrapper.application" | string;
+  fileType: "wrapper.application" | (string & {});
 
   /** UUID to an object of type `PBXContainerItemProxy`. */
   remoteRef: TRemoteRef;
@@ -513,10 +513,9 @@ export interface PBXBuildFile<TFileRef = UUID, TProductRef = UUID>
   extends AbstractObject<ISA.PBXBuildFile> {
   /** UUID for an object of type <PBXFileReference|PBXGroup|PBXVariantGroup|XCVersionGroup|PBXReferenceProxy> */
   fileRef: TFileRef;
-  settings?: { ATTRIBUTES?: ("RemoveHeadersOnCopy" | string)[] } & Record<
-    string,
-    any
-  >;
+  settings?: {
+    ATTRIBUTES?: ("RemoveHeadersOnCopy" | (string & {}))[];
+  } & Record<string, any>;
 
   /** UUID for a `XCSwiftPackageProductDependency` (Swift Package) file. */
   productRef?: TProductRef;
@@ -550,10 +549,10 @@ export interface PBXContainerItemProxy<
   /** UUID */
   remoteGlobalIDString: TRemoteGlobalIDString;
   remoteInfo?:
-    | string
     | "ReferencedProject"
     | "iOS application"
-    | "iOS staticLibrary";
+    | "iOS staticLibrary"
+    | (string & {});
 }
 
 /** This element is an abstract parent for specialized targets. */
@@ -652,7 +651,7 @@ export interface PBXProject<
   /** @example `0` */
   hasScannedForEncodings?: BoolNumber;
   /** Known regions for localized files. */
-  knownRegions: ("en" | "Base" | string)[];
+  knownRegions: ("en" | "Base" | (string & {}))[];
   /** Object is a UUID for a `PBXGroup`. */
   mainGroup: TMainGroup;
   /** Object is a UUID for a `PBXGroup`. */
@@ -814,17 +813,17 @@ export interface BuildSettings {
   INFOPLIST_FILE: string;
   LD_RUNPATH_SEARCH_PATHS?: string;
   OTHER_LDFLAGS?: string[];
-  SWIFT_OPTIMIZATION_LEVEL?: string | "-O";
-  SWIFT_VERSION?: string | "4.2";
+  SWIFT_OPTIMIZATION_LEVEL?: "-O" | (string & {});
+  SWIFT_VERSION?: "4.2" | (string & {});
 
   ALWAYS_SEARCH_USER_PATHS?: BoolString;
   CLANG_ANALYZER_NONNULL?: BoolString;
 
   CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED?: string;
 
-  CLANG_CXX_LANGUAGE_STANDARD?: string | "gnu++0x" | "gnu++14";
-  CLANG_CXX_LIBRARY?: string | "libc++";
-  VERSIONING_SYSTEM?: "apple-generic" | string;
+  CLANG_CXX_LANGUAGE_STANDARD?: "gnu++0x" | "gnu++14" | (string & {});
+  CLANG_CXX_LIBRARY?: "libc++" | (string & {});
+  VERSIONING_SYSTEM?: "apple-generic" | (string & {});
 
   DEVELOPMENT_ASSET_PATHS?: string;
   ENABLE_PREVIEWS?: BoolString;
@@ -853,7 +852,7 @@ export interface BuildSettings {
   CLANG_WARN_SUSPICIOUS_MOVE?: string;
   CLANG_WARN_UNREACHABLE_CODE?: string;
   CLANG_WARN__DUPLICATE_METHOD_MATCH?: string;
-  "CODE_SIGN_IDENTITY[sdk=iphoneos*]"?: string | "iPhone Developer";
+  "CODE_SIGN_IDENTITY[sdk=iphoneos*]"?: "iPhone Developer" | (string & {});
   "INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]"?: BoolString;
   ENABLE_STRICT_OBJC_MSGSEND?: string;
   ENABLE_TESTABILITY?: string;
@@ -877,7 +876,7 @@ export interface BuildSettings {
   SDKROOT?: string;
   ENABLE_NS_ASSERTIONS?: BoolString;
   VALIDATE_PRODUCT?: string;
-  DEBUG_INFORMATION_FORMAT?: "dwarf" | "dwarf-with-dsym" | string;
+  DEBUG_INFORMATION_FORMAT?: "dwarf" | "dwarf-with-dsym" | (string & {});
 
   /** `"iphoneos iphonesimulator macosx xros xrsimulator"` */
   SUPPORTED_PLATFORMS?: string;
