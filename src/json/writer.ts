@@ -148,6 +148,10 @@ export class Writer {
     this.println("}");
   }
 
+  private keyHasFloatValue(key: string) {
+    return (key === key.toUpperCase() && (key.endsWith("SWIFT_VERSION") || key.endsWith('MARKETING_VERSION') || key.endsWith("_DEPLOYMENT_TARGET")));
+  }
+
   private writeObject(object: JSONObject, isBase?: boolean) {
     Object.entries(object).forEach(([key, value]) => {
       if (this.options.skipNullishValues && value == null) {
@@ -172,10 +176,16 @@ export class Writer {
         }
         this.indent--;
         this.println("};");
+      } else if (typeof value === "number"){
+        const valueWithDot = (this.keyHasFloatValue(key) && Number.isInteger(value)) ? `${value}.0` : value;
+        this.printAssignLn(
+          ensureQuotes(key),
+          ensureQuotes(valueWithDot)
+        );
       } else {
         this.printAssignLn(
           ensureQuotes(key),
-          key === "remoteGlobalIDString"
+          (key === "remoteGlobalIDString" || key === "TestTargetID")
             ? ensureQuotes(value)
             : this.formatId(value as any)
         );
