@@ -44,34 +44,6 @@ export function createReferenceList(
     return `Build configuration list for [unknown]`;
   }
 
-  function getXCRemoteSwiftPackageReferenceComment(id: string) {
-    for (const [innerId, obj] of Object.entries(objects) as any) {
-      if (obj.buildConfigurationList === id) {
-        let name = obj.name ?? obj.path ?? obj.productName;
-        if (!name) {
-          name =
-            objects[obj.targets?.[0]]?.productName ??
-            objects[obj.targets?.[0]]?.name;
-
-          if (!name) {
-            // NOTE(EvanBacon): I have no idea what I'm doing...
-            // this is for the case where the build configuration list is pointing to the main `PBXProject` object (no name).
-            // We locate the proxy (which may or may not be related) and use the remoteInfo property.
-            const proxy = Object.values(objects).find(
-              (obj: any) =>
-                obj.isa === "PBXContainerItemProxy" &&
-                obj.containerPortal === innerId
-            );
-            name = proxy?.remoteInfo;
-          }
-        }
-
-        return `${obj.isa} "${name}"`;
-      }
-    }
-    return id;
-  }
-
   function getBuildPhaseNameContainingFile(buildFileId: string): string | null {
     const buildPhase = Object.values(objects).find((obj: any) =>
       obj.files?.includes(buildFileId)
