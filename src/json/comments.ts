@@ -3,6 +3,7 @@ import {
   PBXFileReference,
   PBXProject,
   XCConfigurationList,
+  XCRemoteSwiftPackageReference,
   XcodeProject,
 } from "./types";
 
@@ -20,7 +21,9 @@ export function createReferenceList(
       if (obj.buildConfigurationList === id) {
         let name = obj.name ?? obj.path ?? obj.productName;
         if (!name) {
-          name = objects[obj.targets?.[0]]?.productName ?? objects[obj.targets?.[0]]?.name;
+          name =
+            objects[obj.targets?.[0]]?.productName ??
+            objects[obj.targets?.[0]]?.name;
 
           if (!name) {
             // NOTE(EvanBacon): I have no idea what I'm doing...
@@ -41,6 +44,34 @@ export function createReferenceList(
     return `Build configuration list for [unknown]`;
   }
 
+  function getXCRemoteSwiftPackageReferenceComment(id: string) {
+    for (const [innerId, obj] of Object.entries(objects) as any) {
+      if (obj.buildConfigurationList === id) {
+        let name = obj.name ?? obj.path ?? obj.productName;
+        if (!name) {
+          name =
+            objects[obj.targets?.[0]]?.productName ??
+            objects[obj.targets?.[0]]?.name;
+
+          if (!name) {
+            // NOTE(EvanBacon): I have no idea what I'm doing...
+            // this is for the case where the build configuration list is pointing to the main `PBXProject` object (no name).
+            // We locate the proxy (which may or may not be related) and use the remoteInfo property.
+            const proxy = Object.values(objects).find(
+              (obj: any) =>
+                obj.isa === "PBXContainerItemProxy" &&
+                obj.containerPortal === innerId
+            );
+            name = proxy?.remoteInfo;
+          }
+        }
+
+        return `${obj.isa} "${name}"`;
+      }
+    }
+    return id;
+  }
+
   function getBuildPhaseNameContainingFile(buildFileId: string): string | null {
     const buildPhase = Object.values(objects).find((obj: any) =>
       obj.files?.includes(buildFileId)
@@ -54,8 +85,8 @@ export function createReferenceList(
       getBuildPhaseNameContainingFile(id) ?? "[missing build phase]";
 
     const name = getCommentForObject(
-      buildFile.fileRef,
-      objects[buildFile.fileRef]
+      buildFile.fileRef ?? buildFile.productRef,
+      objects[buildFile.fileRef ?? buildFile.productRef]
     );
 
     return `${name} in ${buildPhaseName}`;
@@ -75,15 +106,32 @@ export function createReferenceList(
       referenceCache[id] = getPBXBuildFileComment(id, object);
     } else if (isXCConfigurationList(object)) {
       referenceCache[id] = getXCConfigurationListComment(id);
+    } else if (isXCRemoteSwiftPackageReference(object)) {
+      if (object.repositoryURL) {
+        referenceCache[id] = `${object.isa} "${getRepoNameFromURL(
+          object.repositoryURL
+        )}"`;
+      } else {
+        referenceCache[id] = object.isa;
+      }
     } else if (isPBXProject(object)) {
       referenceCache[id] = "Project object";
     } else if (object.isa?.endsWith("BuildPhase")) {
       referenceCache[id] = getBuildPhaseName(object) ?? "";
     } else {
-      if (object.isa === 'PBXGroup' && object.name === undefined && object.path === undefined) {
+      if (
+        object.isa === "PBXGroup" &&
+        object.name === undefined &&
+        object.path === undefined
+      ) {
         referenceCache[id] = "";
       } else {
-        referenceCache[id] = object.name ?? object.path ?? object.isa ?? null;
+        referenceCache[id] =
+          object.name ??
+          object.productName ??
+          object.path ??
+          object.isa ??
+          null;
       }
     }
     return referenceCache[id] ?? null;
@@ -104,6 +152,17 @@ export function createReferenceList(
   return referenceCache;
 }
 
+function getRepoNameFromURL(repoUrl: string) {
+  try {
+    const url = new URL(repoUrl);
+    // github.com/expo/spm-package -> spm-package
+    if (url.hostname === "github.com") {
+      return url.pathname.split("/").pop();
+    }
+  } catch {}
+  return repoUrl;
+}
+
 function isPBXProject(val: any): val is PBXProject {
   return val?.isa === "PBXProject";
 }
@@ -114,6 +173,12 @@ export function isPBXBuildFile(val: any): val is PBXBuildFile {
 
 export function isPBXFileReference(val: any): val is PBXFileReference {
   return val?.isa === "PBXFileReference";
+}
+
+function isXCRemoteSwiftPackageReference(
+  val: any
+): val is XCRemoteSwiftPackageReference {
+  return val?.isa === "XCRemoteSwiftPackageReference";
 }
 
 function isXCConfigurationList(val: any): val is XCConfigurationList {

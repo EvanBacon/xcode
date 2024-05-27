@@ -5,6 +5,7 @@ import { inspect } from "util";
 
 describe(parse, () => {
   const fixtures = [
+    "006-spm.pbxproj",
     "AFNetworking.pbxproj",
     // "Cocoa-Application.pbxproj",
     // "project-multitarget-missing-targetattributes.pbxproj",
@@ -26,8 +27,8 @@ describe(parse, () => {
       const file = fs.readFileSync(filePath, "utf8");
       const result = parse(file);
       expect(result).toBeTruthy();
-      console.log(inspect(result, { depth: 5, colors: true }));
-      console.log(build(result));
+      // console.log(inspect(result, { depth: 5, colors: true }));
+      // console.log(build(result));
     });
 
     it(`should write the same pbxproj ${fixture}`, () => {
@@ -39,5 +40,4 @@ describe(parse, () => {
       expect(output).toEqual(file);
     });
   });
-
 });
