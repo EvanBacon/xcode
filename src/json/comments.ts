@@ -4,6 +4,7 @@ import {
   PBXProject,
   XCConfigurationList,
   XCRemoteSwiftPackageReference,
+  XCLocalSwiftPackageReference,
   XcodeProject,
 } from "./types";
 
@@ -86,6 +87,12 @@ export function createReferenceList(
       } else {
         referenceCache[id] = object.isa;
       }
+    } else if (isXCLocalSwiftPackageReference(object)) {
+      if (object.relativePath) {
+        referenceCache[id] = `${object.isa} "${object.relativePath}"`;
+      } else {
+        referenceCache[id] = object.isa;
+      }
     } else if (isPBXProject(object)) {
       referenceCache[id] = "Project object";
     } else if (object.isa?.endsWith("BuildPhase")) {
@@ -151,6 +158,11 @@ function isXCRemoteSwiftPackageReference(
   val: any
 ): val is XCRemoteSwiftPackageReference {
   return val?.isa === "XCRemoteSwiftPackageReference";
+}
+function isXCLocalSwiftPackageReference(
+  val: any
+): val is XCLocalSwiftPackageReference {
+  return val?.isa === "XCLocalSwiftPackageReference";
 }
 
 function isXCConfigurationList(val: any): val is XCConfigurationList {

@@ -143,6 +143,8 @@ const KNOWN_ISA = {
       .XCSwiftPackageProductDependency,
   [json.ISA.XCRemoteSwiftPackageReference]: () =>
     require("./XCRemoteSwiftPackageReference").XCRemoteSwiftPackageReference,
+  [json.ISA.XCLocalSwiftPackageReference]: () =>
+    require("./XCLocalSwiftPackageReference").XCLocalSwiftPackageReference,
 } as const;
 
 type AnyModel = ValueOf<IsaMapping>;

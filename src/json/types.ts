@@ -41,6 +41,7 @@ export enum ISA {
   // spm
   XCSwiftPackageProductDependency = "XCSwiftPackageProductDependency",
   XCRemoteSwiftPackageReference = "XCRemoteSwiftPackageReference",
+  XCLocalSwiftPackageReference = "XCLocalSwiftPackageReference",
 }
 
 /** Indicates the relationship between a path and the project/system. */
@@ -525,7 +526,7 @@ export interface PBXBuildFile<TFileRef = UUID, TProductRef = UUID>
 
 export interface XCSwiftPackageProductDependency<TPackage = UUID>
   extends AbstractObject<ISA.XCSwiftPackageProductDependency> {
-  /** UUID for an object of type `XCRemoteSwiftPackageReference` */
+  /** UUID for an object of type `XCRemoteSwiftPackageReference` or `XCLocalSwiftPackageReference` */
   package?: TPackage;
 
   productName?: string;
@@ -537,6 +538,14 @@ export interface XCRemoteSwiftPackageReference
   repositoryURL: string;
   /** Version requirements. */
   requirement?: Record<string, any>;
+}
+
+export interface XCLocalSwiftPackageReference
+  extends AbstractObject<ISA.XCLocalSwiftPackageReference> {
+  /** URL the Swift package was installed from. */
+  path: string;
+  /** Repository path where the package is located relative to the Xcode project. */
+  relativePath: string;
 }
 
 export interface PBXContainerItemProxy<
@@ -665,7 +674,7 @@ export interface PBXProject<
   /** List of UUIDs for targets. */
   targets: TTargets[];
 
-  /** List of UUIDs for `XCRemoteSwiftPackageReference` */
+  /** List of UUIDs for `XCRemoteSwiftPackageReference` or `XCLocalSwiftPackageReference` */
   packageReferences?: TPackageReference[];
 }
 
