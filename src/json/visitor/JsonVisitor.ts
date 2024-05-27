@@ -70,6 +70,11 @@ export class JsonVisitor extends BaseVisitor {
 
 function parseType(literal: string): number | string {
   if (
+    // octal should be parsed as string not a number to preserve the 0 prefix
+    /^0\d+$/.test(literal)
+  ) {
+    return literal;
+  } else if (
     // Try decimal
     /^[+-]?([0-9]+\.?[0-9]*|\.[0-9]+)$/.test(literal)
   ) {

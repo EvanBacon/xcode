@@ -20,7 +20,7 @@ export function createReferenceList(
       if (obj.buildConfigurationList === id) {
         let name = obj.name ?? obj.path ?? obj.productName;
         if (!name) {
-          name = objects[obj.targets?.[0]]?.name;
+          name = objects[obj.targets?.[0]]?.productName ?? objects[obj.targets?.[0]]?.name;
 
           if (!name) {
             // NOTE(EvanBacon): I have no idea what I'm doing...
@@ -80,16 +80,16 @@ export function createReferenceList(
     } else if (object.isa?.endsWith("BuildPhase")) {
       referenceCache[id] = getBuildPhaseName(object) ?? "";
     } else {
-      referenceCache[id] = object.name ?? object.path ?? object.isa ?? null;
+      if (object.isa === 'PBXGroup' && object.name === undefined && object.path === undefined) {
+        referenceCache[id] = "";
+      } else {
+        referenceCache[id] = object.name ?? object.path ?? object.isa ?? null;
+      }
     }
     return referenceCache[id] ?? null;
   }
 
   Object.entries(objects).forEach(([id, object]) => {
-    if (id === project.rootObject) {
-      return;
-    }
-
     if (!getCommentForObject(id, object)) {
       if (strict)
         throw new Error(
