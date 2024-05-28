@@ -3,6 +3,8 @@ import {
   PBXFileReference,
   PBXProject,
   XCConfigurationList,
+  XCRemoteSwiftPackageReference,
+  XCLocalSwiftPackageReference,
   XcodeProject,
 } from "./types";
 
@@ -20,7 +22,9 @@ export function createReferenceList(
       if (obj.buildConfigurationList === id) {
         let name = obj.name ?? obj.path ?? obj.productName;
         if (!name) {
-          name = objects[obj.targets?.[0]]?.productName ?? objects[obj.targets?.[0]]?.name;
+          name =
+            objects[obj.targets?.[0]]?.productName ??
+            objects[obj.targets?.[0]]?.name;
 
           if (!name) {
             // NOTE(EvanBacon): I have no idea what I'm doing...
@@ -54,8 +58,8 @@ export function createReferenceList(
       getBuildPhaseNameContainingFile(id) ?? "[missing build phase]";
 
     const name = getCommentForObject(
-      buildFile.fileRef,
-      objects[buildFile.fileRef]
+      buildFile.fileRef ?? buildFile.productRef,
+      objects[buildFile.fileRef ?? buildFile.productRef]
     );
 
     return `${name} in ${buildPhaseName}`;
@@ -75,15 +79,38 @@ export function createReferenceList(
       referenceCache[id] = getPBXBuildFileComment(id, object);
     } else if (isXCConfigurationList(object)) {
       referenceCache[id] = getXCConfigurationListComment(id);
+    } else if (isXCRemoteSwiftPackageReference(object)) {
+      if (object.repositoryURL) {
+        referenceCache[id] = `${object.isa} "${getRepoNameFromURL(
+          object.repositoryURL
+        )}"`;
+      } else {
+        referenceCache[id] = object.isa;
+      }
+    } else if (isXCLocalSwiftPackageReference(object)) {
+      if (object.relativePath) {
+        referenceCache[id] = `${object.isa} "${object.relativePath}"`;
+      } else {
+        referenceCache[id] = object.isa;
+      }
     } else if (isPBXProject(object)) {
       referenceCache[id] = "Project object";
     } else if (object.isa?.endsWith("BuildPhase")) {
       referenceCache[id] = getBuildPhaseName(object) ?? "";
     } else {
-      if (object.isa === 'PBXGroup' && object.name === undefined && object.path === undefined) {
+      if (
+        object.isa === "PBXGroup" &&
+        object.name === undefined &&
+        object.path === undefined
+      ) {
         referenceCache[id] = "";
       } else {
-        referenceCache[id] = object.name ?? object.path ?? object.isa ?? null;
+        referenceCache[id] =
+          object.name ??
+          object.productName ??
+          object.path ??
+          object.isa ??
+          null;
       }
     }
     return referenceCache[id] ?? null;
@@ -104,6 +131,17 @@ export function createReferenceList(
   return referenceCache;
 }
 
+function getRepoNameFromURL(repoUrl: string) {
+  try {
+    const url = new URL(repoUrl);
+    // github.com/expo/spm-package -> spm-package
+    if (url.hostname === "github.com") {
+      return url.pathname.split("/").pop();
+    }
+  } catch {}
+  return repoUrl;
+}
+
 function isPBXProject(val: any): val is PBXProject {
   return val?.isa === "PBXProject";
 }
@@ -114,6 +152,17 @@ export function isPBXBuildFile(val: any): val is PBXBuildFile {
 
 export function isPBXFileReference(val: any): val is PBXFileReference {
   return val?.isa === "PBXFileReference";
+}
+
+function isXCRemoteSwiftPackageReference(
+  val: any
+): val is XCRemoteSwiftPackageReference {
+  return val?.isa === "XCRemoteSwiftPackageReference";
+}
+function isXCLocalSwiftPackageReference(
+  val: any
+): val is XCLocalSwiftPackageReference {
+  return val?.isa === "XCLocalSwiftPackageReference";
 }
 
 function isXCConfigurationList(val: any): val is XCConfigurationList {

@@ -19,3 +19,33 @@ it(`asserts useful error message when malformed`, () => {
     )
   );
 });
+
+describe("parse", () => {
+  const fixtures = [
+    "006-spm.pbxproj",
+    "AFNetworking.pbxproj",
+    // "Cocoa-Application.pbxproj",
+    // "project-multitarget-missing-targetattributes.pbxproj",
+    // "project-multitarget.pbxproj",
+    // "project-rni.pbxproj",
+    // "project-swift.pbxproj",
+    // "project-with-entitlements.pbxproj",
+    // "project-with-incorrect-create-manifest-ios-path.pbxproj",
+    // "project-without-create-manifest-ios.pbxproj",
+    "project.pbxproj",
+    "project-rn74.pbxproj",
+    // "swift-protobuf.pbxproj",
+    // "watch.pbxproj",
+  ];
+
+  fixtures.forEach((fixture) => {
+    it(`should parse ${fixture}`, () => {
+      const filePath = path.join(
+        __dirname,
+        "../../json/__tests__/fixtures/",
+        fixture
+      );
+      const project = XcodeProject.open(filePath);
+    });
+  });
+});

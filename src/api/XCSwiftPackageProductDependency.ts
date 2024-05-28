@@ -4,9 +4,12 @@ import { AbstractObject } from "./AbstractObject";
 import type { SansIsa } from "./utils/util.types";
 import type { XcodeProject } from "./XcodeProject";
 import type { XCRemoteSwiftPackageReference } from "./XCRemoteSwiftPackageReference";
+import type { XCLocalSwiftPackageReference } from "./XCLocalSwiftPackageReference";
 
 export type XCSwiftPackageProductDependencyModel =
-  json.XCSwiftPackageProductDependency<XCRemoteSwiftPackageReference>;
+  json.XCSwiftPackageProductDependency<
+    XCRemoteSwiftPackageReference | XCLocalSwiftPackageReference
+  >;
 
 export class XCSwiftPackageProductDependency extends AbstractObject<XCSwiftPackageProductDependencyModel> {
   static isa = json.ISA.XCSwiftPackageProductDependency as const;

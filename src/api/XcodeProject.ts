@@ -138,6 +138,13 @@ const KNOWN_ISA = {
   [json.ISA.PBXRezBuildPhase]: () =>
     require("./PBXSourcesBuildPhase")
       .PBXRezBuildPhase as typeof import("./PBXSourcesBuildPhase").PBXRezBuildPhase,
+  [json.ISA.XCSwiftPackageProductDependency]: () =>
+    require("./XCSwiftPackageProductDependency")
+      .XCSwiftPackageProductDependency,
+  [json.ISA.XCRemoteSwiftPackageReference]: () =>
+    require("./XCRemoteSwiftPackageReference").XCRemoteSwiftPackageReference,
+  [json.ISA.XCLocalSwiftPackageReference]: () =>
+    require("./XCLocalSwiftPackageReference").XCLocalSwiftPackageReference,
 } as const;
 
 type AnyModel = ValueOf<IsaMapping>;

@@ -13,6 +13,7 @@ import type { PBXAggregateTarget } from "./PBXAggregateTarget";
 import type { PBXLegacyTarget } from "./PBXLegacyTarget";
 import type { XCConfigurationList } from "./XCConfigurationList";
 import type { XCRemoteSwiftPackageReference } from "./XCRemoteSwiftPackageReference";
+import type { XCLocalSwiftPackageReference } from "./XCLocalSwiftPackageReference";
 
 export type PBXProjectModel = json.PBXProject<
   XCConfigurationList,
@@ -20,7 +21,7 @@ export type PBXProjectModel = json.PBXProject<
   PBXGroup,
   /* any target */
   PBXAggregateTarget | PBXLegacyTarget | PBXNativeTarget,
-  XCRemoteSwiftPackageReference
+  XCRemoteSwiftPackageReference | XCLocalSwiftPackageReference
 >;
 
 export class PBXProject extends AbstractObject<PBXProjectModel> {

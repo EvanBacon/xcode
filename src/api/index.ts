@@ -27,5 +27,6 @@ export { AbstractObject } from "./AbstractObject";
 export { XCBuildConfiguration } from "./XCBuildConfiguration";
 export { XCConfigurationList } from "./XCConfigurationList";
 export { XCRemoteSwiftPackageReference } from "./XCRemoteSwiftPackageReference";
+export { XCLocalSwiftPackageReference } from "./XCLocalSwiftPackageReference";
 export { XCSwiftPackageProductDependency } from "./XCSwiftPackageProductDependency";
 export { XCVersionGroup } from "./XCVersionGroup";
