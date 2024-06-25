@@ -149,7 +149,12 @@ export class Writer {
   }
 
   private keyHasFloatValue(key: string) {
-    return (key === key.toUpperCase() && (key.endsWith("SWIFT_VERSION") || key.endsWith('MARKETING_VERSION') || key.endsWith("_DEPLOYMENT_TARGET")));
+    return (
+      key === key.toUpperCase() &&
+      (key.endsWith("SWIFT_VERSION") ||
+        key.endsWith("MARKETING_VERSION") ||
+        key.endsWith("_DEPLOYMENT_TARGET"))
+    );
   }
 
   private writeObject(object: JSONObject, isBase?: boolean) {
@@ -176,16 +181,16 @@ export class Writer {
         }
         this.indent--;
         this.println("};");
-      } else if (typeof value === "number"){
-        const valueWithDot = (this.keyHasFloatValue(key) && Number.isInteger(value)) ? `${value}.0` : value;
-        this.printAssignLn(
-          ensureQuotes(key),
-          ensureQuotes(valueWithDot)
-        );
+      } else if (typeof value === "number") {
+        const valueWithDot =
+          this.keyHasFloatValue(key) && Number.isInteger(value)
+            ? `${value}.0`
+            : value;
+        this.printAssignLn(ensureQuotes(key), ensureQuotes(valueWithDot));
       } else {
         this.printAssignLn(
           ensureQuotes(key),
-          (key === "remoteGlobalIDString" || key === "TestTargetID")
+          key === "remoteGlobalIDString" || key === "TestTargetID"
             ? ensureQuotes(value)
             : this.formatId(value as any)
         );
@@ -197,7 +202,10 @@ export class Writer {
     getSortedObjects(projectObjects).forEach(([isa, objects]) => {
       this.flush(EOL);
       this.flush(`/* Begin ${isa} section */` + EOL);
-      objects.forEach(([id, obj]) => this.writeObjectInclusive(id, obj));
+      // Xcode sorts the objects alphabetically by ID for each section.
+      objects
+        .sort(([a], [b]) => a.localeCompare(b))
+        .forEach(([id, obj]) => this.writeObjectInclusive(id, obj));
       this.flush(`/* End ${isa} section */` + EOL);
     });
   }
