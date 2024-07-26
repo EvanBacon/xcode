@@ -10,5 +10,5 @@ module.exports = {
   ],
   rootDir: path.resolve(__dirname),
   displayName: require("./package").name,
-  roots: ["__mocks__", "src"],
+  roots: ["src"],
 };
