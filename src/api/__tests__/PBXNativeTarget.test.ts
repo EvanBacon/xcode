@@ -21,7 +21,7 @@ it(`sets build setting`, () => {
   const obj = xcproj.getObject("299522761BBF136400859F49") as PBXNativeTarget;
 
   // Sanity
-  expect(obj.getDefaultBuildSetting("IPHONEOS_DEPLOYMENT_TARGET")).toBe(8);
+  expect(obj.getDefaultBuildSetting("IPHONEOS_DEPLOYMENT_TARGET")).toBe("8.0");
 
   expect(obj.setBuildSetting("IPHONEOS_DEPLOYMENT_TARGET", "17.0")).toBe(
     "17.0"

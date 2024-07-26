@@ -78,6 +78,11 @@ function parseType(literal: string): number | string {
     // Try decimal
     /^[+-]?([0-9]+\.?[0-9]*|\.[0-9]+)$/.test(literal)
   ) {
+    // decimal that ends with a 0 should be parsed as string to preserve the 0
+    if (/0$/.test(literal)) {
+      return literal;
+    }
+
     try {
       const num = parseFloat(literal);
       if (!isNaN(num)) return num;
