@@ -22,6 +22,22 @@ export async function getPbxprojAsJsonWithPlutil(
   return json;
 }
 
+export function deepCoerceToString(obj1: any) {
+  //Loop through properties in object 1
+  for (var p in obj1) {
+    switch (typeof obj1[p]) {
+      //Deep compare objects
+      case "object":
+        deepCoerceToString(obj1[p]);
+        break;
+      case "number":
+        obj1[p] = obj1[p].toString();
+    }
+  }
+
+  return obj1;
+}
+
 export function deepCompare(obj1: any, obj2: any): boolean {
   //Loop through properties in object 1
   for (var p in obj1) {
