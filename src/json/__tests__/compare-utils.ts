@@ -1,5 +1,3 @@
-// plutil -convert json ./src/json/__tests__/fixtures/AFNetworking.pbxproj
-
 import spawnAsync from "@expo/spawn-async";
 import fs from "fs";
 import tempy from "tempy";
@@ -18,7 +16,6 @@ export async function getPbxprojAsJsonWithPlutil(
     tempJsonPath,
   ]);
   const json = JSON.parse(await fs.promises.readFile(tempJsonPath, "utf8"));
-  //   fs.unlinkSync(tempJsonPath);
   return json;
 }
 
