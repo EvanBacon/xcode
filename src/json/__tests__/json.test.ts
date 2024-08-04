@@ -13,6 +13,7 @@ describe(parse, () => {
   const fixtures = [
     "01-float.pbxproj",
     "006-spm.pbxproj",
+    "007-xcode16.pbxproj",
     "AFNetworking.pbxproj",
     "project.pbxproj",
     "project-rn74.pbxproj",
@@ -46,6 +47,7 @@ describe(parse, () => {
 
   const inOutFixtures = [
     "006-spm.pbxproj",
+    "007-xcode16.pbxproj",
     "AFNetworking.pbxproj",
     "project.pbxproj",
     "project-rn74.pbxproj",

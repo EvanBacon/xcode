@@ -25,6 +25,8 @@ export enum ISA {
   PBXGroup = "PBXGroup",
   PBXVariantGroup = "PBXVariantGroup",
   XCVersionGroup = "XCVersionGroup",
+  PBXFileSystemSynchronizedRootGroup = "PBXFileSystemSynchronizedRootGroup",
+  PBXFileSystemSynchronizedBuildFileExceptionSet = "PBXFileSystemSynchronizedBuildFileExceptionSet",
 
   PBXNativeTarget = "PBXNativeTarget",
   PBXAggregateTarget = "PBXAggregateTarget",
@@ -224,6 +226,25 @@ export interface PBXGroup<TISA extends ISA = ISA.PBXGroup, TChild = UUID>
 /** Object for referencing localized resources. */
 export interface PBXVariantGroup<TChild = UUID>
   extends PBXGroup<ISA.PBXVariantGroup, TChild> {}
+
+/** A group that references a folder on disk. */
+export interface PBXFileSystemSynchronizedRootGroup<TException = UUID>
+  extends AbstractObject<ISA.PBXFileSystemSynchronizedRootGroup>
+{
+  exceptions?: TException[];
+  explicitFileTypes: Record<string, any>;
+  explicitFolders: any[];
+  path: string;
+  sourceTree: SourceTree;
+}
+
+/** Object for referencing a files that should be excluded from synchronization with the file system. */
+export interface PBXFileSystemSynchronizedBuildFileExceptionSet<TTarget = UUID>
+  extends AbstractObject<ISA.PBXFileSystemSynchronizedBuildFileExceptionSet>
+{
+  membershipExceptions: string[];
+  target: TTarget;
+}
 
 // Possibly not exhaustive.
 export type FileType =
