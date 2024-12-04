@@ -25,12 +25,14 @@ export class AbstractBuildPhase<
     return { files: [String] };
   }
 
+  /** Create a file and add it to the files array. To prevent creating duplicates, use `ensureFile` instead. */
   createFile(json: PickRequired<SansIsa<PBXBuildFileModel>, "fileRef">) {
     const file = PBXBuildFile.create(this.getXcodeProject(), json);
     this.props.files.push(file);
     return file;
   }
 
+  /** Get or create a file. */
   ensureFile(json: PickRequired<SansIsa<PBXBuildFileModel>, "fileRef">) {
     const existing = this.getBuildFile(json.fileRef);
     if (existing) {
