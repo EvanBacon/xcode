@@ -1,11 +1,17 @@
 import * as json from "../json/types";
 import { AbstractTarget } from "./AbstractTarget";
 
+import {
+  PBXFrameworksBuildPhase,
+  PBXHeadersBuildPhase,
+  PBXResourcesBuildPhase,
+  PBXSourcesBuildPhase,
+  type AnyBuildPhase,
+} from "./PBXSourcesBuildPhase";
 import type { PickRequired, SansIsa } from "./utils/util.types";
 import type { XcodeProject } from "./XcodeProject";
 import type { PBXBuildRule } from "./PBXBuildRule";
 import type { PBXFileReference } from "./PBXFileReference";
-import type { AnyBuildPhase } from "./PBXSourcesBuildPhase";
 import type { PBXTargetDependency } from "./PBXTargetDependency";
 import type { XCConfigurationList } from "./XCConfigurationList";
 import type { XCSwiftPackageProductDependency } from "./XCSwiftPackageProductDependency";
@@ -51,6 +57,38 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
     if (this.props.productReference?.uuid === uuid) return true;
 
     return super.isReferencing(uuid);
+  }
+
+  /** @returns the `PBXFrameworksBuildPhase` or creates one if there is none. Only one can exist. */
+  getFrameworksBuildPhase() {
+    return (
+      this.getBuildPhase(PBXFrameworksBuildPhase) ??
+      this.createBuildPhase(PBXFrameworksBuildPhase)
+    );
+  }
+
+  /** @returns the `PBXHeadersBuildPhase` or creates one if there is none. Only one can exist. */
+  getHeadersBuildPhase() {
+    return (
+      this.getBuildPhase(PBXHeadersBuildPhase) ??
+      this.createBuildPhase(PBXHeadersBuildPhase)
+    );
+  }
+
+  /** @returns the `PBXSourcesBuildPhase` or creates one if there is none. Only one can exist. */
+  getSourcesBuildPhase() {
+    return (
+      this.getBuildPhase(PBXSourcesBuildPhase) ??
+      this.createBuildPhase(PBXSourcesBuildPhase)
+    );
+  }
+
+  /** @returns the `PBXResourcesBuildPhase` or creates one if there is none. Only one can exist. */
+  getResourcesBuildPhase() {
+    return (
+      this.getBuildPhase(PBXResourcesBuildPhase) ??
+      this.createBuildPhase(PBXResourcesBuildPhase)
+    );
   }
 
   protected getObjectProps(): Partial<{

@@ -136,6 +136,29 @@ export class PBXProject extends AbstractObject<PBXProjectModel> {
     return group;
   }
 
+  /**
+   * Get or create the child group for a given name in the `mainGroup`. Useful for querying the `'Frameworks'` group.
+   *
+   * @returns The main group child group for the given `name` or a new group if it doesn't exist.
+   */
+  ensureMainGroupChild(name: string): PBXGroup {
+    return (
+      this.props.mainGroup
+        .getChildGroups()
+        .find((group) => group.getDisplayName() === name) ??
+      // If this happens for the 'Frameworks' group, there's a big problem. But just in case...
+      this.props.mainGroup.createGroup({
+        name: name,
+        sourceTree: "<group>",
+      })
+    );
+  }
+
+  /** @returns the `Frameworks` group and ensuring it exists. */
+  getFrameworksGroup(): PBXGroup {
+    return this.ensureMainGroupChild("Frameworks");
+  }
+
   createNativeTarget(
     json: PickRequired<
       SansIsa<PBXNativeTargetModel>,

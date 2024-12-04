@@ -8,7 +8,6 @@ import type { PBXFileReference } from "./PBXFileReference";
 import type { PBXReferenceProxy } from "./PBXReferenceProxy";
 import type { PBXVariantGroup } from "./PBXVariantGroup";
 import type { XCVersionGroup } from "./XCVersionGroup";
-import type { PBXNativeTarget } from "./PBXNativeTarget";
 
 // const debug = require("debug")("xcparse:models") as typeof console.log;
 
