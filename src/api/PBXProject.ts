@@ -1,6 +1,10 @@
 import path from "path";
 
-import { PROJECT_DEFAULT_BUILD_SETTINGS } from "./utils/constants";
+import {
+  LAST_SWIFT_UPGRADE_CHECK,
+  LAST_UPGRADE_CHECK,
+  PROJECT_DEFAULT_BUILD_SETTINGS,
+} from "./utils/constants";
 import * as json from "../json/types";
 import { AbstractObject } from "./AbstractObject";
 import { PBXNativeTarget, PBXNativeTargetModel } from "./PBXNativeTarget";
@@ -79,8 +83,8 @@ export class PBXProject extends AbstractObject<PBXProjectModel> {
     }
     if (!props.attributes) {
       props.attributes = {
-        LastSwiftUpdateCheck: "1300",
-        LastUpgradeCheck: "1300",
+        LastSwiftUpdateCheck: LAST_SWIFT_UPGRADE_CHECK,
+        LastUpgradeCheck: LAST_UPGRADE_CHECK,
         TargetAttributes: {},
       };
     }

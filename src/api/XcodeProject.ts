@@ -36,6 +36,10 @@ import type { XCVersionGroup } from "./XCVersionGroup";
 import type { PBXFileSystemSynchronizedRootGroup } from "./PBXFileSystemSynchronizedRootGroup";
 import type { PBXFileSystemSynchronizedBuildFileExceptionSet } from "./PBXFileSystemSynchronizedBuildFileExceptionSet";
 import type { PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet } from "./PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet";
+import {
+  DEFAULT_OBJECT_VERSION,
+  LAST_KNOWN_ARCHIVE_VERSION,
+} from "./utils/constants";
 
 const debug = require("debug")(
   "xcparse:model:XcodeProject"
@@ -206,8 +210,8 @@ export class XcodeProject extends Map<json.UUID, AnyModel> {
     assert(json.rootObject, "rootObject is required");
 
     this.internalJsonObjects = json.objects;
-    this.archiveVersion = json.archiveVersion ?? 1;
-    this.objectVersion = json.objectVersion ?? 55;
+    this.archiveVersion = json.archiveVersion ?? LAST_KNOWN_ARCHIVE_VERSION;
+    this.objectVersion = json.objectVersion ?? DEFAULT_OBJECT_VERSION;
     this.classes = json.classes ?? {};
 
     // Sanity

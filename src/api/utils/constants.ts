@@ -1,5 +1,39 @@
 import * as json from "../../json/types";
 
+// File like https://github.com/CocoaPods/Xcodeproj/blob/master/lib/xcodeproj/constants.rb
+/** The last known iOS SDK (stable). */
+export const LAST_KNOWN_IOS_SDK = "18.0";
+
+/** The last known macOS SDK (stable). */
+export const LAST_KNOWN_OSX_SDK = "15.0";
+
+/** The last known tvOS SDK (stable). */
+export const LAST_KNOWN_TVOS_SDK = "18.0";
+
+/** The last known visionOS SDK (unstable). */
+export const LAST_KNOWN_VISIONOS_SDK = "2.0";
+
+/** The last known watchOS SDK (stable). */
+export const LAST_KNOWN_WATCHOS_SDK = "11.0";
+
+/** The last known archive version to Xcodeproj. */
+export const LAST_KNOWN_ARCHIVE_VERSION = 1;
+
+/** The last known Swift version (stable). */
+export const LAST_KNOWN_SWIFT_VERSION = "5.0";
+
+/** The default object version for Xcodeproj. */
+export const DEFAULT_OBJECT_VERSION = 46;
+
+/** The last known object version to Xcodeproj. */
+export const LAST_KNOWN_OBJECT_VERSION = 77;
+
+/** The last known Xcode version to Xcodeproj. */
+export const LAST_UPGRADE_CHECK = "1600";
+
+/** The last known Swift upgrade version to Xcodeproj. */
+export const LAST_SWIFT_UPGRADE_CHECK = "1600";
+
 // The known file types corresponding to each extension.
 export const FILE_TYPES_BY_EXTENSION: Record<string, json.FileType> =
   Object.freeze({
