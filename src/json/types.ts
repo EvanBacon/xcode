@@ -544,7 +544,8 @@ export interface PBXNativeTarget<
   TBuildPhase = UUID,
   TBuildRule = UUID,
   TProductReference = UUID,
-  TPackageProductDependency = UUID
+  TPackageProductDependency = UUID,
+  TFileSystemSynchronizedGroups = UUID
 > extends AbstractTarget<
     ISA.PBXNativeTarget,
     TBuildConfigurationList,
@@ -561,6 +562,8 @@ export interface PBXNativeTarget<
   productInstallPath?: string;
   /** List of UUID for object of type `XCSwiftPackageProductDependency` */
   packageProductDependencies?: TPackageProductDependency[];
+  /** List of file system synchronized groups containing files to include to build this target. */
+  fileSystemSynchronizedGroups?: TFileSystemSynchronizedGroups[];
 }
 
 /** Info about build settings for a file in a `PBXBuildPhase`. */
@@ -879,7 +882,7 @@ export interface BuildSettings {
   ENABLE_BITCODE?: string;
   /** Path to the Info.plist file on disk, relative to root. */
   INFOPLIST_FILE: string;
-  LD_RUNPATH_SEARCH_PATHS?: string;
+  LD_RUNPATH_SEARCH_PATHS?: string | string[];
   OTHER_LDFLAGS?: string[];
   SWIFT_OPTIMIZATION_LEVEL?: "-O" | "-Onone" | "-Owholemodule" | (string & {});
   SWIFT_VERSION?: "4.2" | "5" | (string & {});

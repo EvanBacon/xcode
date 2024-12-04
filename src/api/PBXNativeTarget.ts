@@ -9,6 +9,7 @@ import type { AnyBuildPhase } from "./PBXSourcesBuildPhase";
 import type { PBXTargetDependency } from "./PBXTargetDependency";
 import type { XCConfigurationList } from "./XCConfigurationList";
 import type { XCSwiftPackageProductDependency } from "./XCSwiftPackageProductDependency";
+import type { PBXFileSystemSynchronizedRootGroup } from "./PBXFileSystemSynchronizedRootGroup";
 
 export type PBXNativeTargetModel = json.PBXNativeTarget<
   XCConfigurationList,
@@ -16,7 +17,8 @@ export type PBXNativeTargetModel = json.PBXNativeTarget<
   AnyBuildPhase,
   PBXBuildRule,
   PBXFileReference,
-  XCSwiftPackageProductDependency
+  XCSwiftPackageProductDependency,
+  PBXFileSystemSynchronizedRootGroup
 >;
 
 export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
@@ -67,6 +69,7 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
       buildRules: [String],
       productReference: [String],
       packageProductDependencies: [String],
+      fileSystemSynchronizedGroups: [String],
     };
   }
 }
