@@ -1,6 +1,6 @@
 {
   "name": "@bacons/xcode",
-  "version": "1.0.0-alpha.18",
+  "version": "1.0.0-alpha.19",
   "main": "./build/index",
   "description": "pbxproj parser",
   "license": "MIT",
