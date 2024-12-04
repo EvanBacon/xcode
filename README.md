@@ -1,6 +1,5 @@
 # `@bacons/xcode`
 
-
 > This project is a ~~_work in progress_ / _proof of concept_~~ seemingly spec compliant `pbxproj` parser. The API is subject to breaking changes.
 
 ```
@@ -71,10 +70,9 @@ That same object would look like this in `@bacons/xcode`:
 
 Notice how you don't need to strip or reapply quotes, you also don't need to filter out comments because the default visitor ignores comments in favor of regenerating them dynamically like Xcode does.
 
-
 ## API
 
-There's an experimental mutable-graph layer which makes it much easier to work with pbxproj. 
+There's an experimental mutable-graph layer which makes it much easier to work with pbxproj.
 
 ```ts
 import {
@@ -88,14 +86,14 @@ import {
 const project = XcodeProject.open("/path/to/project.pbxproj");
 
 // Get all targets:
-project.rootObject.props.targets
+project.rootObject.props.targets;
 ```
 
 Create a Swift file:
 
 ```ts
-import {PBXBuildFile,PBXFileReference } from '@bacons/xcode'; 
-import path from 'path';
+import { PBXBuildFile, PBXFileReference } from "@bacons/xcode";
+import path from "path";
 
 // Get `project` from XcodeProject.
 
@@ -104,12 +102,10 @@ const file = PBXBuildFile.create(project, {
     path: "MyFile.swift",
     sourceTree: "<group>",
   }),
-})
+});
 
 // The file and fileRef will now be injected in the pbxproj `objects` dict.
 ```
-
-
 
 ## Solution
 
@@ -192,6 +188,7 @@ Certain values loosely map to each other. For instance the top-level `objectVers
 
 | `PBXProject.compatibilityVersion` | `XcodeProject.objectVersion` |
 | --------------------------------- | ---------------------------- |
+| `'Xcode 16.0'`                    | `70`                         |
 | `'Xcode 15.0'`                    | `60`                         |
 | `'Xcode 14.0'`                    | `56`                         |
 | `'Xcode 13.0'`                    | `55`                         |
