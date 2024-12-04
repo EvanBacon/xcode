@@ -578,7 +578,11 @@ export interface PBXBuildFile<TFileRef = UUID, TProductRef = UUID>
   /** UUID for a `XCSwiftPackageProductDependency` (Swift Package) file. */
   productRef?: TProductRef;
 
+  /** Platform filter for this build file. Use the newer `platformFilters` instead. */
   platformFilter?: string;
+
+  /** List of platform filters for this build file. */
+  platformFilters?: string[];
 }
 
 export interface XCSwiftPackageProductDependency<TPackage = UUID>
@@ -884,9 +888,11 @@ export interface BuildSettings {
   INFOPLIST_FILE: string;
   LD_RUNPATH_SEARCH_PATHS?: string | string[];
   OTHER_LDFLAGS?: string[];
+  SWIFT_COMPILATION_MODE?: "wholemodule" | (string & {});
   SWIFT_OPTIMIZATION_LEVEL?: "-O" | "-Onone" | "-Owholemodule" | (string & {});
   SWIFT_VERSION?: "4.2" | "5" | (string & {});
 
+  ENABLE_USER_SCRIPT_SANDBOXING?: BoolString;
   ALWAYS_SEARCH_USER_PATHS?: BoolString;
   CLANG_ANALYZER_NONNULL?: BoolString;
 
