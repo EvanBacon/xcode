@@ -35,6 +35,7 @@ import type { XCConfigurationList } from "./XCConfigurationList";
 import type { XCVersionGroup } from "./XCVersionGroup";
 import type { PBXFileSystemSynchronizedRootGroup } from "./PBXFileSystemSynchronizedRootGroup";
 import type { PBXFileSystemSynchronizedBuildFileExceptionSet } from "./PBXFileSystemSynchronizedBuildFileExceptionSet";
+import type { PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet } from "./PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet";
 
 const debug = require("debug")(
   "xcparse:model:XcodeProject"
@@ -58,8 +59,12 @@ type IsaMapping = {
   [json.ISA.PBXGroup]: PBXGroup;
   [json.ISA.PBXVariantGroup]: PBXVariantGroup;
   [json.ISA.XCVersionGroup]: XCVersionGroup;
-  [json.ISA.PBXFileSystemSynchronizedRootGroup]: PBXFileSystemSynchronizedRootGroup;
-  [json.ISA.PBXFileSystemSynchronizedBuildFileExceptionSet]: PBXFileSystemSynchronizedBuildFileExceptionSet;
+  [json.ISA
+    .PBXFileSystemSynchronizedRootGroup]: PBXFileSystemSynchronizedRootGroup;
+  [json.ISA
+    .PBXFileSystemSynchronizedBuildFileExceptionSet]: PBXFileSystemSynchronizedBuildFileExceptionSet;
+  [json.ISA
+    .PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet]: PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
   [json.ISA.PBXNativeTarget]: PBXNativeTarget;
   [json.ISA.PBXAggregateTarget]: PBXAggregateTarget;
   [json.ISA.PBXLegacyTarget]: PBXLegacyTarget;
@@ -114,12 +119,14 @@ const KNOWN_ISA = {
       .XCVersionGroup as typeof import("./XCVersionGroup").XCVersionGroup,
   [json.ISA.PBXFileSystemSynchronizedRootGroup]: () =>
     require("./PBXFileSystemSynchronizedRootGroup")
-      .PBXFileSystemSynchronizedRootGroup as
-    typeof import("./PBXFileSystemSynchronizedRootGroup").PBXFileSystemSynchronizedRootGroup,
+      .PBXFileSystemSynchronizedRootGroup as typeof import("./PBXFileSystemSynchronizedRootGroup").PBXFileSystemSynchronizedRootGroup,
   [json.ISA.PBXFileSystemSynchronizedBuildFileExceptionSet]: () =>
     require("./PBXFileSystemSynchronizedBuildFileExceptionSet")
-      .PBXFileSystemSynchronizedBuildFileExceptionSet as
-    typeof import("./PBXFileSystemSynchronizedBuildFileExceptionSet").PBXFileSystemSynchronizedBuildFileExceptionSet,
+      .PBXFileSystemSynchronizedBuildFileExceptionSet as typeof import("./PBXFileSystemSynchronizedBuildFileExceptionSet").PBXFileSystemSynchronizedBuildFileExceptionSet,
+  [json.ISA.PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet]:
+    () =>
+      require("./PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet")
+        .PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet as typeof import("./PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet").PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet,
   [json.ISA.PBXNativeTarget]: () =>
     require("./PBXNativeTarget")
       .PBXNativeTarget as typeof import("./PBXNativeTarget").PBXNativeTarget,

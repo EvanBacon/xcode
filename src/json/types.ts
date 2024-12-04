@@ -27,6 +27,7 @@ export enum ISA {
   XCVersionGroup = "XCVersionGroup",
   PBXFileSystemSynchronizedRootGroup = "PBXFileSystemSynchronizedRootGroup",
   PBXFileSystemSynchronizedBuildFileExceptionSet = "PBXFileSystemSynchronizedBuildFileExceptionSet",
+  PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet = "PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet",
 
   PBXNativeTarget = "PBXNativeTarget",
   PBXAggregateTarget = "PBXAggregateTarget",
@@ -228,22 +229,54 @@ export interface PBXVariantGroup<TChild = UUID>
   extends PBXGroup<ISA.PBXVariantGroup, TChild> {}
 
 /** A group that references a folder on disk. */
+
 export interface PBXFileSystemSynchronizedRootGroup<TException = UUID>
-  extends AbstractObject<ISA.PBXFileSystemSynchronizedRootGroup>
-{
+  extends AbstractPhysicalFileObject<ISA.PBXFileSystemSynchronizedRootGroup> {
+  /** The list of exceptions applying to this group. */
   exceptions?: TException[];
-  explicitFileTypes: Record<string, any>;
-  explicitFolders: any[];
-  path: string;
-  sourceTree: SourceTree;
+  /** Maps relative paths inside the synchronized root group to a particular file type. If a path doesn’t have a particular file type specified, Xcode defaults to the default file type based on the extension of the file. */
+  explicitFileTypes: Record<string, string>;
+  /** List of relative paths to children folder whose configuration is overwritten. */
+  explicitFolders: string[];
 }
 
-/** Object for referencing a files that should be excluded from synchronization with the file system. */
+/** Object for referencing files that should be excluded from synchronization with the file system. */
 export interface PBXFileSystemSynchronizedBuildFileExceptionSet<TTarget = UUID>
-  extends AbstractObject<ISA.PBXFileSystemSynchronizedBuildFileExceptionSet>
-{
-  membershipExceptions: string[];
+  extends AbstractObject<ISA.PBXFileSystemSynchronizedBuildFileExceptionSet> {
+  /** Files with a platform filter. */
+  platformFiltersByRelativePath?: Record<string, string[]>;
+
+  /** Additional compiler flags by relative path. Every item in the list is the relative path inside the root synchronized group. The value is the additional compiler flags. */
+  additionalCompilerFlagsByRelativePath?: Record<string, string>;
+
+  /** Attributes by relative path. Every item in the list is the relative path inside the root synchronized group. This is used for example when linking frameworks to specify that they are optional with the attribute “Weak” */
+  attributesByRelativePath?: Record<string, string[]>;
+
+  /** List of relative paths to children subfolders for which exceptions are applied. */
+  membershipExceptions?: string[];
+
+  /** Changes the default header visibility (project) to private for the following headers. Every item in the list is the relative path inside the root synchronized group. */
+  privateHeaders?: string[];
+
+  /** Changes the default header visibility (project) to public for the following headers. Every item in the list is the relative path inside the root synchronized group. */
+  publicHeaders?: string[];
+
+  /** The target that this exception set applies to. */
   target: TTarget;
+}
+
+/** Object for referencing a group of files that should be excluded from synchronization with a build phase. */
+export interface PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet<
+  TBuildPhase = UUID
+> extends AbstractObject<ISA.PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet> {
+  /** Files with a platform filter. */
+  platformFiltersByRelativePath?: Record<string, string[]>;
+
+  /** List of relative paths to children subfolders for which exceptions are applied. */
+  membershipExceptions?: string[];
+
+  /** The build phase that this exception set applies to. */
+  buildPhase: TBuildPhase;
 }
 
 // Possibly not exhaustive.

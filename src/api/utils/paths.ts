@@ -2,11 +2,15 @@
 import assert from "assert";
 import path from "path";
 
+import * as json from "../../json/types";
 import type {
   PBXGroup,
   PBXFileReference,
   AbstractObject,
   PBXProject,
+  PBXFileSystemSynchronizedBuildFileExceptionSet,
+  PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet,
+  PBXNativeTarget,
 } from "../";
 
 function unique<T>(array: T[]) {
@@ -21,7 +25,12 @@ function isPBXGroup(value: any): value is PBXGroup {
 }
 
 function getReferringGroups(
-  object: PBXGroup | PBXFileReference | PBXProject
+  object:
+    | PBXGroup
+    | PBXFileReference
+    | PBXProject
+    | PBXFileSystemSynchronizedBuildFileExceptionSet
+    | PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet
 ): (PBXGroup | PBXProject)[] {
   let referrers = unique(object.getReferrers());
   if (referrers.length > 1) {
@@ -40,7 +49,12 @@ function getReferringGroups(
 }
 
 export function getParent(
-  object: PBXGroup | PBXFileReference | PBXProject
+  object:
+    | PBXGroup
+    | PBXFileReference
+    | PBXProject
+    | PBXFileSystemSynchronizedBuildFileExceptionSet
+    | PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet
 ): PBXGroup | PBXProject {
   const referrers = getReferringGroups(object);
 
@@ -128,4 +142,14 @@ export function getFullPath(object: PBXGroup | PBXFileReference): string {
     return path.join(rootPath, object.props.path);
   }
   return rootPath;
+}
+
+export function getReferringTargets(object: AbstractObject): PBXNativeTarget[] {
+  return object.getReferrers().filter((ref) => {
+    return isPBXNativeTarget(ref);
+  }) as PBXNativeTarget[];
+}
+
+function isPBXNativeTarget(object: any): object is PBXNativeTarget {
+  return object.isa === json.ISA.PBXNativeTarget;
 }

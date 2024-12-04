@@ -4,14 +4,16 @@ import type { SansIsa } from "./utils/util.types";
 import type { XcodeProject } from "./XcodeProject";
 import { AbstractObject } from "./AbstractObject";
 import type { PBXFileSystemSynchronizedBuildFileExceptionSet } from "./PBXFileSystemSynchronizedBuildFileExceptionSet";
+import type { PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet } from "./PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet";
 
-export type PBXFileSystemSynchronizedRootGroupModel = json.PBXFileSystemSynchronizedRootGroup<
-  /* exceptions */
-  PBXFileSystemSynchronizedBuildFileExceptionSet
->;
+export type PBXFileSystemSynchronizedRootGroupModel =
+  json.PBXFileSystemSynchronizedRootGroup<
+    /* exceptions */
+    | PBXFileSystemSynchronizedBuildFileExceptionSet
+    | PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet
+  >;
 
 export class PBXFileSystemSynchronizedRootGroup extends AbstractObject<PBXFileSystemSynchronizedRootGroupModel> {
-
   static isa = json.ISA.PBXFileSystemSynchronizedRootGroup as const;
 
   static is(object: any): object is PBXFileSystemSynchronizedRootGroup {
