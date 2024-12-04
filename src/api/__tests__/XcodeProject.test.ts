@@ -6,7 +6,7 @@ const MALFORMED_FIXTURE = path.join(__dirname, "fixtures/malformed.pbxproj");
 
 const originalConsoleWarn = console.warn;
 beforeEach(() => {
-  console.warn = jest.fn(originalConsoleWarn);
+  console.warn = jest.fn();
 });
 afterAll(() => {
   console.warn = originalConsoleWarn;
