@@ -24,6 +24,7 @@ describe("parse", () => {
   const fixtures = [
     "006-spm.pbxproj",
     "AFNetworking.pbxproj",
+    "shopify-tophat.pbxproj",
     // "Cocoa-Application.pbxproj",
     // "project-multitarget-missing-targetattributes.pbxproj",
     // "project-multitarget.pbxproj",
