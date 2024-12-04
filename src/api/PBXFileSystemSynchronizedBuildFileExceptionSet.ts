@@ -6,17 +6,20 @@ import { AbstractObject } from "./AbstractObject";
 import { PBXAggregateTarget } from "./PBXAggregateTarget";
 import { PBXLegacyTarget } from "./PBXLegacyTarget";
 import { PBXNativeTarget } from "./PBXNativeTarget";
+import { getParent } from "./utils/paths";
 
-export type PBXFileSystemSynchronizedBuildFileExceptionSetModel = json.PBXFileSystemSynchronizedBuildFileExceptionSet<
-  /* any target */
-  PBXAggregateTarget | PBXLegacyTarget | PBXNativeTarget
->;
+export type PBXFileSystemSynchronizedBuildFileExceptionSetModel =
+  json.PBXFileSystemSynchronizedBuildFileExceptionSet<
+    /* any target */
+    PBXAggregateTarget | PBXLegacyTarget | PBXNativeTarget
+  >;
 
 export class PBXFileSystemSynchronizedBuildFileExceptionSet extends AbstractObject<PBXFileSystemSynchronizedBuildFileExceptionSetModel> {
-
   static isa = json.ISA.PBXFileSystemSynchronizedBuildFileExceptionSet as const;
 
-  static is(object: any): object is PBXFileSystemSynchronizedBuildFileExceptionSet {
+  static is(
+    object: any
+  ): object is PBXFileSystemSynchronizedBuildFileExceptionSet {
     return object.isa === PBXFileSystemSynchronizedBuildFileExceptionSet.isa;
   }
 
@@ -24,15 +27,23 @@ export class PBXFileSystemSynchronizedBuildFileExceptionSet extends AbstractObje
     project: XcodeProject,
     opts: SansIsa<PBXFileSystemSynchronizedBuildFileExceptionSetModel>
   ) {
-    return project.createModel<PBXFileSystemSynchronizedBuildFileExceptionSetModel>({
-      isa: PBXFileSystemSynchronizedBuildFileExceptionSet.isa,
-      ...opts,
-    }) as PBXFileSystemSynchronizedBuildFileExceptionSet;
+    return project.createModel<PBXFileSystemSynchronizedBuildFileExceptionSetModel>(
+      {
+        isa: PBXFileSystemSynchronizedBuildFileExceptionSet.isa,
+        ...opts,
+      }
+    ) as PBXFileSystemSynchronizedBuildFileExceptionSet;
   }
 
   protected getObjectProps() {
     return {
       target: String,
     };
+  }
+
+  getDisplayName() {
+    return `Exceptions for "${getParent(this).getDisplayName()}" folder in "${
+      this.props.target.props.name
+    }" target`;
   }
 }

@@ -1,0 +1,1209 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 73;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7F4532AD251A6C4700F2CFC8 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = 7FA71E0924C95CAC001C9574 /* Logging */; };
+		7F4532AF251A6C4700F2CFC8 /* LoggingOSLog in Frameworks */ = {isa = PBXBuildFile; productRef = 7F8EC94425086F3B00D4D42B /* LoggingOSLog */; };
+		8001A4812CF9275400325E7B /* SimpleKeychain in Frameworks */ = {isa = PBXBuildFile; productRef = 8001A4802CF9275400325E7B /* SimpleKeychain */; };
+		8005282F2CB718C200226174 /* TophatKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8005282E2CB718C200226174 /* TophatKit */; };
+		800528312CB718C700226174 /* TophatKit in Frameworks */ = {isa = PBXBuildFile; productRef = 800528302CB718C700226174 /* TophatKit */; };
+		8006E7F02943D3090089805E /* VisualEffects in Frameworks */ = {isa = PBXBuildFile; productRef = 8006E7EF2943D3090089805E /* VisualEffects */; };
+		802635052CFE68720020D841 /* TophatControlServices in Frameworks */ = {isa = PBXBuildFile; productRef = 802635042CFE68720020D841 /* TophatControlServices */; };
+		802635072CFE6B930020D841 /* TophatControlServices in Frameworks */ = {isa = PBXBuildFile; productRef = 802635062CFE6B930020D841 /* TophatControlServices */; };
+		80346F042BEBD527002F54BC /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 80346F032BEBD527002F54BC /* AsyncAlgorithms */; };
+		803B874B290055C70062F070 /* AndroidDeviceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 803B874A290055C70062F070 /* AndroidDeviceKit */; };
+		807D7B0F29835762007942B4 /* TophatFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 807D7B0E29835762007942B4 /* TophatFoundation */; };
+		807D7B1629835795007942B4 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = 807D7B1529835795007942B4 /* ArgumentParser */; };
+		807D7B1A298357C6007942B4 /* tophatctl in Copy tophatctl */ = {isa = PBXBuildFile; fileRef = 807D7B0729835756007942B4 /* tophatctl */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		808C6E3A2CF8D81F0030359E /* TophatBitriseExtension.appex in CopyFiles */ = {isa = PBXBuildFile; fileRef = 808C6E322CF8D81F0030359E /* TophatBitriseExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		808C6E462CF8D8600030359E /* TophatKit in Frameworks */ = {isa = PBXBuildFile; productRef = 808C6E452CF8D8600030359E /* TophatKit */; };
+		8090E201294FA29E003106B9 /* FluidMenuBarExtra in Frameworks */ = {isa = PBXBuildFile; productRef = 8090E200294FA29E003106B9 /* FluidMenuBarExtra */; };
+		8090E268296775BE003106B9 /* Collections in Frameworks */ = {isa = PBXBuildFile; productRef = 8090E267296775BE003106B9 /* Collections */; };
+		80C18345290232D1008D3B80 /* TophatFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 80C18344290232D1008D3B80 /* TophatFoundation */; };
+		80D2799829005DD000F03649 /* TophatServer in Frameworks */ = {isa = PBXBuildFile; productRef = 80D2799729005DD000F03649 /* TophatServer */; };
+		80D648552CB0E20C00135729 /* TophatCoreExtension.appex in CopyFiles */ = {isa = PBXBuildFile; fileRef = 80D6484D2CB0E20C00135729 /* TophatCoreExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		80DC0FD82C82225600E5C9EE /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 80DC0FD72C82225600E5C9EE /* Sparkle */; };
+		80F74E252909E8EA0040F026 /* AppleDeviceKit in Frameworks */ = {isa = PBXBuildFile; productRef = 80F74E242909E8EA0040F026 /* AppleDeviceKit */; };
+		B6AA44CF296DF8EF0017321C /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = B6AA44CE296DF8EF0017321C /* ZIPFoundation */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7F35026524A5060600EE76EA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7F35024724A5060500EE76EA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7F35024E24A5060500EE76EA;
+			remoteInfo = Tophat;
+		};
+		807D7B17298357A7007942B4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7F35024724A5060500EE76EA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 807D7B0629835756007942B4;
+			remoteInfo = tophatctl;
+		};
+		808C6E382CF8D81F0030359E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7F35024724A5060500EE76EA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 808C6E312CF8D81F0030359E;
+			remoteInfo = TophatBitriseExtension;
+		};
+		80D648532CB0E20C00135729 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7F35024724A5060500EE76EA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 80D6484C2CB0E20C00135729;
+			remoteInfo = TophatBaseExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		807D7B0529835756007942B4 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		807D7B19298357AE007942B4 /* Copy tophatctl */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				807D7B1A298357C6007942B4 /* tophatctl in Copy tophatctl */,
+			);
+			name = "Copy tophatctl";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		80B48DE82C8BCBBE00897317 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+				808C6E3A2CF8D81F0030359E /* TophatBitriseExtension.appex in CopyFiles */,
+				80D648552CB0E20C00135729 /* TophatCoreExtension.appex in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		80B48E0A2C8BCC5C00897317 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		7F35024F24A5060500EE76EA /* Tophat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tophat.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7F35026424A5060600EE76EA /* TophatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TophatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8005282D2CB7185E00226174 /* TophatKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = TophatKit; sourceTree = "<group>"; };
+		807D7B0729835756007942B4 /* tophatctl */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = tophatctl; sourceTree = BUILT_PRODUCTS_DIR; };
+		8086AE3628F9E8680069217E /* TophatModules */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = TophatModules; sourceTree = "<group>"; };
+		808C6E322CF8D81F0030359E /* TophatBitriseExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = TophatBitriseExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		80D6484D2CB0E20C00135729 /* TophatCoreExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = TophatCoreExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8001A5962CFE293D00325E7B /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 7F35024E24A5060500EE76EA /* Tophat */;
+		};
+		8001A5A02CFE294100325E7B /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 7F35026324A5060600EE76EA /* TophatTests */;
+		};
+		808C6E442CF8D8260030359E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				TophatBitriseExtension/API/ArtifactListElementResponseModel.swift,
+				TophatBitriseExtension/API/ArtifactListResponseModel.swift,
+				TophatBitriseExtension/API/ArtifactResponseItemModel.swift,
+				TophatBitriseExtension/API/ArtifactShowResponseModel.swift,
+				TophatBitriseExtension/API/BuildListResponseModel.swift,
+				TophatBitriseExtension/API/BuildResponseItemModel.swift,
+				"TophatBitriseExtension/Artifact Providers/ArtifactProvider+Bitrise.swift",
+				"TophatBitriseExtension/Artifact Providers/BasicArtifactProvider.swift",
+				"TophatBitriseExtension/Artifact Providers/BitriseArtifactProviderError.swift",
+				"TophatBitriseExtension/Artifact Providers/BranchArtifactProvider.swift",
+				TophatBitriseExtension/Localizable.xcstrings,
+				TophatBitriseExtension/Settings/Constants.swift,
+				TophatBitriseExtension/Settings/SettingsView.swift,
+				TophatBitriseExtension/TophatBitriseExtension.swift,
+				TophatBitriseExtension/Utilities/SecureStorage.swift,
+			);
+			target = 808C6E312CF8D81F0030359E /* TophatBitriseExtension */;
+		};
+		80D6485F2CB0E22200135729 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"TophatCoreExtension/Artifact Providers/HTTPArtifactProvider.swift",
+				"TophatCoreExtension/Artifact Providers/ShellScriptArtifactProvider.swift",
+				TophatCoreExtension/Localizable.xcstrings,
+				TophatCoreExtension/TophatCoreExtension.swift,
+			);
+			target = 80D6484C2CB0E20C00135729 /* TophatCoreExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		8001A5972CFE293D00325E7B /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 80B48DE82C8BCBBE00897317 /* CopyFiles */;
+			membershipExceptions = (
+				com.shopify.Tophat.extension.appextensionpoint,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		8001A5132CFE293D00325E7B /* Tophat */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (8001A5962CFE293D00325E7B /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 8001A5972CFE293D00325E7B /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Tophat; sourceTree = "<group>"; };
+		8001A59C2CFE294100325E7B /* TophatTests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (8001A5A02CFE294100325E7B /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TophatTests; sourceTree = "<group>"; };
+		8001A5AD2CFE294400325E7B /* TophatCtl */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = TophatCtl; sourceTree = "<group>"; };
+		80D648482CB0E1C200135729 /* TophatExtensions */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (80D6485F2CB0E22200135729 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 808C6E442CF8D8260030359E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TophatExtensions; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7F35024C24A5060500EE76EA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				80F74E252909E8EA0040F026 /* AppleDeviceKit in Frameworks */,
+				B6AA44CF296DF8EF0017321C /* ZIPFoundation in Frameworks */,
+				802635052CFE68720020D841 /* TophatControlServices in Frameworks */,
+				8006E7F02943D3090089805E /* VisualEffects in Frameworks */,
+				7F4532AD251A6C4700F2CFC8 /* Logging in Frameworks */,
+				8090E268296775BE003106B9 /* Collections in Frameworks */,
+				80C18345290232D1008D3B80 /* TophatFoundation in Frameworks */,
+				80346F042BEBD527002F54BC /* AsyncAlgorithms in Frameworks */,
+				80DC0FD82C82225600E5C9EE /* Sparkle in Frameworks */,
+				8005282F2CB718C200226174 /* TophatKit in Frameworks */,
+				7F4532AF251A6C4700F2CFC8 /* LoggingOSLog in Frameworks */,
+				80D2799829005DD000F03649 /* TophatServer in Frameworks */,
+				803B874B290055C70062F070 /* AndroidDeviceKit in Frameworks */,
+				8090E201294FA29E003106B9 /* FluidMenuBarExtra in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7F35026124A5060600EE76EA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		807D7B0429835756007942B4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				807D7B1629835795007942B4 /* ArgumentParser in Frameworks */,
+				807D7B0F29835762007942B4 /* TophatFoundation in Frameworks */,
+				802635072CFE6B930020D841 /* TophatControlServices in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		808C6E2F2CF8D81F0030359E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8001A4812CF9275400325E7B /* SimpleKeychain in Frameworks */,
+				808C6E462CF8D8600030359E /* TophatKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		80D6484A2CB0E20C00135729 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				800528312CB718C700226174 /* TophatKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		7F35024624A5060500EE76EA = {
+			isa = PBXGroup;
+			children = (
+				8001A5132CFE293D00325E7B /* Tophat */,
+				8001A59C2CFE294100325E7B /* TophatTests */,
+				8001A5AD2CFE294400325E7B /* TophatCtl */,
+				8086AE3628F9E8680069217E /* TophatModules */,
+				8005282D2CB7185E00226174 /* TophatKit */,
+				80D648482CB0E1C200135729 /* TophatExtensions */,
+				7F35025024A5060500EE76EA /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		7F35025024A5060500EE76EA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7F35024F24A5060500EE76EA /* Tophat.app */,
+				7F35026424A5060600EE76EA /* TophatTests.xctest */,
+				807D7B0729835756007942B4 /* tophatctl */,
+				80D6484D2CB0E20C00135729 /* TophatCoreExtension.appex */,
+				808C6E322CF8D81F0030359E /* TophatBitriseExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7F35024E24A5060500EE76EA /* Tophat */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7F35027824A5060700EE76EA /* Build configuration list for PBXNativeTarget "Tophat" */;
+			buildPhases = (
+				80B48DE82C8BCBBE00897317 /* CopyFiles */,
+				809429C128FA01F900605490 /* SwiftLint */,
+				7F35024B24A5060500EE76EA /* Sources */,
+				7F35024C24A5060500EE76EA /* Frameworks */,
+				807D7B19298357AE007942B4 /* Copy tophatctl */,
+				7F35024D24A5060500EE76EA /* Resources */,
+				80B48E0A2C8BCC5C00897317 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				807D7B18298357A7007942B4 /* PBXTargetDependency */,
+				80D648542CB0E20C00135729 /* PBXTargetDependency */,
+				808C6E392CF8D81F0030359E /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				8001A5132CFE293D00325E7B /* Tophat */,
+			);
+			name = Tophat;
+			packageProductDependencies = (
+				7FA71E0924C95CAC001C9574 /* Logging */,
+				7F8EC94425086F3B00D4D42B /* LoggingOSLog */,
+				803B874A290055C70062F070 /* AndroidDeviceKit */,
+				80D2799729005DD000F03649 /* TophatServer */,
+				80C18344290232D1008D3B80 /* TophatFoundation */,
+				80F74E242909E8EA0040F026 /* AppleDeviceKit */,
+				8006E7EF2943D3090089805E /* VisualEffects */,
+				8090E200294FA29E003106B9 /* FluidMenuBarExtra */,
+				8090E267296775BE003106B9 /* Collections */,
+				B6AA44CE296DF8EF0017321C /* ZIPFoundation */,
+				80346F032BEBD527002F54BC /* AsyncAlgorithms */,
+				80DC0FD72C82225600E5C9EE /* Sparkle */,
+				8005282E2CB718C200226174 /* TophatKit */,
+				802635042CFE68720020D841 /* TophatControlServices */,
+			);
+			productName = Tophat;
+			productReference = 7F35024F24A5060500EE76EA /* Tophat.app */;
+			productType = "com.apple.product-type.application";
+		};
+		7F35026324A5060600EE76EA /* TophatTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7F35027B24A5060700EE76EA /* Build configuration list for PBXNativeTarget "TophatTests" */;
+			buildPhases = (
+				7F35026024A5060600EE76EA /* Sources */,
+				7F35026124A5060600EE76EA /* Frameworks */,
+				7F35026224A5060600EE76EA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7F35026624A5060600EE76EA /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				8001A59C2CFE294100325E7B /* TophatTests */,
+			);
+			name = TophatTests;
+			productName = TophatTests;
+			productReference = 7F35026424A5060600EE76EA /* TophatTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		807D7B0629835756007942B4 /* tophatctl */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 807D7B0B29835756007942B4 /* Build configuration list for PBXNativeTarget "tophatctl" */;
+			buildPhases = (
+				807D7B0329835756007942B4 /* Sources */,
+				807D7B0429835756007942B4 /* Frameworks */,
+				807D7B0529835756007942B4 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				8001A5AD2CFE294400325E7B /* TophatCtl */,
+			);
+			name = tophatctl;
+			packageProductDependencies = (
+				807D7B0E29835762007942B4 /* TophatFoundation */,
+				807D7B1529835795007942B4 /* ArgumentParser */,
+				802635062CFE6B930020D841 /* TophatControlServices */,
+			);
+			productName = tophatctl;
+			productReference = 807D7B0729835756007942B4 /* tophatctl */;
+			productType = "com.apple.product-type.tool";
+		};
+		808C6E312CF8D81F0030359E /* TophatBitriseExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 808C6E3E2CF8D81F0030359E /* Build configuration list for PBXNativeTarget "TophatBitriseExtension" */;
+			buildPhases = (
+				808C6E2E2CF8D81F0030359E /* Sources */,
+				808C6E2F2CF8D81F0030359E /* Frameworks */,
+				808C6E302CF8D81F0030359E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TophatBitriseExtension;
+			packageProductDependencies = (
+				808C6E452CF8D8600030359E /* TophatKit */,
+				8001A4802CF9275400325E7B /* SimpleKeychain */,
+			);
+			productName = TophatBitriseExtension;
+			productReference = 808C6E322CF8D81F0030359E /* TophatBitriseExtension.appex */;
+			productType = "com.apple.product-type.extensionkit-extension";
+		};
+		80D6484C2CB0E20C00135729 /* TophatCoreExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 80D648572CB0E20C00135729 /* Build configuration list for PBXNativeTarget "TophatCoreExtension" */;
+			buildPhases = (
+				80D648492CB0E20C00135729 /* Sources */,
+				80D6484A2CB0E20C00135729 /* Frameworks */,
+				80D6484B2CB0E20C00135729 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TophatCoreExtension;
+			packageProductDependencies = (
+				800528302CB718C700226174 /* TophatKit */,
+			);
+			productName = TophatBaseExtension;
+			productReference = 80D6484D2CB0E20C00135729 /* TophatCoreExtension.appex */;
+			productType = "com.apple.product-type.extensionkit-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		7F35024724A5060500EE76EA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 1610;
+				LastUpgradeCheck = 1610;
+				ORGANIZATIONNAME = Shopify;
+				TargetAttributes = {
+					7F35024E24A5060500EE76EA = {
+						CreatedOnToolsVersion = 11.5;
+					};
+					7F35026324A5060600EE76EA = {
+						CreatedOnToolsVersion = 11.5;
+						TestTargetID = 7F35024E24A5060500EE76EA;
+					};
+					807D7B0629835756007942B4 = {
+						CreatedOnToolsVersion = 14.2;
+					};
+					808C6E312CF8D81F0030359E = {
+						CreatedOnToolsVersion = 16.1;
+					};
+					80D6484C2CB0E20C00135729 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = 7F35024A24A5060500EE76EA /* Build configuration list for PBXProject "Tophat" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 7F35024624A5060500EE76EA;
+			packageReferences = (
+				7FA71E0824C95CAC001C9574 /* XCRemoteSwiftPackageReference "swift-log" */,
+				7F8EC94325086F3B00D4D42B /* XCRemoteSwiftPackageReference "swift-log-oslog" */,
+				8006E7EE2943D3090089805E /* XCRemoteSwiftPackageReference "VisualEffects" */,
+				8090E1FF294FA29E003106B9 /* XCRemoteSwiftPackageReference "fluid-menu-bar-extra" */,
+				8090E266296775BE003106B9 /* XCRemoteSwiftPackageReference "swift-collections" */,
+				B6AA44CD296DF8EF0017321C /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+				807D7B1429835795007942B4 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
+				80346F022BEBD527002F54BC /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
+				80DC0FD62C82225600E5C9EE /* XCRemoteSwiftPackageReference "Sparkle" */,
+				8001A47F2CF9275400325E7B /* XCRemoteSwiftPackageReference "SimpleKeychain" */,
+			);
+			preferredProjectObjectVersion = 50;
+			productRefGroup = 7F35025024A5060500EE76EA /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7F35024E24A5060500EE76EA /* Tophat */,
+				7F35026324A5060600EE76EA /* TophatTests */,
+				807D7B0629835756007942B4 /* tophatctl */,
+				80D6484C2CB0E20C00135729 /* TophatCoreExtension */,
+				808C6E312CF8D81F0030359E /* TophatBitriseExtension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7F35024D24A5060500EE76EA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7F35026224A5060600EE76EA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		808C6E302CF8D81F0030359E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		80D6484B2CB0E20C00135729 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		809429C128FA01F900605490 /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"$CI\" = \"true\" ]; then\n  echo 'Not running SwiftLint on CI.'\n  exit 0\nfi\n\nexport PATH=\"$PATH:/opt/homebrew/bin\"\nexport PATH=\"~/.mint/bin:$PATH\"\n\nif mint which swiftlint > /dev/null; then\n\tmint run swiftlint\nelse\n\techo 'warning: SwiftLint not installed, run `mint boostrap` to install.'\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7F35024B24A5060500EE76EA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7F35026024A5060600EE76EA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		807D7B0329835756007942B4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		808C6E2E2CF8D81F0030359E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		80D648492CB0E20C00135729 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7F35026624A5060600EE76EA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7F35024E24A5060500EE76EA /* Tophat */;
+			targetProxy = 7F35026524A5060600EE76EA /* PBXContainerItemProxy */;
+		};
+		807D7B18298357A7007942B4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 807D7B0629835756007942B4 /* tophatctl */;
+			targetProxy = 807D7B17298357A7007942B4 /* PBXContainerItemProxy */;
+		};
+		808C6E392CF8D81F0030359E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 808C6E312CF8D81F0030359E /* TophatBitriseExtension */;
+			targetProxy = 808C6E382CF8D81F0030359E /* PBXContainerItemProxy */;
+		};
+		80D648542CB0E20C00135729 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 80D6484C2CB0E20C00135729 /* TophatCoreExtension */;
+			targetProxy = 80D648532CB0E20C00135729 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		7F35027624A5060700EE76EA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		7F35027724A5060700EE76EA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		7F35027924A5060700EE76EA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_ENTITLEMENTS = Tophat/Tophat.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = A7XGC83MZE;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = Tophat/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.11.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.shopify.Tophat;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		7F35027A24A5060700EE76EA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_ENTITLEMENTS = Tophat/Tophat.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = A7XGC83MZE;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = Tophat/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.11.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.shopify.Tophat;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = Tophat;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		7F35027C24A5060700EE76EA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = A7XGC83MZE;
+				INFOPLIST_FILE = TophatTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.shopify.TophatTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tophat.app/Contents/MacOS/Tophat";
+			};
+			name = Debug;
+		};
+		7F35027D24A5060700EE76EA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = A7XGC83MZE;
+				INFOPLIST_FILE = TophatTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.shopify.TophatTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tophat.app/Contents/MacOS/Tophat";
+			};
+			name = Release;
+		};
+		807D7B0C29835756007942B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = TophatCtl/TophatCtl.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = A7XGC83MZE;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.shopify.tophatctl;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		807D7B0D29835756007942B4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = TophatCtl/TophatCtl.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = A7XGC83MZE;
+				ENABLE_HARDENED_RUNTIME = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.shopify.tophatctl;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		808C6E3B2CF8D81F0030359E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = TophatExtensions/TophatBitriseExtension/TophatBitriseExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7XGC83MZE;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TophatExtensions/TophatBitriseExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Bitrise;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Shopify. All rights reserved.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.shopify.Tophat.TophatBitriseExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		808C6E3C2CF8D81F0030359E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = TophatExtensions/TophatBitriseExtension/TophatBitriseExtension.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = A7XGC83MZE;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TophatExtensions/TophatBitriseExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Bitrise;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Shopify. All rights reserved.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.shopify.Tophat.TophatBitriseExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		80D648582CB0E20C00135729 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = TophatExtensions/TophatCoreExtension/TophatCoreExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A7XGC83MZE;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TophatExtensions/TophatCoreExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Tophat Core";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Shopify. All rights reserved.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.shopify.Tophat.TophatCoreExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		80D648592CB0E20C00135729 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = TophatExtensions/TophatCoreExtension/TophatCoreExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = A7XGC83MZE;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TophatExtensions/TophatCoreExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Tophat Core";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Shopify. All rights reserved.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.shopify.Tophat.TophatCoreExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7F35024A24A5060500EE76EA /* Build configuration list for PBXProject "Tophat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7F35027624A5060700EE76EA /* Debug */,
+				7F35027724A5060700EE76EA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7F35027824A5060700EE76EA /* Build configuration list for PBXNativeTarget "Tophat" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7F35027924A5060700EE76EA /* Debug */,
+				7F35027A24A5060700EE76EA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7F35027B24A5060700EE76EA /* Build configuration list for PBXNativeTarget "TophatTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7F35027C24A5060700EE76EA /* Debug */,
+				7F35027D24A5060700EE76EA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		807D7B0B29835756007942B4 /* Build configuration list for PBXNativeTarget "tophatctl" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				807D7B0C29835756007942B4 /* Debug */,
+				807D7B0D29835756007942B4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		808C6E3E2CF8D81F0030359E /* Build configuration list for PBXNativeTarget "TophatBitriseExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				808C6E3B2CF8D81F0030359E /* Debug */,
+				808C6E3C2CF8D81F0030359E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		80D648572CB0E20C00135729 /* Build configuration list for PBXNativeTarget "TophatCoreExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				80D648582CB0E20C00135729 /* Debug */,
+				80D648592CB0E20C00135729 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7F8EC94325086F3B00D4D42B /* XCRemoteSwiftPackageReference "swift-log-oslog" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/chrisaljoudi/swift-log-oslog.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.2;
+			};
+		};
+		7FA71E0824C95CAC001C9574 /* XCRemoteSwiftPackageReference "swift-log" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-log.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.4.0;
+			};
+		};
+		8001A47F2CF9275400325E7B /* XCRemoteSwiftPackageReference "SimpleKeychain" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/auth0/SimpleKeychain.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
+			};
+		};
+		8006E7EE2943D3090089805E /* XCRemoteSwiftPackageReference "VisualEffects" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/VisualEffects";
+			requirement = {
+				kind = exactVersion;
+				version = 1.0.3;
+			};
+		};
+		80346F022BEBD527002F54BC /* XCRemoteSwiftPackageReference "swift-async-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-async-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		807D7B1429835795007942B4 /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-argument-parser";
+			requirement = {
+				kind = exactVersion;
+				version = 1.2.1;
+			};
+		};
+		8090E1FF294FA29E003106B9 /* XCRemoteSwiftPackageReference "fluid-menu-bar-extra" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/lfroms/fluid-menu-bar-extra";
+			requirement = {
+				kind = exactVersion;
+				version = 1.0.2;
+			};
+		};
+		8090E266296775BE003106B9 /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections";
+			requirement = {
+				kind = exactVersion;
+				version = 1.0.4;
+			};
+		};
+		80DC0FD62C82225600E5C9EE /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.6.4;
+			};
+		};
+		B6AA44CD296DF8EF0017321C /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
+			requirement = {
+				kind = exactVersion;
+				version = 0.9.19;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7F8EC94425086F3B00D4D42B /* LoggingOSLog */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7F8EC94325086F3B00D4D42B /* XCRemoteSwiftPackageReference "swift-log-oslog" */;
+			productName = LoggingOSLog;
+		};
+		7FA71E0924C95CAC001C9574 /* Logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7FA71E0824C95CAC001C9574 /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = Logging;
+		};
+		8001A4802CF9275400325E7B /* SimpleKeychain */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8001A47F2CF9275400325E7B /* XCRemoteSwiftPackageReference "SimpleKeychain" */;
+			productName = SimpleKeychain;
+		};
+		8005282E2CB718C200226174 /* TophatKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TophatKit;
+		};
+		800528302CB718C700226174 /* TophatKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TophatKit;
+		};
+		8006E7EF2943D3090089805E /* VisualEffects */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8006E7EE2943D3090089805E /* XCRemoteSwiftPackageReference "VisualEffects" */;
+			productName = VisualEffects;
+		};
+		802635042CFE68720020D841 /* TophatControlServices */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TophatControlServices;
+		};
+		802635062CFE6B930020D841 /* TophatControlServices */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TophatControlServices;
+		};
+		80346F032BEBD527002F54BC /* AsyncAlgorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 80346F022BEBD527002F54BC /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
+			productName = AsyncAlgorithms;
+		};
+		803B874A290055C70062F070 /* AndroidDeviceKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AndroidDeviceKit;
+		};
+		807D7B0E29835762007942B4 /* TophatFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TophatFoundation;
+		};
+		807D7B1529835795007942B4 /* ArgumentParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 807D7B1429835795007942B4 /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
+			productName = ArgumentParser;
+		};
+		808C6E452CF8D8600030359E /* TophatKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TophatKit;
+		};
+		8090E200294FA29E003106B9 /* FluidMenuBarExtra */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8090E1FF294FA29E003106B9 /* XCRemoteSwiftPackageReference "fluid-menu-bar-extra" */;
+			productName = FluidMenuBarExtra;
+		};
+		8090E267296775BE003106B9 /* Collections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8090E266296775BE003106B9 /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = Collections;
+		};
+		80C18344290232D1008D3B80 /* TophatFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TophatFoundation;
+		};
+		80D2799729005DD000F03649 /* TophatServer */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TophatServer;
+		};
+		80DC0FD72C82225600E5C9EE /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 80DC0FD62C82225600E5C9EE /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+		80F74E242909E8EA0040F026 /* AppleDeviceKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AppleDeviceKit;
+		};
+		B6AA44CE296DF8EF0017321C /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B6AA44CD296DF8EF0017321C /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 7F35024724A5060500EE76EA /* Project object */;
+}

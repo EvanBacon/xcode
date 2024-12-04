@@ -248,7 +248,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3E7D825F2C3892C4006B36EB /* Build configuration list for PBXProject "Score Tally" */;
+			buildConfigurationList = 3E7D825F2C3892C4006B36EB /* Build configuration list for PBXProject "ScoreTally" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -631,7 +631,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3E7D825F2C3892C4006B36EB /* Build configuration list for PBXProject "Score Tally" */ = {
+		3E7D825F2C3892C4006B36EB /* Build configuration list for PBXProject "ScoreTally" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3E7D82722C3892C6006B36EB /* Debug */,

@@ -16,9 +16,11 @@ export type PBXContainerItemProxyModel = json.PBXContainerItemProxy<
 
 export class PBXContainerItemProxy extends AbstractObject<PBXContainerItemProxyModel> {
   static isa = json.ISA.PBXContainerItemProxy as const;
+
   static is(object: any): object is PBXContainerItemProxy {
     return object.isa === PBXContainerItemProxy.isa;
   }
+
   static create(
     project: XcodeProject,
     opts: SansIsa<PBXContainerItemProxyModel>

@@ -6,7 +6,7 @@ const MALFORMED_FIXTURE = path.join(__dirname, "fixtures/malformed.pbxproj");
 
 const originalConsoleWarn = console.warn;
 beforeEach(() => {
-  console.warn = jest.fn(originalConsoleWarn);
+  console.warn = jest.fn();
 });
 afterAll(() => {
   console.warn = originalConsoleWarn;
@@ -24,6 +24,7 @@ describe("parse", () => {
   const fixtures = [
     "006-spm.pbxproj",
     "AFNetworking.pbxproj",
+    "shopify-tophat.pbxproj",
     // "Cocoa-Application.pbxproj",
     // "project-multitarget-missing-targetattributes.pbxproj",
     // "project-multitarget.pbxproj",
