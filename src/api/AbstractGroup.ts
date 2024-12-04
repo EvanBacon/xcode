@@ -11,12 +11,13 @@ import type { PickRequired, SansIsa } from "./utils/util.types";
 import type { XcodeProject } from "./XcodeProject";
 import type { PBXProject } from "./PBXProject";
 import type { PBXReferenceProxy } from "./PBXReferenceProxy";
+import type { PBXFileSystemSynchronizedRootGroup } from "./PBXFileSystemSynchronizedRootGroup";
 // const debug = require("debug")("xcparse:models") as typeof console.log;
 
 export class AbstractGroup<
   TJSON extends json.PBXGroup<
     any,
-    PBXGroup | PBXReferenceProxy | PBXFileReference
+    PBXGroup | PBXReferenceProxy | PBXFileReference | PBXFileSystemSynchronizedRootGroup
   >
 > extends AbstractObject<TJSON> {
   // This doesn't have to be any, but otherwise the type is unacceptably long.
@@ -185,7 +186,7 @@ export class AbstractGroup<
 
 export type PBXGroupModel = json.PBXGroup<
   json.ISA.PBXGroup,
-  PBXGroup | PBXReferenceProxy | PBXFileReference
+  PBXGroup | PBXReferenceProxy | PBXFileReference | PBXFileSystemSynchronizedRootGroup
 >;
 
 export class PBXGroup extends AbstractGroup<PBXGroupModel> {
