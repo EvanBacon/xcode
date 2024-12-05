@@ -283,6 +283,7 @@ export interface PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet<
 export type FileType =
   | "archive.ar"
   | "text"
+  | "wrapper.extensionkit-extension"
   | "wrapper.application"
   | "wrapper.app-extension"
   | "wrapper.plug-in"
@@ -756,7 +757,7 @@ export type TargetAttribute =
       ProvisioningStyle?: "Automatic" | "Manual";
       DevelopmentTeam?: string;
     }
-    | {
+  | {
       LastSwiftMigration: string;
       DevelopmentTeam?: string;
     };
