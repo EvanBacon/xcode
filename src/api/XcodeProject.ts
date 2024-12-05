@@ -1,7 +1,7 @@
 import assert from "assert";
 import { readFileSync } from "fs";
 import path from "path";
-import { v4 as uuidV4 } from "uuid";
+import crypto from "crypto";
 
 import { parse } from "../json";
 import * as json from "../json/types";
@@ -45,8 +45,18 @@ const debug = require("debug")(
   "xcparse:model:XcodeProject"
 ) as typeof console.log;
 
-function createUUID(): string {
-  return uuidV4().replace(/-/g, "").substr(0, 24).toUpperCase();
+function uuidForPath(path: string): string {
+  return (
+    // Xcode seems to make the first 7 and last 8 characters the same so we'll inch toward that.
+    "XX" +
+    crypto
+      .createHash("md5")
+      .update(path)
+      .digest("hex")
+      .toUpperCase()
+      .slice(0, 20) +
+    "XX"
+  );
 }
 
 type IsaMapping = {
@@ -286,7 +296,7 @@ export class XcodeProject extends Map<json.UUID, AnyModel> {
   }
 
   createModel<TProps extends json.AbstractObject<any>>(opts: TProps) {
-    const uuid = this.getUniqueId();
+    const uuid = this.getUniqueId(JSON.stringify(canonicalize(opts)));
     const model = this.createObject(uuid, opts);
     this.set(uuid, model);
     return model;
@@ -302,16 +312,24 @@ export class XcodeProject extends Map<json.UUID, AnyModel> {
     return referrers;
   }
 
-  // private isUniqueId(id: string): boolean {
-  //   return !Object.keys(this.objects).includes(id);
-  // }
+  private isUniqueId(id: string): boolean {
+    for (const key of this.keys()) {
+      if (key === id) {
+        return false;
+      }
+    }
+    return true;
+  }
 
-  private getUniqueId(): string {
-    return createUUID();
-    // if (this.isUniqueId(id)) {
-    //   return id;
-    // }
-    // return this.getUniqueId();
+  private getUniqueId(seed: string): string {
+    const id = uuidForPath(seed);
+    if (this.isUniqueId(id)) {
+      return id;
+    }
+    return this.getUniqueId(
+      // Add a space to the seed to increase the hash.
+      seed + " "
+    );
   }
 
   toJSON(): json.XcodeProject {
@@ -338,5 +356,20 @@ function assertRootObject(
 ): asserts obj is json.PBXProject {
   if (obj?.isa !== "PBXProject") {
     throw new Error(`Root object "${id}" is not a PBXProject`);
+  }
+}
+
+function canonicalize(value: any): any {
+  // Deep sort serialized `value` object to make it deterministic.
+  if (Array.isArray(value)) {
+    return value.map(canonicalize);
+  } else if (typeof value === "object") {
+    const sorted: Record<string, any> = {};
+    for (const key of Object.keys(value).sort()) {
+      sorted[key] = canonicalize(value[key]);
+    }
+    return sorted;
+  } else {
+    return value;
   }
 }

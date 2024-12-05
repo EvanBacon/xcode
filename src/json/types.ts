@@ -756,8 +756,9 @@ export type TargetAttribute =
       ProvisioningStyle?: "Automatic" | "Manual";
       DevelopmentTeam?: string;
     }
-  | {
+    | {
       LastSwiftMigration: string;
+      DevelopmentTeam?: string;
     };
 
 export interface XCBuildConfiguration

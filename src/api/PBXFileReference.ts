@@ -110,15 +110,24 @@ export class PBXFileReference extends AbstractObject<PBXFileReferenceModel> {
     //   this.sourceTree = "SOURCE_ROOT";
     // }
 
-    if (!this.props.lastKnownFileType) {
+    if (
+      !this.props.lastKnownFileType &&
+      // Xcode clears the lastKnownFileType for explicitFileType if it exists.
+      !this.props.explicitFileType
+    ) {
       this.setLastKnownFileType();
     }
 
     if (this.props.includeInIndex == null) {
       this.props.includeInIndex = 0;
     }
+
     if (this.props.name == null && this.props.path) {
-      this.props.name = path.basename(this.props.path);
+      const name = path.basename(this.props.path);
+      // If the values are the same then skip setting name.
+      if (name !== this.props.path) {
+        this.props.name = name;
+      }
     }
     if (!this.props.sourceTree) {
       this.props.sourceTree = getPossibleDefaultSourceTree(this.props);

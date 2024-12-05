@@ -6,7 +6,6 @@ import { AbstractObject } from "./AbstractObject";
 import { PBXAggregateTarget } from "./PBXAggregateTarget";
 import { PBXLegacyTarget } from "./PBXLegacyTarget";
 import { PBXNativeTarget } from "./PBXNativeTarget";
-import { getParent } from "./utils/paths";
 
 export type PBXFileSystemSynchronizedBuildFileExceptionSetModel =
   json.PBXFileSystemSynchronizedBuildFileExceptionSet<
@@ -42,8 +41,6 @@ export class PBXFileSystemSynchronizedBuildFileExceptionSet extends AbstractObje
   }
 
   getDisplayName() {
-    return `Exceptions for "${getParent(this).getDisplayName()}" folder in "${
-      this.props.target.props.name
-    }" target`;
+    return PBXFileSystemSynchronizedBuildFileExceptionSet.isa;
   }
 }

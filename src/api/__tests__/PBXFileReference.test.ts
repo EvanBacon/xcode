@@ -7,12 +7,29 @@ const WORKING_FIXTURE = path.join(
   "../../json/__tests__/fixtures/AFNetworking.pbxproj"
 );
 
+it(`adds deterministic UUIDs without collision`, () => {
+  const xcproj = XcodeProject.open(WORKING_FIXTURE);
+
+  const ref = PBXFileReference.create(xcproj, {
+    path: "a.swift",
+  });
+
+  expect(ref.uuid).toBe("XXDBE740AD7C410FE2DF44XX");
+  expect(
+    PBXFileReference.create(xcproj, {
+      path: "a.swift",
+    }).uuid
+  ).toBe("XX5BBE738DD91F7523452AXX");
+});
+
 it(`adds framework file with correct defaults for name`, () => {
   const xcproj = XcodeProject.open(WORKING_FIXTURE);
 
   const ref = PBXFileReference.create(xcproj, {
     path: "System/Library/Frameworks/SwiftUI.framework",
   });
+
+  expect(ref.uuid).toBe("XX4DFF38D47332D6BF0183XX");
 
   expect(ref.props).toEqual({
     fileEncoding: 4,
