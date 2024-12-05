@@ -364,6 +364,9 @@ function canonicalize(value: any): any {
   if (Array.isArray(value)) {
     return value.map(canonicalize);
   } else if (typeof value === "object") {
+    if ("uuid" in value && typeof value.uuid === "string") {
+      return value.uuid;
+    }
     const sorted: Record<string, any> = {};
     for (const key of Object.keys(value).sort()) {
       sorted[key] = canonicalize(value[key]);

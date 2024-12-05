@@ -1,6 +1,6 @@
 import path from "path";
 
-import { PBXFileReference, XcodeProject } from "..";
+import { PBXContainerItemProxy, PBXFileReference, XcodeProject } from "..";
 
 const WORKING_FIXTURE = path.join(
   __dirname,
@@ -9,6 +9,17 @@ const WORKING_FIXTURE = path.join(
 
 it(`adds deterministic UUIDs without collision`, () => {
   const xcproj = XcodeProject.open(WORKING_FIXTURE);
+
+  // @ts-expect-error: Prove that adding a random UUID to the project doesn't change the UUIDs of other objects
+  xcproj.set(Math.random().toString(), {});
+
+  const containerItemProxy = PBXContainerItemProxy.create(xcproj, {
+    containerPortal: xcproj.rootObject,
+    proxyType: 1,
+    remoteGlobalIDString: "xxx",
+    remoteInfo: "xxx",
+  });
+  expect(containerItemProxy.uuid).toBe("XX6D16E1EEB44DF363DCC9XX");
 
   const ref = PBXFileReference.create(xcproj, {
     path: "a.swift",
