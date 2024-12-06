@@ -32,7 +32,7 @@ export class PBXFileSystemSynchronizedRootGroup extends AbstractObject<PBXFileSy
 
   protected getObjectProps() {
     return {
-      exceptions: String,
+      exceptions: [String],
     };
   }
 }
