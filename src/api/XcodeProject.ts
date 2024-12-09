@@ -302,6 +302,23 @@ export class XcodeProject extends Map<json.UUID, AnyModel> {
     return model;
   }
 
+  getReferenceForPath(absolutePath: string) {
+    if (!path.isAbsolute(absolutePath)) {
+      throw new Error(`Paths must be absolute ${absolutePath}`);
+    }
+
+    for (const child of this.values()) {
+      if (
+        child.isa === "PBXFileReference" &&
+        "getRealPath" in child &&
+        child.getRealPath() === absolutePath
+      ) {
+        return child;
+      }
+    }
+    return null;
+  }
+
   getReferrers(uuid: string): AbstractObject[] {
     let referrers = [];
     for (const child of this.values()) {

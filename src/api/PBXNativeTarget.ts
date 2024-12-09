@@ -12,10 +12,11 @@ import { PBXFileReference } from "./PBXFileReference";
 import type { PickRequired, SansIsa } from "./utils/util.types";
 import type { XcodeProject } from "./XcodeProject";
 import type { PBXBuildRule } from "./PBXBuildRule";
-import type { PBXTargetDependency } from "./PBXTargetDependency";
+import { PBXTargetDependency } from "./PBXTargetDependency";
 import type { XCConfigurationList } from "./XCConfigurationList";
 import type { XCSwiftPackageProductDependency } from "./XCSwiftPackageProductDependency";
 import type { PBXFileSystemSynchronizedRootGroup } from "./PBXFileSystemSynchronizedRootGroup";
+import { PBXContainerItemProxy } from "./PBXContainerItemProxy";
 
 export type PBXNativeTargetModel = json.PBXNativeTarget<
   XCConfigurationList,
@@ -131,6 +132,52 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
         fileRef: getFrameworkFileReference(framework),
       });
     });
+  }
+
+  /**
+   * Adds a dependency on the given target.
+   *
+   * @param  [AbstractTarget] target
+   *         the target which should be added to the dependencies list of
+   *         the receiver. The target may be a target of this target's
+   *         project or of a subproject of this project. Note that the
+   *         subproject must already be added to this target's project.
+   *
+   * @return [void]
+   */
+  addDependency(target: PBXNativeTarget) {
+    const existing = this.getDependencyForTarget(target);
+    if (existing) {
+      // Update existing props with the existing target.
+      existing.props.name = target.props.name;
+      return;
+    }
+
+    const containerProxy = PBXContainerItemProxy.create(
+      this.getXcodeProject(),
+      {
+        containerPortal: this.getXcodeProject().rootObject,
+        proxyType: 1,
+        remoteGlobalIDString: target.uuid,
+        remoteInfo: target.props.name,
+      }
+    );
+
+    if (target.getXcodeProject().filePath === this.getXcodeProject().filePath) {
+      containerProxy.props.containerPortal = this.getXcodeProject().rootObject;
+    } else {
+      throw new Error(
+        "adding dependencies to subprojects is not yet supported. Please open an issue if you need this feature."
+      );
+    }
+
+    const dependency = PBXTargetDependency.create(this.getXcodeProject(), {
+      target,
+      targetProxy: containerProxy,
+      name: target.props.name,
+    });
+
+    this.props.dependencies.push(dependency);
   }
 
   protected getObjectProps(): Partial<{

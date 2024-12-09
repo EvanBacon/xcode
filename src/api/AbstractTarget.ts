@@ -52,6 +52,32 @@ export class AbstractTarget<
     return list;
   }
 
+  /**
+   * Checks whether this target has a dependency on the given target.
+   */
+
+  getDependencyForTarget(
+    target: AbstractTarget<any>
+  ): PBXTargetDependency | undefined {
+    return this.props.dependencies.find((dep) => {
+      if (dep.props.targetProxy.isRemote()) {
+        const subprojectReference = this.getXcodeProject().getReferenceForPath(
+          target.getXcodeProject().filePath
+        );
+
+        if (subprojectReference) {
+          const uuid = subprojectReference.uuid;
+          return (
+            dep.props.targetProxy.props.remoteGlobalIDString === target.uuid &&
+            dep.props.targetProxy.props.containerPortal.uuid === uuid
+          );
+        }
+      } else {
+        return dep.props.target.uuid === target.uuid;
+      }
+    });
+  }
+
   createBuildPhase<
     TBuildPhase extends
       | typeof PBXSourcesBuildPhase
