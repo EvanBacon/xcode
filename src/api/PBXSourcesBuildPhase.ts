@@ -106,6 +106,7 @@ export class PBXCopyFilesBuildPhase extends AbstractBuildPhase<
 
   private isAppExtensionFileRef(file: PBXBuildFile): PBXFileReference | null {
     if (
+      file.props.fileRef &&
       file.props.fileRef.isa === "PBXFileReference" &&
       "isAppExtension" in file.props.fileRef &&
       file.props.fileRef.isAppExtension()
@@ -148,7 +149,9 @@ export class PBXCopyFilesBuildPhase extends AbstractBuildPhase<
 
   protected setupDefaults(): void {
     const appExtFiles = this.props.files
-      .map((file) => this.isAppExtensionFileRef(file))
+      .map(
+        (file) => typeof file !== "string" && this.isAppExtensionFileRef(file)
+      )
       .filter(Boolean) as PBXFileReference[];
 
     // Set defaults for copy build phases that are used to embed app extensions.

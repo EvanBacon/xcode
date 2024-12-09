@@ -193,7 +193,7 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
     this.props.dependencies.push(dependency);
   }
 
-  getCopyBuildPhaseForTarget(target: PBXNativeTarget) {
+  getCopyBuildPhaseForTarget(target: PBXNativeTarget): PBXCopyFilesBuildPhase {
     const project = this.getXcodeProject();
     if (project.rootObject.getMainAppTarget("ios")!.uuid !== this.uuid) {
       throw new Error(
@@ -228,7 +228,7 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
       );
     });
     if (existing) {
-      return existing;
+      return existing as PBXCopyFilesBuildPhase;
     }
 
     const phase = this.createBuildPhase(PBXCopyFilesBuildPhase, {

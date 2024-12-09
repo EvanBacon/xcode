@@ -192,16 +192,18 @@ export class PBXProject extends AbstractObject<PBXProjectModel> {
 
     const targetBuildSetting = MAPPING[type];
 
-    const mainAppTarget = this.props.targets.filter((target) => {
-      if (
+    const anyAppTarget = this.props.targets.filter((target) => {
+      return (
         PBXNativeTarget.is(target) &&
         target.props.productType === "com.apple.product-type.application"
-      ) {
-        const config = target.getDefaultConfiguration();
-        // WatchOS apps look very similar to iOS apps, but they have a different deployment target
-        return targetBuildSetting in config.props.buildSettings;
-      }
-      return false;
+      );
+    }) as PBXNativeTarget[];
+
+    const mainAppTarget = anyAppTarget.filter((target) => {
+      // TODO: This needs to support `baseConfigurationReference` too, otherwise all the settings won't be present.
+      const config = target.getDefaultConfiguration();
+      // WatchOS apps look very similar to iOS apps, but they have a different deployment target
+      return targetBuildSetting in config.props.buildSettings;
     }) as PBXNativeTarget[];
 
     if (mainAppTarget.length > 1) {
@@ -215,6 +217,10 @@ export class PBXProject extends AbstractObject<PBXProjectModel> {
     const target = mainAppTarget[0];
 
     if (!target) {
+      // NOTE: This is a fallback since we don't support `baseConfigurationReference` yet.
+      if (type === "ios" && anyAppTarget.length) {
+        return anyAppTarget[0];
+      }
       throw new Error("No main app target found");
     }
     return target;

@@ -14,6 +14,7 @@ describe(parse, () => {
     "01-float.pbxproj",
     "006-spm.pbxproj",
     "007-xcode16.pbxproj",
+    "008-out-of-order-orphans.pbxproj",
     "shopify-tophat.pbxproj",
     "AFNetworking.pbxproj",
     "project.pbxproj",
@@ -49,6 +50,7 @@ describe(parse, () => {
   const inOutFixtures = [
     "006-spm.pbxproj",
     "007-xcode16.pbxproj",
+
     "AFNetworking.pbxproj",
     "project.pbxproj",
     "project-rn74.pbxproj",
