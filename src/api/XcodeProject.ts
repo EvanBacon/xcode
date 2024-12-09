@@ -302,7 +302,7 @@ export class XcodeProject extends Map<json.UUID, AnyModel> {
     return model;
   }
 
-  getReferenceForPath(absolutePath: string) {
+  getReferenceForPath(absolutePath: string): PBXFileReference | null {
     if (!path.isAbsolute(absolutePath)) {
       throw new Error(`Paths must be absolute ${absolutePath}`);
     }
