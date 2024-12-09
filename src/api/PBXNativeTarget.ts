@@ -2,6 +2,7 @@ import * as json from "../json/types";
 import { AbstractTarget } from "./AbstractTarget";
 
 import {
+  PBXCopyFilesBuildPhase,
   PBXFrameworksBuildPhase,
   PBXHeadersBuildPhase,
   PBXResourcesBuildPhase,
@@ -17,6 +18,7 @@ import type { XCConfigurationList } from "./XCConfigurationList";
 import type { XCSwiftPackageProductDependency } from "./XCSwiftPackageProductDependency";
 import type { PBXFileSystemSynchronizedRootGroup } from "./PBXFileSystemSynchronizedRootGroup";
 import { PBXContainerItemProxy } from "./PBXContainerItemProxy";
+import type { PBXFileSystemSynchronizedBuildFileExceptionSet } from "./PBXFileSystemSynchronizedBuildFileExceptionSet";
 
 export type PBXNativeTargetModel = json.PBXNativeTarget<
   XCConfigurationList,
@@ -56,6 +58,12 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
     if (this.props.packageProductDependencies?.some((dep) => dep.uuid === uuid))
       return true;
     if (this.props.productReference?.uuid === uuid) return true;
+    if (
+      this.props.fileSystemSynchronizedGroups?.some(
+        (group) => group.uuid === uuid
+      )
+    )
+      return true;
 
     return super.isReferencing(uuid);
   }
@@ -178,6 +186,43 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
     });
 
     this.props.dependencies.push(dependency);
+  }
+
+  getCopyBuildPhaseForTarget(target: PBXNativeTarget) {
+    const project = this.getXcodeProject();
+    if (project.rootObject.getMainAppTarget("ios")!.uuid !== this.uuid) {
+      throw new Error(
+        `getCopyBuildPhaseForTarget can only be called on the main target`
+      );
+    }
+
+    const WELL_KNOWN_COPY_EXTENSIONS_NAME = (() => {
+      if (
+        target.props.productType ===
+        "com.apple.product-type.application.on-demand-install-capable"
+      ) {
+        return "Embed App Clips";
+      } else if (
+        target.props.productType === "com.apple.product-type.application"
+      ) {
+        return "Embed Watch Content";
+      } else if (
+        target.props.productType ===
+        "com.apple.product-type.extensionkit-extension"
+      ) {
+        return "Embed ExtensionKit Extensions";
+      }
+      return "Embed Foundation Extensions";
+    })();
+
+    return (
+      this.props.buildPhases.find((phase) => {
+        if (PBXCopyFilesBuildPhase.is(phase)) {
+          // TODO: maybe there's a safer way to do this? The name is not a good identifier.
+          return phase.props.name === WELL_KNOWN_COPY_EXTENSIONS_NAME;
+        }
+      }) ?? this.createBuildPhase(PBXCopyFilesBuildPhase, { files: [] })
+    );
   }
 
   protected getObjectProps(): Partial<{
