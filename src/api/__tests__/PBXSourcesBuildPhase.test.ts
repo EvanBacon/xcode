@@ -13,6 +13,10 @@ const WORKING_FIXTURE = path.join(
   __dirname,
   "../../json/__tests__/fixtures/AFNetworking.pbxproj"
 );
+const RN_FIXTURE = path.join(
+  __dirname,
+  "../../json/__tests__/fixtures/project-rn74.pbxproj"
+);
 
 it(`adds PBXCopyFilesBuildPhase for Watch extension`, () => {
   const xcproj = XcodeProject.open(WORKING_FIXTURE);
@@ -247,6 +251,71 @@ it(`adds PBXCopyFilesBuildPhase for ExtensionKit extension`, () => {
   const phase = target.createBuildPhase(PBXCopyFilesBuildPhase, {
     files: [file],
   });
+
+  expect(phase.props).toEqual(
+    expect.objectContaining({
+      buildActionMask: 2147483647,
+      dstPath: "$(EXTENSIONS_FOLDER_PATH)",
+      dstSubfolderSpec: 16,
+      files: expect.anything(),
+      isa: "PBXCopyFilesBuildPhase",
+      name: "Embed ExtensionKit Extensions",
+      runOnlyForDeploymentPostprocessing: 0,
+    })
+  );
+});
+
+// Test the idempotent invocation.
+it(`adds PBXCopyFilesBuildPhase for ExtensionKit extension from main target`, () => {
+  const xcproj = XcodeProject.open(RN_FIXTURE);
+
+  const fileRef = PBXFileReference.create(xcproj, {
+    path: "stendo.appex",
+  });
+  const file = PBXBuildFile.create(xcproj, {
+    fileRef,
+    settings: {
+      ATTRIBUTES: ["RemoveHeadersOnCopy"],
+    },
+  });
+
+  const target = xcproj.rootObject.createNativeTarget({
+    buildConfigurationList: XCConfigurationList.create(xcproj, {
+      defaultConfigurationName: "Release",
+      buildConfigurations: [
+        XCBuildConfiguration.create(xcproj, {
+          name: "Release",
+          buildSettings: {
+            INFOPLIST_FILE: "stendo/Info.plist",
+            PRODUCT_BUNDLE_IDENTIFIER: "com.example.app.stendo",
+            MARKETING_VERSION: 1,
+          },
+        }),
+        XCBuildConfiguration.create(xcproj, {
+          name: "Debug",
+          buildSettings: {
+            INFOPLIST_FILE: "stendo/Info.plist",
+            PRODUCT_BUNDLE_IDENTIFIER: "com.example.app.stendo",
+            MARKETING_VERSION: 1,
+          },
+        }),
+      ],
+    }),
+    name: "stendo",
+    productName: "stendo",
+    productType: "com.apple.product-type.extensionkit-extension",
+    productReference: fileRef,
+  });
+
+  xcproj.rootObject.ensureProductGroup().props.children.push(fileRef);
+
+  expect(fileRef.getTargetReferrers()).toEqual([target]);
+
+  const mainTarget = xcproj.rootObject.getMainAppTarget();
+
+  const phase = mainTarget!.getCopyBuildPhaseForTarget(target);
+
+  phase.props.files.push(file);
 
   expect(phase.props).toEqual(
     expect.objectContaining({

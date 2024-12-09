@@ -2,6 +2,7 @@ import * as json from "../json/types";
 import { AbstractTarget } from "./AbstractTarget";
 
 import {
+  PBXCopyFilesBuildPhase,
   PBXFrameworksBuildPhase,
   PBXHeadersBuildPhase,
   PBXResourcesBuildPhase,
@@ -12,10 +13,12 @@ import { PBXFileReference } from "./PBXFileReference";
 import type { PickRequired, SansIsa } from "./utils/util.types";
 import type { XcodeProject } from "./XcodeProject";
 import type { PBXBuildRule } from "./PBXBuildRule";
-import type { PBXTargetDependency } from "./PBXTargetDependency";
+import { PBXTargetDependency } from "./PBXTargetDependency";
 import type { XCConfigurationList } from "./XCConfigurationList";
 import type { XCSwiftPackageProductDependency } from "./XCSwiftPackageProductDependency";
 import type { PBXFileSystemSynchronizedRootGroup } from "./PBXFileSystemSynchronizedRootGroup";
+import { PBXContainerItemProxy } from "./PBXContainerItemProxy";
+import type { PBXFileSystemSynchronizedBuildFileExceptionSet } from "./PBXFileSystemSynchronizedBuildFileExceptionSet";
 
 export type PBXNativeTargetModel = json.PBXNativeTarget<
   XCConfigurationList,
@@ -55,6 +58,12 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
     if (this.props.packageProductDependencies?.some((dep) => dep.uuid === uuid))
       return true;
     if (this.props.productReference?.uuid === uuid) return true;
+    if (
+      this.props.fileSystemSynchronizedGroups?.some(
+        (group) => group.uuid === uuid
+      )
+    )
+      return true;
 
     return super.isReferencing(uuid);
   }
@@ -131,6 +140,112 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
         fileRef: getFrameworkFileReference(framework),
       });
     });
+  }
+
+  /**
+   * Adds a dependency on the given target.
+   *
+   * @param  [AbstractTarget] target
+   *         the target which should be added to the dependencies list of
+   *         the receiver. The target may be a target of this target's
+   *         project or of a subproject of this project. Note that the
+   *         subproject must already be added to this target's project.
+   *
+   * @return [void]
+   */
+  addDependency(target: PBXNativeTarget) {
+    const isSameProject =
+      target.getXcodeProject().filePath === this.getXcodeProject().filePath;
+    const existing = this.getDependencyForTarget(target);
+    if (existing) {
+      if (!isSameProject) {
+        // Seems to only be used when the target is a subproject. https://github.com/CocoaPods/Xcodeproj/blob/ab3dfa504b5a97cae3a653a8924f4616dcaa062e/lib/xcodeproj/project/object/target_dependency.rb#L24-L25
+        // Update existing props with the existing target.
+        existing.props.name = target.props.name;
+      }
+      return;
+    }
+
+    const containerProxy = PBXContainerItemProxy.create(
+      this.getXcodeProject(),
+      {
+        containerPortal: this.getXcodeProject().rootObject,
+        proxyType: 1,
+        remoteGlobalIDString: target.uuid,
+        remoteInfo: target.props.name,
+      }
+    );
+
+    if (isSameProject) {
+      containerProxy.props.containerPortal = this.getXcodeProject().rootObject;
+    } else {
+      throw new Error(
+        "adding dependencies to subprojects is not yet supported. Please open an issue if you need this feature."
+      );
+    }
+
+    const dependency = PBXTargetDependency.create(this.getXcodeProject(), {
+      target,
+      targetProxy: containerProxy,
+      // name: isSameProject ? undefined : target.props.name,
+    });
+
+    this.props.dependencies.push(dependency);
+  }
+
+  getCopyBuildPhaseForTarget(target: PBXNativeTarget): PBXCopyFilesBuildPhase {
+    const project = this.getXcodeProject();
+    if (project.rootObject.getMainAppTarget("ios")!.uuid !== this.uuid) {
+      throw new Error(
+        `getCopyBuildPhaseForTarget can only be called on the main target`
+      );
+    }
+
+    const WELL_KNOWN_COPY_EXTENSIONS_NAME = (() => {
+      if (
+        target.props.productType ===
+        "com.apple.product-type.application.on-demand-install-capable"
+      ) {
+        return "Embed App Clips";
+      } else if (
+        target.props.productType === "com.apple.product-type.application"
+      ) {
+        return "Embed Watch Content";
+      } else if (
+        target.props.productType ===
+        "com.apple.product-type.extensionkit-extension"
+      ) {
+        return "Embed ExtensionKit Extensions";
+      }
+      return "Embed Foundation Extensions";
+    })();
+
+    const existing = this.props.buildPhases.find((phase) => {
+      // TODO: maybe there's a safer way to do this? The name is not a good identifier.
+      return (
+        PBXCopyFilesBuildPhase.is(phase) &&
+        phase.props.name === WELL_KNOWN_COPY_EXTENSIONS_NAME
+      );
+    });
+    if (existing) {
+      return existing as PBXCopyFilesBuildPhase;
+    }
+
+    const phase = this.createBuildPhase(PBXCopyFilesBuildPhase, {
+      name: WELL_KNOWN_COPY_EXTENSIONS_NAME,
+      files: [],
+    });
+
+    phase.ensureDefaultsForTarget(target);
+
+    return phase;
+  }
+
+  isWatchOSTarget(): boolean {
+    return (
+      this.props.productType === "com.apple.product-type.application" &&
+      !!this.getDefaultBuildSetting("WATCHOS_DEPLOYMENT_TARGET")
+    );
   }
 
   protected getObjectProps(): Partial<{

@@ -748,6 +748,7 @@ export interface Attributes {
   /** @example `1240` */
   LastSwiftUpdateCheck?: string;
   TargetAttributes?: Record<string, TargetAttribute>;
+  BuildIndependentTargetsInParallel?: BoolString;
 }
 
 export type TargetAttribute =

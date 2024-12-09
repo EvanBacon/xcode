@@ -8,6 +8,7 @@ import type { PBXFileReference } from "./PBXFileReference";
 import type { PBXReferenceProxy } from "./PBXReferenceProxy";
 import type { PBXVariantGroup } from "./PBXVariantGroup";
 import type { XCVersionGroup } from "./XCVersionGroup";
+import type { PBXNativeTarget } from "./PBXNativeTarget";
 
 // const debug = require("debug")("xcparse:models") as typeof console.log;
 
@@ -104,103 +105,64 @@ export class PBXCopyFilesBuildPhase extends AbstractBuildPhase<
   }
 
   private isAppExtensionFileRef(file: PBXBuildFile): PBXFileReference | null {
-    if (file.props.fileRef.isa === "PBXFileReference") {
-      const ref = file.props.fileRef as PBXFileReference;
-      const type = ref.props.lastKnownFileType ?? ref.props.explicitFileType;
-      if (
-        type === "wrapper.app-extension" &&
-        ref.props.sourceTree === "BUILT_PRODUCTS_DIR"
-      ) {
-        return ref;
-      }
+    if (
+      file.props.fileRef &&
+      file.props.fileRef.isa === "PBXFileReference" &&
+      "isAppExtension" in file.props.fileRef &&
+      file.props.fileRef.isAppExtension()
+    ) {
+      return file.props.fileRef;
     }
     return null;
   }
 
+  /** Given a target, set the default CopyBuildPhase values. This is useful for adding app extensions. */
+  ensureDefaultsForTarget(target: PBXNativeTarget) {
+    if (target.isWatchOSTarget()) {
+      // Is WatchOS appex CopyFilesBuildPhase
+      this.props.dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+
+      // WatchOS folder.
+      this.props.dstSubfolderSpec = 16;
+      this.props.name = "Embed Watch Content";
+    } else if (
+      target.props.productType ===
+      "com.apple.product-type.application.on-demand-install-capable"
+    ) {
+      this.props.dstPath = "$(CONTENTS_FOLDER_PATH)/AppClips";
+      this.props.dstSubfolderSpec = 16;
+      this.props.name = "Embed App Clips";
+    } else if (
+      // Is Extension appex CopyFilesBuildPhase
+      target.props.productType ===
+      "com.apple.product-type.extensionkit-extension"
+    ) {
+      this.props.dstPath = "$(EXTENSIONS_FOLDER_PATH)";
+      this.props.dstSubfolderSpec = 16;
+      this.props.name = "Embed ExtensionKit Extensions";
+    } else if (target.props.productReference?.isAppExtension()) {
+      // PlugIns folder.
+      this.props.dstSubfolderSpec = 13;
+      this.props.name = "Embed Foundation Extensions";
+    }
+  }
+
   protected setupDefaults(): void {
     const appExtFiles = this.props.files
-      .map((file) => this.isAppExtensionFileRef(file))
+      .map(
+        (file) => typeof file !== "string" && this.isAppExtensionFileRef(file)
+      )
       .filter(Boolean) as PBXFileReference[];
 
     // Set defaults for copy build phases that are used to embed app extensions.
     if (appExtFiles.length) {
-      if (
-        appExtFiles.some((ref) => {
-          return ref.getTargetReferrers().some((target) => {
-            if (
-              target.props.productType === "com.apple.product-type.application"
-            ) {
-              return !!target.getDefaultBuildSetting(
-                "WATCHOS_DEPLOYMENT_TARGET"
-              );
-            }
-            return false;
-          });
-        })
-      ) {
-        // Is WatchOS appex CopyFilesBuildPhase
-        if (!this.props.dstPath) {
-          this.props.dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
-        }
-        if (!this.props.dstSubfolderSpec) {
-          // WatchOS folder.
-          this.props.dstSubfolderSpec = 16;
-        }
-        if (!this.props.name) {
-          this.props.name = "Embed Watch Content";
-        }
-      } else if (
-        // Is App Clip appex CopyFilesBuildPhase
-        appExtFiles.some((ref) => {
-          return ref
-            .getTargetReferrers()
-            .some(
-              (target) =>
-                target.props.productType ===
-                "com.apple.product-type.application.on-demand-install-capable"
-            );
-        })
-      ) {
-        if (!this.props.dstPath) {
-          this.props.dstPath = "$(CONTENTS_FOLDER_PATH)/AppClips";
-        }
-        if (!this.props.dstSubfolderSpec) {
-          this.props.dstSubfolderSpec = 16;
-        }
-        if (!this.props.name) {
-          this.props.name = "Embed App Clips";
-        }
-      } else if (
-        // Is Extension appex CopyFilesBuildPhase
-        appExtFiles.some((ref) => {
-          return ref
-            .getTargetReferrers()
-            .some(
-              (target) =>
-                target.props.productType ===
-                "com.apple.product-type.extensionkit-extension"
-            );
-        })
-      ) {
-        if (!this.props.dstPath) {
-          this.props.dstPath = "$(EXTENSIONS_FOLDER_PATH)";
-        }
-        if (!this.props.dstSubfolderSpec) {
-          this.props.dstSubfolderSpec = 16;
-        }
-        if (!this.props.name) {
-          this.props.name = "Embed ExtensionKit Extensions";
-        }
-      } else {
-        // Is iOS appex CopyFilesBuildPhase
+      const firstTarget = appExtFiles
+        .map((ref) => ref.getTargetReferrers())
+        .flat()
+        .filter(Boolean)[0];
 
-        if (!this.props.dstSubfolderSpec) {
-          // PlugIns folder.
-          this.props.dstSubfolderSpec = 13;
-        }
-        if (!this.props.name) {
-          this.props.name = "Embed Foundation Extensions";
-        }
+      if (firstTarget) {
+        this.ensureDefaultsForTarget(firstTarget);
       }
     }
 

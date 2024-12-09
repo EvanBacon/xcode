@@ -94,12 +94,19 @@ export abstract class AbstractObject<
             }
             try {
               return this.getXcodeProject().getObject(uuid);
-            } catch (error) {
-              console.warn(
-                `[Malformed Xcode project]: Found orphaned reference: ${
-                  this.uuid
-                } > ${this.isa}.${String(key)} > ${uuid}`
-              );
+            } catch (error: any) {
+              if (
+                "message" in error &&
+                error.message.includes("object with uuid")
+              ) {
+                console.warn(
+                  `[Malformed Xcode project]: Found orphaned reference: ${
+                    this.uuid
+                  } > ${this.isa}.${String(key)} > ${uuid}`
+                );
+              } else {
+                throw error;
+              }
               return null;
             }
           })
@@ -121,12 +128,19 @@ export abstract class AbstractObject<
             // @ts-expect-error
             jsonValue
           );
-        } catch (error) {
-          console.warn(
-            `[Malformed Xcode project]: Found orphaned reference: ${
-              this.uuid
-            } > ${this.isa}.${String(key)} > ${jsonValue}`
-          );
+        } catch (error: any) {
+          if (
+            "message" in error &&
+            error.message.includes("object with uuid")
+          ) {
+            console.warn(
+              `[Malformed Xcode project]: Found orphaned reference: ${
+                this.uuid
+              } > ${this.isa}.${String(key)} > ${jsonValue}`
+            );
+          } else {
+            throw error;
+          }
         }
       }
     }

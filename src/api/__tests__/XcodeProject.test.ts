@@ -21,22 +21,31 @@ it(`asserts useful error message when malformed`, () => {
 });
 
 describe("parse", () => {
+  beforeEach(() => {
+    console.warn = jest.fn();
+  });
+  afterAll(() => {
+    console.warn = originalConsoleWarn;
+  });
+
   const fixtures = [
+    "008-out-of-order-orphans.pbxproj",
     "006-spm.pbxproj",
     "AFNetworking.pbxproj",
     "shopify-tophat.pbxproj",
-    // "Cocoa-Application.pbxproj",
-    // "project-multitarget-missing-targetattributes.pbxproj",
-    // "project-multitarget.pbxproj",
-    // "project-rni.pbxproj",
-    // "project-swift.pbxproj",
-    // "project-with-entitlements.pbxproj",
-    // "project-with-incorrect-create-manifest-ios-path.pbxproj",
-    // "project-without-create-manifest-ios.pbxproj",
     "project.pbxproj",
     "project-rn74.pbxproj",
-    // "swift-protobuf.pbxproj",
-    // "watch.pbxproj",
+    ////
+    // "Cocoa-Application.pbxproj",
+    "project-multitarget-missing-targetattributes.pbxproj",
+    "project-multitarget.pbxproj",
+    "project-rni.pbxproj",
+    "project-swift.pbxproj",
+    "project-with-entitlements.pbxproj",
+    "project-with-incorrect-create-manifest-ios-path.pbxproj",
+    "project-without-create-manifest-ios.pbxproj",
+    "swift-protobuf.pbxproj",
+    "watch.pbxproj",
   ];
 
   fixtures.forEach((fixture) => {
@@ -47,6 +56,7 @@ describe("parse", () => {
         fixture
       );
       const project = XcodeProject.open(filePath);
+      expect(console.warn).not.toHaveBeenCalled();
     });
   });
 });
