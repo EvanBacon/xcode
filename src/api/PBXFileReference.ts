@@ -283,6 +283,18 @@ export class PBXFileReference extends AbstractObject<PBXFileReferenceModel> {
     }) as PBXReferenceProxy[];
   }
 
+  /** @returns `true` if the file refers to an app extension, widget, etc. */
+  isAppExtension(): boolean {
+    const type = this.props.lastKnownFileType ?? this.props.explicitFileType;
+    return !!(
+      type &&
+      ["wrapper.extensionkit-extension", "wrapper.app-extension"].includes(
+        type
+      ) &&
+      this.props.sourceTree === "BUILT_PRODUCTS_DIR"
+    );
+  }
+
   getTargetReferrers(): PBXNativeTarget[] {
     return this.getReferrers().filter((ref) => {
       return (

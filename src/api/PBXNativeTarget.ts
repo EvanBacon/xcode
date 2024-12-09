@@ -154,10 +154,15 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
    * @return [void]
    */
   addDependency(target: PBXNativeTarget) {
+    const isSameProject =
+      target.getXcodeProject().filePath === this.getXcodeProject().filePath;
     const existing = this.getDependencyForTarget(target);
     if (existing) {
-      // Update existing props with the existing target.
-      existing.props.name = target.props.name;
+      if (!isSameProject) {
+        // Seems to only be used when the target is a subproject. https://github.com/CocoaPods/Xcodeproj/blob/ab3dfa504b5a97cae3a653a8924f4616dcaa062e/lib/xcodeproj/project/object/target_dependency.rb#L24-L25
+        // Update existing props with the existing target.
+        existing.props.name = target.props.name;
+      }
       return;
     }
 
@@ -171,7 +176,7 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
       }
     );
 
-    if (target.getXcodeProject().filePath === this.getXcodeProject().filePath) {
+    if (isSameProject) {
       containerProxy.props.containerPortal = this.getXcodeProject().rootObject;
     } else {
       throw new Error(
@@ -182,7 +187,7 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
     const dependency = PBXTargetDependency.create(this.getXcodeProject(), {
       target,
       targetProxy: containerProxy,
-      name: target.props.name,
+      // name: isSameProject ? undefined : target.props.name,
     });
 
     this.props.dependencies.push(dependency);
@@ -215,13 +220,31 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
       return "Embed Foundation Extensions";
     })();
 
+    const existing = this.props.buildPhases.find((phase) => {
+      // TODO: maybe there's a safer way to do this? The name is not a good identifier.
+      return (
+        PBXCopyFilesBuildPhase.is(phase) &&
+        phase.props.name === WELL_KNOWN_COPY_EXTENSIONS_NAME
+      );
+    });
+    if (existing) {
+      return existing;
+    }
+
+    const phase = this.createBuildPhase(PBXCopyFilesBuildPhase, {
+      name: WELL_KNOWN_COPY_EXTENSIONS_NAME,
+      files: [],
+    });
+
+    phase.ensureDefaultsForTarget(target);
+
+    return phase;
+  }
+
+  isWatchOSTarget(): boolean {
     return (
-      this.props.buildPhases.find((phase) => {
-        if (PBXCopyFilesBuildPhase.is(phase)) {
-          // TODO: maybe there's a safer way to do this? The name is not a good identifier.
-          return phase.props.name === WELL_KNOWN_COPY_EXTENSIONS_NAME;
-        }
-      }) ?? this.createBuildPhase(PBXCopyFilesBuildPhase, { files: [] })
+      this.props.productType === "com.apple.product-type.application" &&
+      !!this.getDefaultBuildSetting("WATCHOS_DEPLOYMENT_TARGET")
     );
   }
 

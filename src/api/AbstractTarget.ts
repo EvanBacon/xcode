@@ -75,6 +75,7 @@ export class AbstractTarget<
       } else {
         return dep.props.target.uuid === target.uuid;
       }
+      return false;
     });
   }
 
