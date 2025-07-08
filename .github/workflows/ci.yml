@@ -2,26 +2,26 @@ name: CI
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     
     strategy:
       matrix:
-        node-version: [16.x, 18.x, 20.x]
+        os: [ubuntu-latest, windows-latest]
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js LTS
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 'lts/*'
         cache: 'yarn'
     
     - name: Install dependencies
@@ -31,23 +31,4 @@ jobs:
       run: yarn test
     
     - name: Build project
-      run: yarn build
-
-  lint-and-format:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Use Node.js 18.x
-      uses: actions/setup-node@v4
-      with:
-        node-version: 18.x
-        cache: 'yarn'
-    
-    - name: Install dependencies
-      run: yarn install --frozen-lockfile
-    
-    - name: Check TypeScript types
       run: yarn build
