@@ -749,6 +749,8 @@ export interface Attributes {
   LastSwiftUpdateCheck?: string;
   TargetAttributes?: Record<string, TargetAttribute>;
   BuildIndependentTargetsInParallel?: BoolString;
+
+  KnownAssetTags?: string[];
 }
 
 export type TargetAttribute =
