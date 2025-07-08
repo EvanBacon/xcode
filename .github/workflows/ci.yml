@@ -8,11 +8,7 @@ on:
 
 jobs:
   test:
-    runs-on: ${{ matrix.os }}
-    
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
+    runs-on: macos-latest
     
     steps:
     - name: Checkout code
