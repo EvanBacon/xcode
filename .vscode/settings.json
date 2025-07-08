@@ -1,0 +1,11 @@
+{
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "text": "This is the @bacons/xcode repository (EvanBacon/xcode on GitHub). It's a TypeScript library for parsing and manipulating Xcode project files (.pbxproj). Key information:\n\n- Repository: EvanBacon/xcode\n- Package: @bacons/xcode\n- Purpose: pbxproj parser and Xcode project manipulation\n- Main technologies: TypeScript, Chevrotain parser, Jest testing\n- Key features: Model-based API for Xcode projects, Swift Package Manager support, FileSystemSynchronized objects"
+    }
+  ],
+  "files.associations": {
+    "*.pbxproj": "plist"
+  },
+  "typescript.preferences.includePackageJsonAutoImports": "on"
+}
