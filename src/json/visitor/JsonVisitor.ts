@@ -43,15 +43,13 @@ export class JsonVisitor extends BaseVisitor {
   }
 
   identifier(ctx: any) {
-    // console.log(ctx);
     if (ctx.QuotedString) {
       return ctx.QuotedString[0].payload ?? ctx.QuotedString[0].image;
     } else if (ctx.StringLiteral) {
-      const literal =
-        ctx.StringLiteral[0].payload ?? ctx.StringLiteral[0].image;
+      const literal = ctx.StringLiteral[0].payload ?? ctx.StringLiteral[0].image;
       return parseType(literal);
     }
-    throw new Error("unhandled: " + ctx);
+    throw new Error("unhandled identifier: " + JSON.stringify(ctx));
   }
 
   value(ctx: any) {
@@ -64,38 +62,30 @@ export class JsonVisitor extends BaseVisitor {
     } else if (ctx.array) {
       return this.visit(ctx.array);
     }
-    throw new Error("unhandled: " + ctx);
+    throw new Error("unhandled value: " + JSON.stringify(ctx));
   }
 }
 
 function parseType(literal: string): number | string {
-  if (
-    // octal should be parsed as string not a number to preserve the 0 prefix
-    /^0\d+$/.test(literal)
-  ) {
+  // Preserve octal literals with leading zeros
+  if (/^0\d+$/.test(literal)) {
     return literal;
-  } else if (
-    // Try decimal
-    /^[+-]?([0-9]+\.?[0-9]*|\.[0-9]+)$/.test(literal)
-  ) {
-    // decimal that ends with a 0 should be parsed as string to preserve the 0
-    if (/0$/.test(literal)) {
-      return literal;
-    }
-
-    try {
-      const num = parseFloat(literal);
-      if (!isNaN(num)) return num;
-    } catch {}
-  } else if (
-    // Try integer
-    /^\d+$/.test(literal)
-  ) {
-    try {
-      const num = parseInt(literal, 10);
-      if (!isNaN(num)) return num;
-    } catch {}
   }
-  // Return whatever is left
+  
+  // Handle decimal numbers but preserve trailing zeros
+  if (/^[+-]?([0-9]+\.?[0-9]*|\.[0-9]+)$/.test(literal)) {
+    if (/0$/.test(literal)) {
+      return literal; // Preserve trailing zero
+    }
+    const num = parseFloat(literal);
+    if (!isNaN(num)) return num;
+  }
+  
+  // Handle integers
+  if (/^\d+$/.test(literal)) {
+    const num = parseInt(literal, 10);
+    if (!isNaN(num)) return num;
+  }
+  
   return literal;
 }
