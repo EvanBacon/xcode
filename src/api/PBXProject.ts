@@ -210,7 +210,7 @@ export class PBXProject extends AbstractObject<PBXProjectModel> {
       console.warn(
         `Multiple main app targets found, using first one: ${mainAppTarget
           .map((t) => t.getDisplayName())
-          .join(", ")}}`
+          .join(", ")}`
       );
     }
 
