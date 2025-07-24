@@ -1,15 +1,11 @@
 import {
-  ParserMethod,
-  IRuleConfig,
   CstNode,
   CstParser,
-  tokenMatcher,
 } from "./chevrotain";
 import {
   ArrayEnd,
   ArrayStart,
   Colon,
-  Comment,
   DataLiteral,
   ObjectEnd,
   ObjectStart,
@@ -20,63 +16,7 @@ import {
 } from "./identifiers";
 import { lexer, tokens } from "./lexer";
 
-export class CommentCstParser extends CstParser {
-  protected RULE<F extends () => void>(
-    name: string,
-    implementation: F,
-    config?: IRuleConfig<CstNode>
-  ): ParserMethod<Parameters<F>, CstNode> {
-    return super.RULE(
-      name,
-      () => {
-        const start = this.LA(1).startOffset;
-        const ruleResult = implementation();
-        const end = this.LA(0);
-
-        if (ruleResult !== undefined) {
-          // @ts-ignore
-          ruleResult.position = {
-            start: start,
-            end: end,
-          };
-        }
-
-        return ruleResult;
-      },
-      config
-    );
-  }
-
-  LA(howMuch: any) {
-    // Skip Comments during regular parsing as we wish to auto-magically insert them
-    // into our CST
-    while (tokenMatcher(super.LA(howMuch), Comment)) {
-      // @ts-expect-error
-      super.consumeToken();
-    }
-
-    return super.LA(howMuch);
-  }
-
-  cstPostTerminal(key: string, consumedToken: any) {
-    // @ts-expect-error
-    super.cstPostTerminal(key, consumedToken);
-
-    let lookBehindIdx = -1;
-    let prevToken = super.LA(lookBehindIdx);
-
-    // After every Token (terminal) is successfully consumed
-    // We will add all the comment that appeared before it to the CST (Parse Tree)
-    while (tokenMatcher(prevToken, Comment)) {
-      // @ts-expect-error
-      super.cstPostTerminal(Comment.name, prevToken);
-      lookBehindIdx--;
-      prevToken = super.LA(lookBehindIdx);
-    }
-  }
-}
-
-export class PbxprojParser extends CommentCstParser {
+export class PbxprojParser extends CstParser {
   constructor() {
     super(tokens, {
       recoveryEnabled: false,
