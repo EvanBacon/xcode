@@ -64,9 +64,9 @@ function ensureQuotes(value: any): string {
   return `"${value}"`;
 }
 
-// TODO: How to handle buffer? <xx xx xx>
+// Format buffer as hex data literal
 function formatData(data: Buffer): string {
-  return `<${data.toString()}>`;
+  return `<${data.toString('hex').toUpperCase()}>`;
 }
 
 function getSortedObjects(objects: Record<string, any>) {
