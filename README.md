@@ -6,8 +6,6 @@
 yarn add @bacons/xcode
 ```
 
-> Website https://xcode-seven.vercel.app/
-
 Here is a diagram of the grammar used for parsing:
 
 <img width="1211" alt="Screen Shot 2022-04-25 at 12 39 27 PM" src="https://user-images.githubusercontent.com/9664363/165143651-a75e354c-e131-4ae9-bde8-876be7d430f5.png">
@@ -131,7 +129,8 @@ We support the following types: `Object`, `Array`, `Data`, `String`. Notably, we
 - [x] Use a fork of chevrotain -- it's [way too large](https://packagephobia.com/result?p=chevrotain@10.1.2) for what it offers.
 - [x] Generating UUIDs.
 - [x] Reference-type API.
-- [ ] Build setting parsing.
+- [x] Build setting parsing.
+- [ ] xcworkspace support.
 - [ ] Docs.
 
 # Docs
