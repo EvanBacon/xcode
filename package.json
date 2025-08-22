@@ -1,9 +1,13 @@
 {
   "name": "@bacons/xcode",
-  "version": "1.0.0-alpha.25",
+  "version": "1.0.0-alpha.26",
   "main": "./build/index",
   "description": "pbxproj parser",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EvanBacon/xcode.git"
+  },
   "author": "Evan Bacon <bacon@expo.io> (https://github.com/evanbacon)",
   "keywords": [
     "pbxproj",
