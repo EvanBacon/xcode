@@ -3,7 +3,7 @@ import { readFileSync } from "fs";
 import path from "path";
 import crypto from "crypto";
 
-import { parse } from "../json";
+import { parse, parseOptimized } from "../json";
 import * as json from "../json/types";
 import { AbstractObject } from "./AbstractObject";
 
@@ -230,7 +230,19 @@ export class XcodeProject extends Map<json.UUID, AnyModel> {
     
     progressCallback?.('Parsing JSON...');
     console.time('🔍 JSON parsing');
-    const json = parse(contents);
+    const fileSizeMB = contents.length / 1024 / 1024;
+    let json;
+    
+    if (fileSizeMB > 5) {
+      // Use optimized parser for large files
+      json = parseOptimized(contents, {
+        progressCallback: (processed, total, stage, memoryMB) => {
+          progressCallback?.(`${stage}: ${processed}/${total}${memoryMB ? ` (${memoryMB}MB)` : ''}`);
+        }
+      });
+    } else {
+      json = parse(contents);
+    }
     console.timeEnd('🔍 JSON parsing');
     
     const objectCount = Object.keys(json.objects || {}).length;

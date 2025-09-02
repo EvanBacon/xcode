@@ -17,3 +17,4 @@ export function build(project: Partial<XcodeProject>): string {
 }
 
 export * from "./types";
+export { parseOptimized, parseWithStrategy, benchmarkParsing, analyzeProjectMetadata } from "./OptimizedParser";
