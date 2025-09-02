@@ -46,14 +46,6 @@
     "build": "tsc",
     "clean": "rm -rf build",
     "test": "jest",
-    "prepare": "yarn clean && yarn build",
-    "example:basic": "ts-node examples/basic-usage.ts",
-    "example:basic-multithreaded": "ts-node examples/basic-multithreaded.ts",
-    "example:advanced": "ts-node examples/advanced-usage.ts", 
-    "example:doordash": "ts-node examples/doordash-example.ts",
-    "example:doordash-optimized": "node --max-old-space-size=8192 -r ts-node/register examples/doordash-optimized.ts",
-    "example:doordash-multithreaded": "node --max-old-space-size=8192 -r ts-node/register examples/doordash-multithreaded.ts", 
-    "example:optimized-parsing": "node --max-old-space-size=8192 -r ts-node/register examples/optimized-parsing.ts",
-    "example:doordash-memory-safe": "node --max-old-space-size=8192 -r ts-node/register examples/doordash-memory-safe.ts"
+    "prepare": "yarn clean && yarn build"
   }
 }
