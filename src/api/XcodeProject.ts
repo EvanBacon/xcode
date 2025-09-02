@@ -212,10 +212,49 @@ export class XcodeProject extends Map<json.UUID, AnyModel> {
     return new XcodeProject(filePath, json);
   }
 
-  constructor(public filePath: string, props: Partial<json.XcodeProject>) {
+  /**
+   * Optimized open method for large projects
+   * @param filePath -- path to a `pbxproj` file
+   * @param options -- optimization options
+   */
+  static openLazy(filePath: string, options: {
+    skipFullInflation?: boolean;
+    progressCallback?: (message: string) => void;
+  } = {}) {
+    const { skipFullInflation = true, progressCallback } = options;
+    
+    progressCallback?.('Reading file...');
+    console.time('📁 File read');
+    const contents = readFileSync(filePath, "utf8");
+    console.timeEnd('📁 File read');
+    
+    progressCallback?.('Parsing JSON...');
+    console.time('🔍 JSON parsing');
+    const json = parse(contents);
+    console.timeEnd('🔍 JSON parsing');
+    
+    const objectCount = Object.keys(json.objects || {}).length;
+    console.log(`📊 Found ${objectCount.toLocaleString()} objects`);
+    
+    progressCallback?.('Creating project...');
+    console.time('🏗️  Project creation');
+    const project = new XcodeProject(filePath, json, { skipFullInflation });
+    console.timeEnd('🏗️  Project creation');
+    
+    return project;
+  }
+
+  constructor(
+    public filePath: string, 
+    props: Partial<json.XcodeProject>, 
+    options: { skipFullInflation?: boolean } = {}
+  ) {
     super();
 
-    const json = JSON.parse(JSON.stringify(props));
+    const { skipFullInflation = false } = options;
+
+    // Optimize: avoid deep clone for large projects
+    const json = skipFullInflation ? props : JSON.parse(JSON.stringify(props));
     assert(json.objects, "objects is required");
     assert(json.rootObject, "rootObject is required");
 
@@ -228,9 +267,19 @@ export class XcodeProject extends Map<json.UUID, AnyModel> {
     assertRootObject(json.rootObject, json.objects?.[json.rootObject]);
 
     // Inflate the root object.
+    console.time('🌱 Root object inflation');
     this.rootObject = this.getObject(json.rootObject);
-    // This should never be needed in a compliant project.
-    this.ensureAllObjectsInflated();
+    console.timeEnd('🌱 Root object inflation');
+
+    // Skip full inflation for large projects
+    if (!skipFullInflation) {
+      console.time('🌳 Full object inflation');
+      this.ensureAllObjectsInflated();
+      console.timeEnd('🌳 Full object inflation');
+    } else {
+      const remainingCount = Object.keys(this.internalJsonObjects).length;
+      console.log(`⏭️  Skipping full inflation of ${remainingCount.toLocaleString()} objects (lazy mode)`);
+    }
   }
 
   /** The directory containing the `*.xcodeproj/project.pbxproj` file, e.g. `/ios/` in React Native. */
@@ -285,14 +334,71 @@ export class XcodeProject extends Map<json.UUID, AnyModel> {
     // This method exists for sanity
     if (Object.keys(this.internalJsonObjects).length === 0) return;
 
-    debug(
-      "inflating unreferenced objects: %o",
-      Object.keys(this.internalJsonObjects)
-    );
+    const remaining = Object.keys(this.internalJsonObjects).length;
+    debug("inflating unreferenced objects: %o", Object.keys(this.internalJsonObjects));
+    
+    let processed = 0;
     while (Object.keys(this.internalJsonObjects).length > 0) {
       const uuid = Object.keys(this.internalJsonObjects)[0];
       this.getObject(uuid);
+      processed++;
+      
+      // Progress for large batches
+      if (remaining > 1000 && processed % 500 === 0) {
+        console.log(`   ⚙️  Inflated ${processed}/${remaining} objects...`);
+      }
     }
+  }
+
+  /**
+   * Manually trigger full inflation of all objects (for lazy-loaded projects)
+   */
+  forceFullInflation(progressCallback?: (processed: number, total: number) => void) {
+    const remaining = Object.keys(this.internalJsonObjects).length;
+    if (remaining === 0) {
+      console.log('✅ All objects already inflated');
+      return;
+    }
+
+    console.log(`🔄 Force inflating ${remaining.toLocaleString()} remaining objects...`);
+    console.time('🌳 Full inflation');
+    
+    let processed = 0;
+    while (Object.keys(this.internalJsonObjects).length > 0) {
+      const uuid = Object.keys(this.internalJsonObjects)[0];
+      this.getObject(uuid);
+      processed++;
+      
+      if (progressCallback && processed % 100 === 0) {
+        progressCallback(processed, remaining);
+      }
+    }
+    
+    console.timeEnd('🌳 Full inflation');
+    console.log('✅ Full inflation completed');
+  }
+
+  /**
+   * Get project statistics without full inflation
+   */
+  getQuickStats() {
+    const totalObjects = this.size + Object.keys(this.internalJsonObjects).length;
+    const inflatedObjects = this.size;
+    const uninflatedObjects = Object.keys(this.internalJsonObjects).length;
+
+    return {
+      totalObjects,
+      inflatedObjects,
+      uninflatedObjects,
+      inflationPercentage: ((inflatedObjects / totalObjects) * 100).toFixed(1)
+    };
+  }
+
+  /**
+   * Get uninflated objects for analysis (read-only access)
+   */
+  getUninflatedObjects(): Readonly<Record<json.UUID, json.AbstractObject<any>>> {
+    return this.internalJsonObjects;
   }
 
   createModel<TProps extends json.AbstractObject<any>>(opts: TProps) {

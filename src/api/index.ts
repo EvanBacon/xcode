@@ -1,5 +1,6 @@
 export { PBXGroup, AbstractGroup } from "./AbstractGroup";
 export { XcodeProject } from "./XcodeProject";
+export { MultithreadedXcodeProject } from "./MultithreadedXcodeProject";
 export { PBXAggregateTarget } from "./PBXAggregateTarget";
 export { PBXBuildFile } from "./PBXBuildFile";
 export { PBXBuildRule } from "./PBXBuildRule";
@@ -33,3 +34,4 @@ export { XCRemoteSwiftPackageReference } from "./XCRemoteSwiftPackageReference";
 export { XCLocalSwiftPackageReference } from "./XCLocalSwiftPackageReference";
 export { XCSwiftPackageProductDependency } from "./XCSwiftPackageProductDependency";
 export { XCVersionGroup } from "./XCVersionGroup";
+export { WorkerPool } from "../utils/WorkerPool";

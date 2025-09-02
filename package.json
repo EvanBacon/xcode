@@ -46,6 +46,12 @@
     "build": "tsc",
     "clean": "rm -rf build",
     "test": "jest",
-    "prepare": "yarn clean && yarn build"
+    "prepare": "yarn clean && yarn build",
+    "example:basic": "ts-node examples/basic-usage.ts",
+    "example:basic-multithreaded": "ts-node examples/basic-multithreaded.ts",
+    "example:advanced": "ts-node examples/advanced-usage.ts", 
+    "example:doordash": "ts-node examples/doordash-example.ts",
+    "example:doordash-optimized": "ts-node examples/doordash-optimized.ts",
+    "example:doordash-multithreaded": "ts-node examples/doordash-multithreaded.ts"
   }
 }
