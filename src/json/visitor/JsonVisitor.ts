@@ -78,12 +78,16 @@ function parseType(literal: string): number | string {
       return literal; // Preserve trailing zero
     }
     const num = parseFloat(literal);
+    // If numbers exceed the maximum safe integer, it should preserve the string version
+    if (num > Number.MAX_SAFE_INTEGER) return literal;
     if (!isNaN(num)) return num;
   }
   
   // Handle integers
   if (/^\d+$/.test(literal)) {
     const num = parseInt(literal, 10);
+    // If numbers exceed the maximum safe integer, it should preserve the string version
+    if (num > Number.MAX_SAFE_INTEGER) return literal;
     if (!isNaN(num)) return num;
   }
   
