@@ -10,6 +10,23 @@ import {
 } from "./compare-utils";
 
 describe(parse, () => {
+  it("should keep numeric object keys as strings", () => {
+    const input = `{ 123 = abc; 456 = { 789 = def; }; }`;
+    const result = parse(input) as any;
+
+    expect(result).toEqual({
+      "123": "abc",
+      "456": {
+        "789": "def"
+      }
+    });
+
+    // Verify keys are strings, not numbers
+    expect(typeof Object.keys(result)[0]).toBe("string");
+    expect(typeof Object.keys(result)[1]).toBe("string");
+    expect(typeof Object.keys(result["456"])[0]).toBe("string");
+  });
+
   const fixtures = [
     "01-float.pbxproj",
     "006-spm.pbxproj",

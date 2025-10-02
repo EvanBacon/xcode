@@ -37,9 +37,23 @@ export class JsonVisitor extends BaseVisitor {
   }
 
   objectItem(ctx: any) {
+    // Object keys must always be strings, even if they're numeric
+    const key = this.visitIdentifierAsString(ctx.identifier);
     return {
-      [this.visit(ctx.identifier)]: this.visit(ctx.value),
+      [key]: this.visit(ctx.value),
     };
+  }
+
+  /** Visit an identifier and ensure the result is always a string (used for object keys) */
+  visitIdentifierAsString(identifierCtx: any) {
+    // Extract the actual context - identifierCtx is an array with a single item containing children
+    const ctx = identifierCtx[0]?.children || identifierCtx;
+    if (ctx.QuotedString) {
+      return ctx.QuotedString[0].payload ?? ctx.QuotedString[0].image;
+    } else if (ctx.StringLiteral) {
+      return ctx.StringLiteral[0].payload ?? ctx.StringLiteral[0].image;
+    }
+    throw new Error("unhandled identifier: " + JSON.stringify(identifierCtx));
   }
 
   identifier(ctx: any) {
@@ -71,7 +85,19 @@ function parseType(literal: string): number | string {
   if (/^0\d+$/.test(literal)) {
     return literal;
   }
-  
+
+  // Handle integers - check if they're safe to convert
+  if (/^\d+$/.test(literal)) {
+    const num = parseInt(literal, 10);
+    // Only convert to number if it's within JavaScript's safe integer range
+    // Xcode UUIDs are often 24 characters which exceed MAX_SAFE_INTEGER
+    if (!isNaN(num) && Number.isSafeInteger(num)) {
+      return num;
+    }
+    // Preserve as string if too large
+    return literal;
+  }
+
   // Handle decimal numbers but preserve trailing zeros
   if (/^[+-]?([0-9]+\.?[0-9]*|\.[0-9]+)$/.test(literal)) {
     if (/0$/.test(literal)) {
@@ -80,12 +106,6 @@ function parseType(literal: string): number | string {
     const num = parseFloat(literal);
     if (!isNaN(num)) return num;
   }
-  
-  // Handle integers
-  if (/^\d+$/.test(literal)) {
-    const num = parseInt(literal, 10);
-    if (!isNaN(num)) return num;
-  }
-  
+
   return literal;
 }
