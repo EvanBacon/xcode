@@ -192,7 +192,7 @@ export abstract class AbstractObject<
           // @ts-expect-error: tried my best lol
           json[key] = resolvedValue;
         } else {
-          throw new Error(util.format("Unable to serialize object: %O", value));
+          console.warn(util.format("Unable to serialize object: %O", value));
         }
       }
     }
