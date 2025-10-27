@@ -607,7 +607,7 @@ export interface XCLocalSwiftPackageReference
   /** URL the Swift package was installed from. */
   path: string;
   /** Repository path where the package is located relative to the Xcode project. */
-  relativePath: string;
+  relativePath?: string;
 }
 
 export interface PBXContainerItemProxy<
