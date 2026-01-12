@@ -68,4 +68,15 @@ export class PBXTargetDependency extends AbstractObject<PBXTargetDependencyModel
       super.getDisplayName()
     );
   }
+
+  removeFromProject() {
+    // Remove the target proxy if it's only referenced by this dependency
+    if (this.props.targetProxy) {
+      const referrers = this.props.targetProxy.getReferrers();
+      if (referrers.length === 1 && referrers[0].uuid === this.uuid) {
+        this.props.targetProxy.removeFromProject();
+      }
+    }
+    return super.removeFromProject();
+  }
 }

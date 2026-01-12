@@ -148,17 +148,6 @@ export class AbstractGroup<
     return getParents(this);
   }
 
-  isReferencing(uuid: string): boolean {
-    return !!this.props.children.find((child) => child.uuid === uuid);
-  }
-
-  removeReference(uuid: string) {
-    const index = this.props.children.findIndex((child) => child.uuid === uuid);
-    if (index !== -1) {
-      this.props.children.splice(index, 1);
-    }
-  }
-
   getPath(): string {
     throw new Error("TODO");
   }

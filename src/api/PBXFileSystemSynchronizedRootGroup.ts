@@ -35,4 +35,17 @@ export class PBXFileSystemSynchronizedRootGroup extends AbstractObject<PBXFileSy
       exceptions: [String],
     };
   }
+
+  removeFromProject() {
+    // Remove all exceptions that are only referenced by this group
+    if (this.props.exceptions) {
+      for (const exception of [...this.props.exceptions]) {
+        const referrers = exception.getReferrers();
+        if (referrers.length === 1 && referrers[0].uuid === this.uuid) {
+          exception.removeFromProject();
+        }
+      }
+    }
+    return super.removeFromProject();
+  }
 }

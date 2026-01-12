@@ -17,8 +17,8 @@ describe(parse, () => {
     expect(result).toEqual({
       "123": "abc",
       "456": {
-        "789": "def"
-      }
+        "789": "def",
+      },
     });
 
     // Verify keys are strings, not numbers
@@ -32,6 +32,7 @@ describe(parse, () => {
     "006-spm.pbxproj",
     "007-xcode16.pbxproj",
     "008-out-of-order-orphans.pbxproj",
+    "009-expo-app-clip.pbxproj",
     "shopify-tophat.pbxproj",
     "AFNetworking.pbxproj",
     "project.pbxproj",
