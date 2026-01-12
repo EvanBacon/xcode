@@ -41,12 +41,6 @@ export class PBXTargetDependency extends AbstractObject<PBXTargetDependencyModel
     };
   }
 
-  isReferencing(uuid: string): boolean {
-    if (this.props.target?.uuid === uuid) return true;
-    if (this.props.targetProxy?.uuid === uuid) return true;
-    return false;
-  }
-
   /**
    * @return uuid of the target, if the dependency is a native target, otherwise the uuid of the target in the sub-project if the dependency is a target proxy.
    */

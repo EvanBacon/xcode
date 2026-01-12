@@ -226,26 +226,8 @@ export class PBXProject extends AbstractObject<PBXProjectModel> {
     return target;
   }
 
-  isReferencing(uuid: string): boolean {
-    if (
-      [
-        this.props.mainGroup.uuid,
-        this.props.buildConfigurationList.uuid,
-        this.props.productRefGroup?.uuid,
-      ].includes(uuid)
-    ) {
-      return true;
-    }
-    return !!this.props.targets.find((target) => target.uuid === uuid);
-  }
-
   removeReference(uuid: string) {
-    const index = this.props.targets.findIndex(
-      (target) => target.uuid === uuid
-    );
-    if (index !== -1) {
-      this.props.targets.splice(index, 1);
-    }
+    super.removeReference(uuid);
 
     // Also remove from TargetAttributes if present
     if (this.props.attributes?.TargetAttributes?.[uuid]) {

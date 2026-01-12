@@ -54,19 +54,6 @@ export class XCConfigurationList extends AbstractObject<XCConfigurationListModel
     return config;
   }
 
-  removeReference(uuid: string) {
-    const index = this.props.buildConfigurations.findIndex(
-      (child) => child.uuid === uuid
-    );
-    if (index !== -1) {
-      this.props.buildConfigurations.splice(index, 1);
-    }
-  }
-
-  isReferencing(uuid: string): boolean {
-    return this.props.buildConfigurations.some((child) => child.uuid === uuid);
-  }
-
   /** Set a build setting on all build configurations. */
   setBuildSetting<TSetting extends keyof json.BuildSettings>(
     key: TSetting,

@@ -158,6 +158,14 @@ export abstract class AbstractObject<
 
   /** @returns `true` if the provided UUID is used somewhere in the props. */
   isReferencing(uuid: string): boolean {
+    for (const key of Object.keys(this.getObjectProps()) as (keyof TJSON)[]) {
+      const value = this.props[key];
+      if (Array.isArray(value)) {
+        if (value.some((item: any) => item?.uuid === uuid)) return true;
+      } else if (value && typeof value === "object" && "uuid" in value) {
+        if ((value as any).uuid === uuid) return true;
+      }
+    }
     return false;
   }
 
@@ -200,8 +208,23 @@ export abstract class AbstractObject<
     return json as TJSON;
   }
 
-  /** abstract method for removing a UUID from any props that might be referencing it. */
-  removeReference(uuid: string) {}
+  /** Removes a UUID from any props that reference it. */
+  removeReference(uuid: string) {
+    for (const key of Object.keys(this.getObjectProps()) as (keyof TJSON)[]) {
+      const value = this.props[key];
+      if (Array.isArray(value)) {
+        const index = value.findIndex((item: any) => item?.uuid === uuid);
+        if (index !== -1) {
+          value.splice(index, 1);
+        }
+      } else if (value && typeof value === "object" && "uuid" in value) {
+        if ((value as any).uuid === uuid) {
+          // @ts-expect-error
+          this.props[key] = undefined;
+        }
+      }
+    }
+  }
 
   removeFromProject() {
     this.getXcodeProject().delete(this.uuid);

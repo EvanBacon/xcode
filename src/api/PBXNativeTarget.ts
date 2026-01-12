@@ -52,58 +52,6 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
     }) as PBXNativeTarget;
   }
 
-  isReferencing(uuid: string): boolean {
-    if (this.props.buildRules.some((rule) => rule.uuid === uuid)) return true;
-    if (this.props.packageProductDependencies?.some((dep) => dep.uuid === uuid))
-      return true;
-    if (this.props.productReference?.uuid === uuid) return true;
-    if (
-      this.props.fileSystemSynchronizedGroups?.some(
-        (group) => group.uuid === uuid
-      )
-    )
-      return true;
-
-    return super.isReferencing(uuid);
-  }
-
-  removeReference(uuid: string) {
-    // Remove from buildRules array
-    const ruleIndex = this.props.buildRules.findIndex(
-      (rule) => rule.uuid === uuid
-    );
-    if (ruleIndex !== -1) {
-      this.props.buildRules.splice(ruleIndex, 1);
-    }
-
-    // Remove from packageProductDependencies array
-    if (this.props.packageProductDependencies) {
-      const pkgIndex = this.props.packageProductDependencies.findIndex(
-        (dep) => dep.uuid === uuid
-      );
-      if (pkgIndex !== -1) {
-        this.props.packageProductDependencies.splice(pkgIndex, 1);
-      }
-    }
-
-    // Remove from fileSystemSynchronizedGroups array
-    if (this.props.fileSystemSynchronizedGroups) {
-      const fsIndex = this.props.fileSystemSynchronizedGroups.findIndex(
-        (group) => group.uuid === uuid
-      );
-      if (fsIndex !== -1) {
-        this.props.fileSystemSynchronizedGroups.splice(fsIndex, 1);
-      }
-    }
-
-    // Clear productReference if it matches
-    if (this.props.productReference?.uuid === uuid) {
-      this.props.productReference = undefined;
-    }
-
-    super.removeReference(uuid);
-  }
-
   /** @returns the `PBXFrameworksBuildPhase` or creates one if there is none. Only one can exist. */
   getFrameworksBuildPhase() {
     return (
