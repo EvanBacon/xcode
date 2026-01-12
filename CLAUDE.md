@@ -42,6 +42,46 @@ The package offers two main APIs:
 3. **Reference Resolution**: Objects maintain references to each other via UUIDs
 4. **Type Safety**: Full TypeScript coverage with strict compiler options
 
+### The `getObjectProps()` Pattern
+
+Each object class defines `getObjectProps()` to declare which properties contain UUID references:
+
+```typescript
+protected getObjectProps() {
+  return {
+    buildConfigurationList: String,  // Single object reference
+    dependencies: [String],          // Array of object references
+    buildPhases: [String],
+  };
+}
+```
+
+This powers several automatic behaviors in `AbstractObject`:
+- **Inflation**: UUIDs are automatically resolved to object instances
+- **Serialization**: Objects are deflated back to UUIDs in `toJSON()`
+- **Reference tracking**: `isReferencing(uuid)` and `removeReference(uuid)` work automatically
+
+When adding new object types or properties, define them in `getObjectProps()` to get this behavior for free. Only override `isReferencing`/`removeReference` if you need custom logic (e.g., `PBXProject` removes from `TargetAttributes`).
+
+### Implementing `removeFromProject()`
+
+When implementing cascade deletion (removing an object and its children):
+
+1. **Check exclusive ownership**: Before removing a child, verify no other object uses it
+2. **Beware of display groups**: Objects like `productReference` or `fileSystemSynchronizedGroups` may be in a PBXGroup for display but still belong to one target
+3. **For target-owned objects**: Check if any OTHER target references the object, not just if it has any referrers
+
+```typescript
+// Good: Check if another target uses this product reference
+const usedByOtherTarget = [...project.values()].some(
+  (obj) => PBXNativeTarget.is(obj) && obj.uuid !== this.uuid &&
+    obj.props.productReference?.uuid === this.props.productReference?.uuid
+);
+if (!usedByOtherTarget) {
+  this.props.productReference.removeFromProject();
+}
+```
+
 ### Entry Points
 
 - `src/index.ts` - Exports the high-level API
@@ -56,3 +96,13 @@ Tests are located in `__tests__/` directories throughout the codebase:
 - Fixtures in `src/json/__tests__/fixtures/` contain real-world project files
 
 The test suite uses Jest with TypeScript support and includes extensive fixtures from various Xcode project types (React Native, Swift, CocoaPods, etc.).
+
+### Fixture Naming
+
+New fixtures should follow the pattern `NNN-description.pbxproj` (e.g., `009-expo-app-clip.pbxproj`). Add new fixtures to the `fixtures` array in `src/json/__tests__/json.test.ts` for parsing validation against `plutil`.
+
+### JSON Tests
+
+In `json.test.ts`, fixtures are added to two arrays:
+- `fixtures` - Tests parsing correctness by comparing against macOS `plutil` output
+- `inOutFixtures` - Tests round-trip (parse → build → should equal original). Only add here if the fixture round-trips perfectly; some fixtures have known formatting differences.
