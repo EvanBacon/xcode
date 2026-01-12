@@ -18,7 +18,6 @@ import type { XCConfigurationList } from "./XCConfigurationList";
 import type { XCSwiftPackageProductDependency } from "./XCSwiftPackageProductDependency";
 import type { PBXFileSystemSynchronizedRootGroup } from "./PBXFileSystemSynchronizedRootGroup";
 import { PBXContainerItemProxy } from "./PBXContainerItemProxy";
-import type { PBXFileSystemSynchronizedBuildFileExceptionSet } from "./PBXFileSystemSynchronizedBuildFileExceptionSet";
 
 export type PBXNativeTargetModel = json.PBXNativeTarget<
   XCConfigurationList,
@@ -66,6 +65,43 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
       return true;
 
     return super.isReferencing(uuid);
+  }
+
+  removeReference(uuid: string) {
+    // Remove from buildRules array
+    const ruleIndex = this.props.buildRules.findIndex(
+      (rule) => rule.uuid === uuid
+    );
+    if (ruleIndex !== -1) {
+      this.props.buildRules.splice(ruleIndex, 1);
+    }
+
+    // Remove from packageProductDependencies array
+    if (this.props.packageProductDependencies) {
+      const pkgIndex = this.props.packageProductDependencies.findIndex(
+        (dep) => dep.uuid === uuid
+      );
+      if (pkgIndex !== -1) {
+        this.props.packageProductDependencies.splice(pkgIndex, 1);
+      }
+    }
+
+    // Remove from fileSystemSynchronizedGroups array
+    if (this.props.fileSystemSynchronizedGroups) {
+      const fsIndex = this.props.fileSystemSynchronizedGroups.findIndex(
+        (group) => group.uuid === uuid
+      );
+      if (fsIndex !== -1) {
+        this.props.fileSystemSynchronizedGroups.splice(fsIndex, 1);
+      }
+    }
+
+    // Clear productReference if it matches
+    if (this.props.productReference?.uuid === uuid) {
+      this.props.productReference = undefined;
+    }
+
+    super.removeReference(uuid);
   }
 
   /** @returns the `PBXFrameworksBuildPhase` or creates one if there is none. Only one can exist. */
@@ -266,5 +302,100 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
       packageProductDependencies: [String],
       fileSystemSynchronizedGroups: [String],
     };
+  }
+
+  /**
+   * Removes this target from the project along with all of its exclusively-owned children.
+   * Children that are shared with other targets (e.g., shared build phases) are preserved.
+   */
+  removeFromProject() {
+    const project = this.getXcodeProject();
+
+    // Helper to check if an object is only referenced by this target
+    const isExclusivelyOwnedByThisTarget = (obj: { getReferrers(): { uuid: string }[] }) => {
+      const referrers = obj.getReferrers();
+      return referrers.length === 1 && referrers[0].uuid === this.uuid;
+    };
+
+    // Remove build phases that are only referenced by this target
+    for (const phase of [...this.props.buildPhases]) {
+      if (isExclusivelyOwnedByThisTarget(phase)) {
+        phase.removeFromProject();
+      }
+    }
+
+    // Remove build rules that are only referenced by this target
+    for (const rule of [...this.props.buildRules]) {
+      if (isExclusivelyOwnedByThisTarget(rule)) {
+        rule.removeFromProject();
+      }
+    }
+
+    // Remove the build configuration list (it will cascade to configurations)
+    if (isExclusivelyOwnedByThisTarget(this.props.buildConfigurationList)) {
+      this.props.buildConfigurationList.removeFromProject();
+    }
+
+    // Remove dependencies (PBXTargetDependency objects that this target depends on)
+    for (const dep of [...this.props.dependencies]) {
+      if (isExclusivelyOwnedByThisTarget(dep)) {
+        dep.removeFromProject();
+      }
+    }
+
+    // Remove file system synchronized groups
+    // Check if any OTHER target uses this group (not just any referrer, since groups can be in PBXGroups too)
+    if (this.props.fileSystemSynchronizedGroups) {
+      for (const group of [...this.props.fileSystemSynchronizedGroups]) {
+        const groupUsedByOtherTarget = [...project.values()].some(
+          (obj) =>
+            PBXNativeTarget.is(obj) &&
+            obj.uuid !== this.uuid &&
+            obj.props.fileSystemSynchronizedGroups?.some(
+              (g) => g.uuid === group.uuid
+            )
+        );
+        if (!groupUsedByOtherTarget) {
+          group.removeFromProject();
+        }
+      }
+    }
+
+    // Remove package product dependencies
+    if (this.props.packageProductDependencies) {
+      for (const dep of [...this.props.packageProductDependencies]) {
+        if (isExclusivelyOwnedByThisTarget(dep)) {
+          dep.removeFromProject();
+        }
+      }
+    }
+
+    // Remove the product reference (the .app, .framework, etc. file reference)
+    // Check if any OTHER target uses this as their productReference
+    if (this.props.productReference) {
+      const productRefUsedByOtherTarget = [...project.values()].some(
+        (obj) =>
+          PBXNativeTarget.is(obj) &&
+          obj.uuid !== this.uuid &&
+          obj.props.productReference?.uuid === this.props.productReference?.uuid
+      );
+      if (!productRefUsedByOtherTarget) {
+        this.props.productReference.removeFromProject();
+      }
+    }
+
+    // Find and remove any PBXTargetDependency objects from OTHER targets that depend on THIS target
+    for (const [, obj] of project.entries()) {
+      if (
+        PBXTargetDependency.is(obj) &&
+        (obj.props.target?.uuid === this.uuid ||
+          obj.props.targetProxy?.props.remoteGlobalIDString === this.uuid)
+      ) {
+        obj.removeFromProject();
+      }
+    }
+
+    // Call parent which handles removing from PBXProject.targets array
+    return super.removeFromProject();
   }
 }

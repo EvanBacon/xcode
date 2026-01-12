@@ -41,6 +41,12 @@ export class PBXTargetDependency extends AbstractObject<PBXTargetDependencyModel
     };
   }
 
+  isReferencing(uuid: string): boolean {
+    if (this.props.target?.uuid === uuid) return true;
+    if (this.props.targetProxy?.uuid === uuid) return true;
+    return false;
+  }
+
   /**
    * @return uuid of the target, if the dependency is a native target, otherwise the uuid of the target in the sub-project if the dependency is a target proxy.
    */
@@ -67,5 +73,16 @@ export class PBXTargetDependency extends AbstractObject<PBXTargetDependencyModel
       this.props.targetProxy.props.remoteInfo ??
       super.getDisplayName()
     );
+  }
+
+  removeFromProject() {
+    // Remove the target proxy if it's only referenced by this dependency
+    if (this.props.targetProxy) {
+      const referrers = this.props.targetProxy.getReferrers();
+      if (referrers.length === 1 && referrers[0].uuid === this.uuid) {
+        this.props.targetProxy.removeFromProject();
+      }
+    }
+    return super.removeFromProject();
   }
 }

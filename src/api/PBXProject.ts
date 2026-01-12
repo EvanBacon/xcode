@@ -238,4 +238,18 @@ export class PBXProject extends AbstractObject<PBXProjectModel> {
     }
     return !!this.props.targets.find((target) => target.uuid === uuid);
   }
+
+  removeReference(uuid: string) {
+    const index = this.props.targets.findIndex(
+      (target) => target.uuid === uuid
+    );
+    if (index !== -1) {
+      this.props.targets.splice(index, 1);
+    }
+
+    // Also remove from TargetAttributes if present
+    if (this.props.attributes?.TargetAttributes?.[uuid]) {
+      delete this.props.attributes.TargetAttributes[uuid];
+    }
+  }
 }

@@ -7,6 +7,7 @@ import {
   PBXCopyFilesBuildPhase,
   PBXFileReference,
 } from "..";
+import * as json from "../../json/types";
 
 const WORKING_FIXTURE = path.join(
   __dirname,
@@ -23,6 +24,11 @@ const WATCH_FIXTURE = path.join(
   "../../json/__tests__/fixtures/watch.pbxproj"
 );
 
+const APP_CLIP_FIXTURE = path.join(
+  __dirname,
+  "../../json/__tests__/fixtures/009-missing-app-clip-target.pbxproj"
+);
+
 describe("PBXNativeTarget", () => {
   describe("basic functionality", () => {
     it("gets referrers", () => {
@@ -31,8 +37,9 @@ describe("PBXNativeTarget", () => {
         "299522761BBF136400859F49"
       ) as PBXNativeTarget;
 
-      expect(obj.getReferrers().map((o) => o.uuid)).toEqual([
-        "299522301BBF104D00859F49",
+      expect(obj.getReferrers().map((o) => o.uuid).sort()).toEqual([
+        "298D7C511BC2C7B200FD3B3E", // PBXTargetDependency that references this target
+        "299522301BBF104D00859F49", // PBXProject that contains this target
       ]);
     });
 
@@ -583,6 +590,268 @@ describe("PBXNativeTarget", () => {
           expect(typeof nativeTarget.isWatchOSTarget()).toBe("boolean");
         }
       });
+    });
+  });
+
+  describe("removeFromProject", () => {
+    it("should remove app clip target and its exclusive children from project", () => {
+      const xcproj = XcodeProject.open(APP_CLIP_FIXTURE);
+      const project = xcproj.rootObject;
+
+      // Get the app clip target
+      const appClipTarget = xcproj.getObject(
+        "XX42A75F8F031FED491C16XX"
+      ) as PBXNativeTarget;
+      expect(appClipTarget).toBeDefined();
+      expect(appClipTarget.props.productType).toBe(
+        "com.apple.product-type.application.on-demand-install-capable"
+      );
+
+      // Record UUIDs of objects that should be removed
+      const appClipBuildConfigList = appClipTarget.props.buildConfigurationList;
+      const appClipBuildConfigs = [...appClipBuildConfigList.props.buildConfigurations];
+      const appClipProductRef = appClipTarget.props.productReference;
+      const appClipFileSystemGroups = appClipTarget.props.fileSystemSynchronizedGroups || [];
+
+      // Get the main target to verify it's not affected
+      const mainTarget = project.props.targets.find(
+        (t) => PBXNativeTarget.is(t) && t.uuid !== appClipTarget.uuid
+      ) as PBXNativeTarget;
+      expect(mainTarget).toBeDefined();
+      const mainTargetUuid = mainTarget.uuid;
+
+      // Count initial objects
+      const initialTargetCount = project.props.targets.length;
+      const initialObjectCount = xcproj.size;
+
+      // Remove the app clip target
+      appClipTarget.removeFromProject();
+
+      // Verify target was removed from project
+      expect(project.props.targets.length).toBe(initialTargetCount - 1);
+      expect(
+        project.props.targets.find((t) => t.uuid === "XX42A75F8F031FED491C16XX")
+      ).toBeUndefined();
+
+      // Verify target is no longer in the project map
+      expect(xcproj.has("XX42A75F8F031FED491C16XX")).toBe(false);
+
+      // Verify build configuration list was removed
+      expect(xcproj.has(appClipBuildConfigList.uuid)).toBe(false);
+
+      // Verify build configurations were removed
+      for (const config of appClipBuildConfigs) {
+        expect(xcproj.has(config.uuid)).toBe(false);
+      }
+
+      // Verify product reference was removed
+      if (appClipProductRef) {
+        expect(xcproj.has(appClipProductRef.uuid)).toBe(false);
+      }
+
+      // Verify file system synchronized groups were removed
+      for (const group of appClipFileSystemGroups) {
+        expect(xcproj.has(group.uuid)).toBe(false);
+      }
+
+      // Verify objects were actually removed (not just from arrays)
+      expect(xcproj.size).toBeLessThan(initialObjectCount);
+
+      // Verify main target still exists and is functional
+      expect(xcproj.has(mainTargetUuid)).toBe(true);
+      const stillExistingMainTarget = xcproj.getObject(mainTargetUuid) as PBXNativeTarget;
+      expect(stillExistingMainTarget.props.name).toBe("testlaunchappclip");
+    });
+
+    it("should remove target dependency from main target when app clip is removed", () => {
+      const xcproj = XcodeProject.open(APP_CLIP_FIXTURE);
+      const project = xcproj.rootObject;
+
+      // Get the main target
+      const mainTarget = project.props.targets.find(
+        (t) =>
+          PBXNativeTarget.is(t) &&
+          t.props.productType === "com.apple.product-type.application"
+      ) as PBXNativeTarget;
+      expect(mainTarget).toBeDefined();
+
+      // Verify main target has a dependency on the clip target
+      const initialDependencyCount = mainTarget.props.dependencies.length;
+      expect(initialDependencyCount).toBeGreaterThan(0);
+
+      // Find the dependency on the clip target
+      const clipDependency = mainTarget.props.dependencies.find(
+        (dep) =>
+          dep.props.target?.uuid === "XX42A75F8F031FED491C16XX" ||
+          dep.props.targetProxy?.props.remoteGlobalIDString === "XX42A75F8F031FED491C16XX"
+      );
+      expect(clipDependency).toBeDefined();
+
+      // Get the app clip target and remove it
+      const appClipTarget = xcproj.getObject(
+        "XX42A75F8F031FED491C16XX"
+      ) as PBXNativeTarget;
+      appClipTarget.removeFromProject();
+
+      // Verify the dependency was removed from main target
+      expect(mainTarget.props.dependencies.length).toBe(
+        initialDependencyCount - 1
+      );
+
+      // Verify no dependency references the removed target
+      const remainingClipDependency = mainTarget.props.dependencies.find(
+        (dep) =>
+          dep.props.target?.uuid === "XX42A75F8F031FED491C16XX" ||
+          dep.props.targetProxy?.props.remoteGlobalIDString === "XX42A75F8F031FED491C16XX"
+      );
+      expect(remainingClipDependency).toBeUndefined();
+    });
+
+    it("should preserve shared build phases when removing target", () => {
+      const xcproj = XcodeProject.open(APP_CLIP_FIXTURE);
+
+      // Get both targets
+      const appClipTarget = xcproj.getObject(
+        "XX42A75F8F031FED491C16XX"
+      ) as PBXNativeTarget;
+      const mainTarget = xcproj.rootObject.props.targets.find(
+        (t) => PBXNativeTarget.is(t) && t.uuid !== appClipTarget.uuid
+      ) as PBXNativeTarget;
+
+      // Find a shared build phase (Bundle React Native code and images)
+      const sharedBuildPhaseUuid = "00DD1BFF1BD5951E006B06BC";
+      const sharedPhaseInAppClip = appClipTarget.props.buildPhases.find(
+        (p) => p.uuid === sharedBuildPhaseUuid
+      );
+      const sharedPhaseInMain = mainTarget.props.buildPhases.find(
+        (p) => p.uuid === sharedBuildPhaseUuid
+      );
+
+      expect(sharedPhaseInAppClip).toBeDefined();
+      expect(sharedPhaseInMain).toBeDefined();
+
+      // Remove the app clip target
+      appClipTarget.removeFromProject();
+
+      // Verify shared build phase still exists
+      expect(xcproj.has(sharedBuildPhaseUuid)).toBe(true);
+
+      // Verify main target still has the shared build phase
+      expect(
+        mainTarget.props.buildPhases.find((p) => p.uuid === sharedBuildPhaseUuid)
+      ).toBeDefined();
+    });
+
+    it("should remove TargetAttributes when target is removed", () => {
+      const xcproj = XcodeProject.open(APP_CLIP_FIXTURE);
+      const project = xcproj.rootObject;
+
+      // Verify TargetAttributes exists for the app clip target
+      expect(
+        project.props.attributes?.TargetAttributes?.["XX42A75F8F031FED491C16XX"]
+      ).toBeDefined();
+
+      // Get and remove the app clip target
+      const appClipTarget = xcproj.getObject(
+        "XX42A75F8F031FED491C16XX"
+      ) as PBXNativeTarget;
+      appClipTarget.removeFromProject();
+
+      // Verify TargetAttributes was removed
+      expect(
+        project.props.attributes?.TargetAttributes?.["XX42A75F8F031FED491C16XX"]
+      ).toBeUndefined();
+    });
+
+    it("should remove PBXFileSystemSynchronizedBuildFileExceptionSet when target is removed", () => {
+      const xcproj = XcodeProject.open(APP_CLIP_FIXTURE);
+
+      // Verify the exception set exists
+      const exceptionSetUuid = "XX01298A2D70B7E6C164BFXX";
+      expect(xcproj.has(exceptionSetUuid)).toBe(true);
+
+      // Get and remove the app clip target
+      const appClipTarget = xcproj.getObject(
+        "XX42A75F8F031FED491C16XX"
+      ) as PBXNativeTarget;
+      appClipTarget.removeFromProject();
+
+      // Verify the exception set was removed (it was only referenced by the clip's file system group)
+      expect(xcproj.has(exceptionSetUuid)).toBe(false);
+    });
+
+    it("should remove container item proxy when target dependency is removed", () => {
+      const xcproj = XcodeProject.open(APP_CLIP_FIXTURE);
+
+      // Verify the container item proxy exists
+      const containerProxyUuid = "XX0A11D0DF5B266A2E8584XX";
+      expect(xcproj.has(containerProxyUuid)).toBe(true);
+
+      // Get and remove the app clip target
+      const appClipTarget = xcproj.getObject(
+        "XX42A75F8F031FED491C16XX"
+      ) as PBXNativeTarget;
+      appClipTarget.removeFromProject();
+
+      // Verify the container item proxy was removed
+      expect(xcproj.has(containerProxyUuid)).toBe(false);
+    });
+
+    it("should handle removing a target with no dependencies", () => {
+      const xcproj = XcodeProject.open(MULTITARGET_FIXTURE);
+      const project = xcproj.rootObject;
+
+      // Create a new standalone target
+      const mainTarget = project.getMainAppTarget()!;
+      const newTarget = project.createNativeTarget({
+        name: "StandaloneTarget",
+        productType: "com.apple.product-type.framework",
+        buildConfigurationList: mainTarget.props.buildConfigurationList,
+      });
+
+      const newTargetUuid = newTarget.uuid;
+      expect(xcproj.has(newTargetUuid)).toBe(true);
+
+      // Remove the standalone target
+      newTarget.removeFromProject();
+
+      // Verify target was removed
+      expect(xcproj.has(newTargetUuid)).toBe(false);
+      expect(
+        project.props.targets.find((t) => t.uuid === newTargetUuid)
+      ).toBeUndefined();
+    });
+
+    it("should not remove build configuration list if shared", () => {
+      const xcproj = XcodeProject.open(MULTITARGET_FIXTURE);
+      const project = xcproj.rootObject;
+
+      // Create two targets sharing the same build configuration list
+      const mainTarget = project.getMainAppTarget()!;
+      const sharedConfigList = mainTarget.props.buildConfigurationList;
+
+      const target1 = project.createNativeTarget({
+        name: "Target1",
+        productType: "com.apple.product-type.framework",
+        buildConfigurationList: sharedConfigList,
+      });
+
+      const target2 = project.createNativeTarget({
+        name: "Target2",
+        productType: "com.apple.product-type.framework",
+        buildConfigurationList: sharedConfigList,
+      });
+
+      // Remove target1
+      target1.removeFromProject();
+
+      // Verify shared config list still exists (used by mainTarget and target2)
+      expect(xcproj.has(sharedConfigList.uuid)).toBe(true);
+
+      // Verify target2 still has the config list
+      expect(target2.props.buildConfigurationList.uuid).toBe(
+        sharedConfigList.uuid
+      );
     });
   });
 });

@@ -91,4 +91,19 @@ export class XCConfigurationList extends AbstractObject<XCConfigurationListModel
   ) {
     return this.getDefaultConfiguration().props.buildSettings[key];
   }
+
+  removeFromProject() {
+    // Remove all build configurations that are only referenced by this list
+    for (const config of [...this.props.buildConfigurations]) {
+      const referrers = config.getReferrers();
+      // Only remove if this config list is the only referrer
+      if (
+        referrers.length === 1 &&
+        referrers[0].uuid === this.uuid
+      ) {
+        config.removeFromProject();
+      }
+    }
+    return super.removeFromProject();
+  }
 }

@@ -128,6 +128,24 @@ export class AbstractTarget<
     return false;
   }
 
+  removeReference(uuid: string) {
+    // Remove from dependencies array
+    const depIndex = this.props.dependencies.findIndex(
+      (dep) => dep.uuid === uuid
+    );
+    if (depIndex !== -1) {
+      this.props.dependencies.splice(depIndex, 1);
+    }
+
+    // Remove from buildPhases array
+    const phaseIndex = this.props.buildPhases.findIndex(
+      (phase) => phase.uuid === uuid
+    );
+    if (phaseIndex !== -1) {
+      this.props.buildPhases.splice(phaseIndex, 1);
+    }
+  }
+
   protected getObjectProps(): any {
     return {
       buildConfigurationList: String,
