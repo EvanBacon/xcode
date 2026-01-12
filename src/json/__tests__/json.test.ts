@@ -32,6 +32,7 @@ describe(parse, () => {
     "006-spm.pbxproj",
     "007-xcode16.pbxproj",
     "008-out-of-order-orphans.pbxproj",
+    "009-missing-app-clip-target.pbxproj",
     "shopify-tophat.pbxproj",
     "AFNetworking.pbxproj",
     "project.pbxproj",
