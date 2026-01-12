@@ -26,7 +26,7 @@ const WATCH_FIXTURE = path.join(
 
 const APP_CLIP_FIXTURE = path.join(
   __dirname,
-  "../../json/__tests__/fixtures/009-missing-app-clip-target.pbxproj"
+  "../../json/__tests__/fixtures/009-expo-app-clip.pbxproj"
 );
 
 describe("PBXNativeTarget", () => {
@@ -37,7 +37,12 @@ describe("PBXNativeTarget", () => {
         "299522761BBF136400859F49"
       ) as PBXNativeTarget;
 
-      expect(obj.getReferrers().map((o) => o.uuid).sort()).toEqual([
+      expect(
+        obj
+          .getReferrers()
+          .map((o) => o.uuid)
+          .sort()
+      ).toEqual([
         "298D7C511BC2C7B200FD3B3E", // PBXTargetDependency that references this target
         "299522301BBF104D00859F49", // PBXProject that contains this target
       ]);
@@ -609,9 +614,12 @@ describe("PBXNativeTarget", () => {
 
       // Record UUIDs of objects that should be removed
       const appClipBuildConfigList = appClipTarget.props.buildConfigurationList;
-      const appClipBuildConfigs = [...appClipBuildConfigList.props.buildConfigurations];
+      const appClipBuildConfigs = [
+        ...appClipBuildConfigList.props.buildConfigurations,
+      ];
       const appClipProductRef = appClipTarget.props.productReference;
-      const appClipFileSystemGroups = appClipTarget.props.fileSystemSynchronizedGroups || [];
+      const appClipFileSystemGroups =
+        appClipTarget.props.fileSystemSynchronizedGroups || [];
 
       // Get the main target to verify it's not affected
       const mainTarget = project.props.targets.find(
@@ -659,7 +667,9 @@ describe("PBXNativeTarget", () => {
 
       // Verify main target still exists and is functional
       expect(xcproj.has(mainTargetUuid)).toBe(true);
-      const stillExistingMainTarget = xcproj.getObject(mainTargetUuid) as PBXNativeTarget;
+      const stillExistingMainTarget = xcproj.getObject(
+        mainTargetUuid
+      ) as PBXNativeTarget;
       expect(stillExistingMainTarget.props.name).toBe("testlaunchappclip");
     });
 
@@ -683,7 +693,8 @@ describe("PBXNativeTarget", () => {
       const clipDependency = mainTarget.props.dependencies.find(
         (dep) =>
           dep.props.target?.uuid === "XX42A75F8F031FED491C16XX" ||
-          dep.props.targetProxy?.props.remoteGlobalIDString === "XX42A75F8F031FED491C16XX"
+          dep.props.targetProxy?.props.remoteGlobalIDString ===
+            "XX42A75F8F031FED491C16XX"
       );
       expect(clipDependency).toBeDefined();
 
@@ -702,7 +713,8 @@ describe("PBXNativeTarget", () => {
       const remainingClipDependency = mainTarget.props.dependencies.find(
         (dep) =>
           dep.props.target?.uuid === "XX42A75F8F031FED491C16XX" ||
-          dep.props.targetProxy?.props.remoteGlobalIDString === "XX42A75F8F031FED491C16XX"
+          dep.props.targetProxy?.props.remoteGlobalIDString ===
+            "XX42A75F8F031FED491C16XX"
       );
       expect(remainingClipDependency).toBeUndefined();
     });
@@ -738,7 +750,9 @@ describe("PBXNativeTarget", () => {
 
       // Verify main target still has the shared build phase
       expect(
-        mainTarget.props.buildPhases.find((p) => p.uuid === sharedBuildPhaseUuid)
+        mainTarget.props.buildPhases.find(
+          (p) => p.uuid === sharedBuildPhaseUuid
+        )
       ).toBeDefined();
     });
 
