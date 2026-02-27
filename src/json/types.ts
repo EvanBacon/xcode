@@ -594,12 +594,40 @@ export interface XCSwiftPackageProductDependency<TPackage = UUID>
   productName?: string;
 }
 
+/** Version requirement for a remote Swift package. */
+export type XCSwiftPackageVersionRequirement =
+  | {
+      kind: "upToNextMajorVersion";
+      minimumVersion: string;
+    }
+  | {
+      kind: "upToNextMinorVersion";
+      minimumVersion: string;
+    }
+  | {
+      kind: "versionRange";
+      minimumVersion: string;
+      maximumVersion: string;
+    }
+  | {
+      kind: "exactVersion";
+      version: string;
+    }
+  | {
+      kind: "branch";
+      branch: string;
+    }
+  | {
+      kind: "revision";
+      revision: string;
+    };
+
 export interface XCRemoteSwiftPackageReference
   extends AbstractObject<ISA.XCRemoteSwiftPackageReference> {
   /** URL the Swift package was installed from. */
-  repositoryURL: string;
+  repositoryURL?: string;
   /** Version requirements. */
-  requirement?: Record<string, any>;
+  requirement?: XCSwiftPackageVersionRequirement;
 }
 
 export interface XCLocalSwiftPackageReference
