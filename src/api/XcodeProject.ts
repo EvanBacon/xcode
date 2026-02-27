@@ -1,7 +1,9 @@
 import assert from "assert";
-import { readFileSync } from "fs";
+import { readFileSync, readdirSync, existsSync, unlinkSync, rmdirSync } from "fs";
 import path from "path";
 import crypto from "crypto";
+
+import { XCScheme, createBuildableReference } from "./XCScheme";
 
 import { parse } from "../json";
 import * as json from "../json/types";
@@ -346,6 +348,176 @@ export class XcodeProject extends Map<json.UUID, AnyModel> {
     return this.getUniqueId(
       // Add a space to the seed to increase the hash.
       seed + " "
+    );
+  }
+
+  // ============================================================================
+  // Scheme Methods
+  // ============================================================================
+
+  /**
+   * Get the directory containing shared schemes.
+   */
+  getSharedSchemesDir(): string {
+    const projectDir = path.dirname(this.filePath);
+    return path.join(projectDir, "xcshareddata", "xcschemes");
+  }
+
+  /**
+   * Get the directory containing user schemes for a specific user.
+   */
+  getUserSchemesDir(username: string): string {
+    const projectDir = path.dirname(this.filePath);
+    return path.join(
+      projectDir,
+      "xcuserdata",
+      `${username}.xcuserdatad`,
+      "xcschemes"
+    );
+  }
+
+  /**
+   * Get all schemes (shared + user) for this project.
+   *
+   * @param options.includeUser Whether to include user schemes (requires username)
+   * @param options.username Username for user schemes
+   */
+  getSchemes(options?: {
+    includeUser?: boolean;
+    username?: string;
+  }): XCScheme[] {
+    const schemes: XCScheme[] = [];
+
+    // Get shared schemes
+    const sharedDir = this.getSharedSchemesDir();
+    if (existsSync(sharedDir)) {
+      const files = readdirSync(sharedDir).filter((f) =>
+        f.endsWith(".xcscheme")
+      );
+      for (const file of files) {
+        schemes.push(XCScheme.open(path.join(sharedDir, file)));
+      }
+    }
+
+    // Get user schemes if requested
+    if (options?.includeUser && options?.username) {
+      const userDir = this.getUserSchemesDir(options.username);
+      if (existsSync(userDir)) {
+        const files = readdirSync(userDir).filter((f) =>
+          f.endsWith(".xcscheme")
+        );
+        for (const file of files) {
+          schemes.push(XCScheme.open(path.join(userDir, file)));
+        }
+      }
+    }
+
+    return schemes;
+  }
+
+  /**
+   * Get a scheme by name.
+   *
+   * @param name The scheme name (without .xcscheme extension)
+   * @param options.username Optional username to check user schemes
+   */
+  getScheme(
+    name: string,
+    options?: { username?: string }
+  ): XCScheme | null {
+    const fileName = name.endsWith(".xcscheme") ? name : `${name}.xcscheme`;
+
+    // Check shared schemes first
+    const sharedPath = path.join(this.getSharedSchemesDir(), fileName);
+    if (existsSync(sharedPath)) {
+      return XCScheme.open(sharedPath);
+    }
+
+    // Check user schemes if username provided
+    if (options?.username) {
+      const userPath = path.join(
+        this.getUserSchemesDir(options.username),
+        fileName
+      );
+      if (existsSync(userPath)) {
+        return XCScheme.open(userPath);
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Save a scheme to disk.
+   *
+   * @param scheme The scheme to save
+   * @param options.shared Whether to save as shared scheme (default: true)
+   * @param options.username Required if shared=false
+   */
+  saveScheme(
+    scheme: XCScheme,
+    options?: { shared?: boolean; username?: string }
+  ): void {
+    const isShared = options?.shared ?? true;
+    const fileName = `${scheme.name}.xcscheme`;
+
+    let targetDir: string;
+    if (isShared) {
+      targetDir = this.getSharedSchemesDir();
+    } else {
+      if (!options?.username) {
+        throw new Error("username is required when saving a user scheme");
+      }
+      targetDir = this.getUserSchemesDir(options.username);
+    }
+
+    const targetPath = path.join(targetDir, fileName);
+    scheme.save(targetPath);
+  }
+
+  /**
+   * Delete a scheme.
+   *
+   * @param name The scheme name (without .xcscheme extension)
+   * @param options.shared Whether to delete from shared schemes (default: true)
+   * @param options.username Required if shared=false
+   */
+  deleteScheme(
+    name: string,
+    options?: { shared?: boolean; username?: string }
+  ): void {
+    const isShared = options?.shared ?? true;
+    const fileName = `${name}.xcscheme`;
+
+    let targetDir: string;
+    if (isShared) {
+      targetDir = this.getSharedSchemesDir();
+    } else {
+      if (!options?.username) {
+        throw new Error("username is required when deleting a user scheme");
+      }
+      targetDir = this.getUserSchemesDir(options.username);
+    }
+
+    const targetPath = path.join(targetDir, fileName);
+    if (existsSync(targetPath)) {
+      unlinkSync(targetPath);
+    }
+  }
+
+  /**
+   * Create a basic scheme for a target.
+   *
+   * @param target The target to create a scheme for
+   * @param name Optional custom scheme name (defaults to target name)
+   */
+  createSchemeForTarget(target: PBXNativeTarget, name?: string): XCScheme {
+    const projectDir = path.dirname(this.filePath);
+    const projectName = path.basename(projectDir);
+    return XCScheme.createForTarget(
+      target,
+      name,
+      `${projectName}`
     );
   }
 
