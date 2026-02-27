@@ -29,7 +29,9 @@ export class XCSwiftPackageProductDependency extends AbstractObject<XCSwiftPacka
   }
 
   protected getObjectProps() {
-    return {};
+    return {
+      package: String,
+    };
   }
 
   getDisplayName(): string {

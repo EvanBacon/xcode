@@ -591,23 +591,50 @@ export interface XCSwiftPackageProductDependency<TPackage = UUID>
   /** UUID for an object of type `XCRemoteSwiftPackageReference` or `XCLocalSwiftPackageReference` */
   package?: TPackage;
 
-  productName?: string;
+  /** Name of the product from the Swift package. For plugins, prefixed with "plugin:" */
+  productName: string;
 }
+
+/** Version requirement for a remote Swift package. */
+export type XCSwiftPackageVersionRequirement =
+  | {
+      kind: "upToNextMajorVersion";
+      minimumVersion: string;
+    }
+  | {
+      kind: "upToNextMinorVersion";
+      minimumVersion: string;
+    }
+  | {
+      kind: "versionRange";
+      minimumVersion: string;
+      maximumVersion: string;
+    }
+  | {
+      kind: "exactVersion";
+      version: string;
+    }
+  | {
+      kind: "branch";
+      branch: string;
+    }
+  | {
+      kind: "revision";
+      revision: string;
+    };
 
 export interface XCRemoteSwiftPackageReference
   extends AbstractObject<ISA.XCRemoteSwiftPackageReference> {
   /** URL the Swift package was installed from. */
-  repositoryURL: string;
+  repositoryURL?: string;
   /** Version requirements. */
-  requirement?: Record<string, any>;
+  requirement?: XCSwiftPackageVersionRequirement;
 }
 
 export interface XCLocalSwiftPackageReference
   extends AbstractObject<ISA.XCLocalSwiftPackageReference> {
-  /** URL the Swift package was installed from. */
-  path: string;
   /** Repository path where the package is located relative to the Xcode project. */
-  relativePath?: string;
+  relativePath: string;
 }
 
 export interface PBXContainerItemProxy<
