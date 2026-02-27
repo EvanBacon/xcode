@@ -591,7 +591,8 @@ export interface XCSwiftPackageProductDependency<TPackage = UUID>
   /** UUID for an object of type `XCRemoteSwiftPackageReference` or `XCLocalSwiftPackageReference` */
   package?: TPackage;
 
-  productName?: string;
+  /** Name of the product from the Swift package. For plugins, prefixed with "plugin:" */
+  productName: string;
 }
 
 /** Version requirement for a remote Swift package. */
