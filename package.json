@@ -2,6 +2,7 @@
   "name": "@bacons/xcode",
   "version": "1.0.0-alpha.29",
   "main": "./build/index",
+  "types": "./build/index.d.ts",
   "description": "pbxproj parser",
   "license": "MIT",
   "repository": {
@@ -15,12 +16,26 @@
     "xcode",
     "ios"
   ],
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "default": "./build/index.js"
+    },
+    "./json": {
+      "types": "./build/json/index.d.ts",
+      "default": "./build/json/index.js"
+    },
+    "./scheme": {
+      "types": "./build/scheme/index.d.ts",
+      "default": "./build/scheme/index.js"
+    },
+    "./workspace": {
+      "types": "./build/workspace/index.d.ts",
+      "default": "./build/workspace/index.js"
+    }
+  },
   "files": [
-    "build",
-    "json.js",
-    "json.d.ts",
-    "scheme.js",
-    "scheme.d.ts"
+    "build"
   ],
   "dependencies": {
     "@expo/plist": "^0.0.18",

@@ -34,3 +34,4 @@ export { XCLocalSwiftPackageReference } from "./XCLocalSwiftPackageReference";
 export { XCSwiftPackageProductDependency } from "./XCSwiftPackageProductDependency";
 export { XCVersionGroup } from "./XCVersionGroup";
 export { XCScheme, createBuildableReference } from "./XCScheme";
+export { XCWorkspace } from "./XCWorkspace";

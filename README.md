@@ -116,13 +116,16 @@ import * as scheme from "@bacons/xcode/scheme";
 import fs from "fs";
 
 // Parse an xcscheme file
-const xml = fs.readFileSync("/path/to/Project.xcodeproj/xcshareddata/xcschemes/App.xcscheme", "utf-8");
+const xml = fs.readFileSync(
+  "/path/to/Project.xcodeproj/xcshareddata/xcschemes/App.xcscheme",
+  "utf-8",
+);
 const xcscheme = scheme.parse(xml);
 
 // Modify the scheme
 xcscheme.buildAction.parallelizeBuildables = true;
 xcscheme.launchAction.environmentVariables = [
-  { key: "DEBUG", value: "1", isEnabled: true }
+  { key: "DEBUG", value: "1", isEnabled: true },
 ];
 
 // Serialize back to XML
@@ -144,7 +147,7 @@ const appScheme = project.getScheme("App");
 const newScheme = XCScheme.create("MyNewScheme");
 newScheme.addBuildTarget({
   buildableIdentifier: "primary",
-  blueprintIdentifier: "ABC123",  // Target UUID
+  blueprintIdentifier: "ABC123", // Target UUID
   buildableName: "App.app",
   blueprintName: "App",
   referencedContainer: "container:Project.xcodeproj",
@@ -179,6 +182,77 @@ console.log(management.SchemeUserState?.["App.xcscheme"]?.isShown);
 const output = scheme.buildManagement(management);
 ```
 
+## XCWorkspace Support
+
+Parse and manipulate Xcode workspace files (`.xcworkspace`). Workspaces group multiple Xcode projects together, commonly used with CocoaPods, monorepos, and multi-project setups.
+
+### Low-level API
+
+```ts
+import * as workspace from "@bacons/xcode/workspace";
+import fs from "fs";
+
+// Parse a workspace file
+const xml = fs.readFileSync(
+  "/path/to/MyApp.xcworkspace/contents.xcworkspacedata",
+  "utf-8",
+);
+const ws = workspace.parse(xml);
+
+// Access project references
+console.log(ws.fileRefs); // [{ location: "group:App.xcodeproj" }, ...]
+
+// Modify the workspace
+ws.fileRefs?.push({ location: "group:NewProject.xcodeproj" });
+
+// Serialize back to XML
+const outputXml = workspace.build(ws);
+fs.writeFileSync("/path/to/contents.xcworkspacedata", outputXml);
+```
+
+### High-level API
+
+```ts
+import { XCWorkspace } from "@bacons/xcode";
+
+// Open an existing workspace
+const workspace = XCWorkspace.open("/path/to/MyApp.xcworkspace");
+
+// Get all project paths
+const projects = workspace.getProjectPaths();
+console.log(projects); // ["group:App.xcodeproj", "group:Pods/Pods.xcodeproj"]
+
+// Check if workspace contains a project
+if (!workspace.hasProject("NewProject.xcodeproj")) {
+  workspace.addProject("NewProject.xcodeproj");
+}
+
+// Remove a project
+workspace.removeProject("OldProject.xcodeproj");
+
+// Work with groups
+const group = workspace.addGroup("Libraries", "group:Libraries");
+group.fileRefs?.push({ location: "group:Libraries/MyLib.xcodeproj" });
+
+// Save changes
+workspace.save();
+
+// Create a new workspace
+const newWorkspace = XCWorkspace.create("MyWorkspace");
+newWorkspace.addProject("App.xcodeproj");
+newWorkspace.addProject("Pods/Pods.xcodeproj");
+newWorkspace.save("/path/to/MyWorkspace.xcworkspace");
+```
+
+### Location Types
+
+Workspace file references use location specifiers:
+
+- `group:path` - Relative path from workspace root (most common)
+- `self:` - Self-reference (embedded workspace inside `.xcodeproj`)
+- `container:path` - Absolute container reference (rare)
+- `absolute:path` - Absolute file path
+
 ## Solution
 
 - Unlike the [xcode](https://www.npmjs.com/package/xcode) package which uses PEG.js, this implementation uses [Chevrotain](https://chevrotain.io/).
@@ -205,7 +279,7 @@ We support the following types: `Object`, `Array`, `Data`, `String`. Notably, we
 - [x] Reference-type API.
 - [x] Build setting parsing.
 - [x] xcscheme support.
-- [ ] xcworkspace support.
+- [x] xcworkspace support.
 - [ ] Benchmarks.
 - [ ] Create robust xcode projects from scratch.
 - [ ] Skills.
