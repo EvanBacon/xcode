@@ -1,9 +1,9 @@
 # `@bacons/xcode`
 
-> This project is a ~~_work in progress_ / _proof of concept_~~ seemingly spec compliant `pbxproj` parser. The API is subject to breaking changes.
+Very fast and well-typed parser for Xcode project files (`.pbxproj`).
 
 ```
-yarn add @bacons/xcode
+bun install @bacons/xcode
 ```
 
 Here is a diagram of the grammar used for parsing:
@@ -105,6 +105,80 @@ const file = PBXBuildFile.create(project, {
 // The file and fileRef will now be injected in the pbxproj `objects` dict.
 ```
 
+## XCScheme Support
+
+Parse and manipulate Xcode scheme files (`.xcscheme`). Schemes define how targets are built, run, tested, profiled, analyzed, and archived.
+
+### Low-level API
+
+```ts
+import * as scheme from "@bacons/xcode/scheme";
+import fs from "fs";
+
+// Parse an xcscheme file
+const xml = fs.readFileSync("/path/to/Project.xcodeproj/xcshareddata/xcschemes/App.xcscheme", "utf-8");
+const xcscheme = scheme.parse(xml);
+
+// Modify the scheme
+xcscheme.buildAction.parallelizeBuildables = true;
+xcscheme.launchAction.environmentVariables = [
+  { key: "DEBUG", value: "1", isEnabled: true }
+];
+
+// Serialize back to XML
+const outputXml = scheme.build(xcscheme);
+fs.writeFileSync("/path/to/App.xcscheme", outputXml);
+```
+
+### High-level API
+
+```ts
+import { XcodeProject, XCScheme } from "@bacons/xcode";
+
+// Load project and get schemes
+const project = XcodeProject.open("/path/to/project.pbxproj");
+const schemes = project.getSchemes();
+const appScheme = project.getScheme("App");
+
+// Create a new scheme
+const newScheme = XCScheme.create("MyNewScheme");
+newScheme.addBuildTarget({
+  buildableIdentifier: "primary",
+  blueprintIdentifier: "ABC123",  // Target UUID
+  buildableName: "App.app",
+  blueprintName: "App",
+  referencedContainer: "container:Project.xcodeproj",
+});
+newScheme.setLaunchEnvironmentVariable("API_URL", "https://api.example.com");
+newScheme.addLaunchArgument("-verbose");
+
+// Save to disk
+project.saveScheme(newScheme);
+
+// Create scheme for an existing target
+const mainTarget = project.rootObject.props.targets[0];
+const targetScheme = project.createSchemeForTarget(mainTarget);
+project.saveScheme(targetScheme);
+```
+
+### Scheme Management
+
+Parse and build `xcschememanagement.plist` files that control scheme visibility and ordering:
+
+```ts
+import * as scheme from "@bacons/xcode/scheme";
+import fs from "fs";
+
+const plist = fs.readFileSync("/path/to/xcschememanagement.plist", "utf-8");
+const management = scheme.parseManagement(plist);
+
+// Check scheme visibility
+console.log(management.SchemeUserState?.["App.xcscheme"]?.isShown);
+
+// Rebuild plist
+const output = scheme.buildManagement(management);
+```
+
 ## Solution
 
 - Unlike the [xcode](https://www.npmjs.com/package/xcode) package which uses PEG.js, this implementation uses [Chevrotain](https://chevrotain.io/).
@@ -130,8 +204,12 @@ We support the following types: `Object`, `Array`, `Data`, `String`. Notably, we
 - [x] Generating UUIDs.
 - [x] Reference-type API.
 - [x] Build setting parsing.
+- [x] xcscheme support.
 - [ ] xcworkspace support.
-- [ ] Docs.
+- [ ] Benchmarks.
+- [ ] Create robust xcode projects from scratch.
+- [ ] Skills.
+- [ ] Import from other tools.
 
 # Docs
 
