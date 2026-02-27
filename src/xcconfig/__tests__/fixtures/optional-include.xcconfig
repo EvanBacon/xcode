@@ -1,0 +1,5 @@
+// Optional include test
+#include? "NonExistent.xcconfig"
+#include "Base.xcconfig"
+
+LOCAL_SETTING = local_value

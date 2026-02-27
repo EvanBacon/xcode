@@ -277,6 +277,84 @@ Workspace file references use location specifiers:
 - `container:path` - Absolute container reference (rare)
 - `absolute:path` - Absolute file path
 
+## XCConfig Support
+
+Parse and manipulate Xcode configuration files (`.xcconfig`). These files define build settings that can be shared across targets and configurations.
+
+### Low-level API
+
+```ts
+import * as xcconfig from "@bacons/xcode/xcconfig";
+import fs from "fs";
+
+// Parse an xcconfig string
+const config = xcconfig.parse(`
+  #include "Base.xcconfig"
+  PRODUCT_NAME = MyApp
+  OTHER_LDFLAGS[sdk=iphoneos*] = -framework UIKit
+`);
+
+// Parse from file (resolves #include directives)
+const config = xcconfig.parseFile("/path/to/Project.xcconfig");
+
+// Flatten build settings (merges includes, applies conditions)
+const allSettings = xcconfig.flattenBuildSettings(config);
+
+// Filter by platform conditions
+const iosSettings = xcconfig.flattenBuildSettings(config, {
+  sdk: "iphoneos",
+  arch: "arm64",
+  config: "Release",
+});
+
+// Serialize back to xcconfig format
+const output = xcconfig.build(config);
+fs.writeFileSync("/path/to/Project.xcconfig", output);
+```
+
+### Conditional Settings
+
+XCConfig supports conditional settings based on SDK, architecture, and configuration:
+
+```
+// SDK-specific settings
+OTHER_LDFLAGS[sdk=iphoneos*] = -framework UIKit
+OTHER_LDFLAGS[sdk=macosx*] = -framework AppKit
+
+// Architecture-specific settings
+ARCHS[arch=arm64] = arm64
+ARCHS[arch=x86_64] = x86_64
+
+// Configuration-specific settings
+GCC_OPTIMIZATION_LEVEL[config=Debug] = 0
+GCC_OPTIMIZATION_LEVEL[config=Release] = s
+
+// Combined conditions
+LIBRARY_SEARCH_PATHS[sdk=iphoneos*][arch=arm64] = /usr/lib/arm64
+```
+
+### Include Directives
+
+```
+// Required include - throws if file not found
+#include "Base.xcconfig"
+
+// Optional include - silently ignored if file not found
+#include? "Optional.xcconfig"
+```
+
+### Variable Expansion
+
+XCConfig supports variable references and the `$(inherited)` keyword:
+
+```
+// Reference other settings
+PRODUCT_BUNDLE_IDENTIFIER = $(BUNDLE_ID_PREFIX).$(PRODUCT_NAME:lower)
+
+// Inherit from included files
+OTHER_LDFLAGS = $(inherited) -framework UIKit
+```
+
 ## Solution
 
 - Uses a hand-optimized single-pass parser that is 11x faster than the legacy `xcode` package (which uses PEG.js).
@@ -307,7 +385,7 @@ We support the following types: `Object`, `Array`, `Data`, `String`. Notably, we
 - [ ] Create robust xcode projects from scratch.
 - [ ] Skills.
 - [ ] Import from other tools.
-- [ ] **XCConfig** Parsing: `.xcconfig` file parsing with `#include` support and build settings flattening.
+- [x] **XCConfig** Parsing: `.xcconfig` file parsing with `#include` support and build settings flattening.
 - [ ] **XCSharedData**: Shared project data directory (schemes, breakpoints, workspace settings).
 - [ ] **XCSchemeManagement**: Scheme ordering, visibility, and management plist. Controls which schemes appear and in what order in Xcode.
 - [ ] **XCUserData**: User-specific data (breakpoints, UI state). Useful for tooling that manages user preferences.

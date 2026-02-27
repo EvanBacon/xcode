@@ -1,0 +1,3 @@
+// Base xcconfig - root settings
+BASE_SETTING = base_value
+OVERRIDDEN_SETTING = from_base
