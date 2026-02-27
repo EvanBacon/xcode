@@ -283,6 +283,14 @@ We support the following types: `Object`, `Array`, `Data`, `String`. Notably, we
 - [ ] Create robust xcode projects from scratch.
 - [ ] Skills.
 - [ ] Import from other tools.
+- [ ] **XCConfig** Parsing: `.xcconfig` file parsing with `#include` support and build settings flattening.
+- [ ] **XCSharedData**: Shared project data directory (schemes, breakpoints, workspace settings).
+- [ ] **XCSchemeManagement**: Scheme ordering, visibility, and management plist. Controls which schemes appear and in what order in Xcode.
+- [ ] **XCUserData**: User-specific data (breakpoints, UI state). Useful for tooling that manages user preferences.
+- [ ] **WorkspaceSettings**: (`xcshareddata/WorkspaceSettings.xcsettings`) Derived data location, build system version, auto-create schemes setting.
+- [ ] **XCBreakpointList**: (`xcshareddata/xcdebugger/Breakpoints_v2.xcbkptlist`) Shared debugger breakpoints (file, symbolic, exception breakpoints)
+- [ ] **XCUserData**: (`xcuserdata/<user>.xcuserdatad/`) Per-user schemes, breakpoints, UI state.
+- [ ] **IDEWorkspaceChecks**: (`xcshareddata/IDEWorkspaceChecks.plist`) "Trust this project" flag that suppresses Xcode warning.
 
 # Docs
 
