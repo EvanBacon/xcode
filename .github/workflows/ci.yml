@@ -9,22 +9,19 @@ on:
 jobs:
   test:
     runs-on: macos-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
-    - name: Use Node.js LTS
-      uses: actions/setup-node@v4
-      with:
-        node-version: 'lts/*'
-        cache: 'yarn'
-    
+
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
+
     - name: Install dependencies
-      run: yarn install --frozen-lockfile
-    
+      run: bun install --frozen-lockfile
+
     - name: Run tests
-      run: yarn test
-    
+      run: bun run test
+
     - name: Build project
-      run: yarn build
+      run: bun run build

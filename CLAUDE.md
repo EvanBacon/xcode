@@ -12,11 +12,11 @@ The package offers two main APIs:
 
 ## Development Commands
 
-- **Build**: `yarn build` (compiles TypeScript to `build/` directory)
-- **Test**: `yarn test` (runs Jest tests)
-- **Clean**: `yarn clean` (removes build directory)
-- **Test single file**: `yarn test <filename>` (e.g., `yarn test PBXProject.test.ts`)
-- **Watch tests**: `yarn test --watch`
+- **Build**: `bun build` (compiles TypeScript to `build/` directory)
+- **Test**: `bun test` (runs Jest tests)
+- **Clean**: `bun clean` (removes build directory)
+- **Test single file**: `bun test <filename>` (e.g., `bun test PBXProject.test.ts`)
+- **Watch tests**: `bun test --watch`
 
 ## Architecture
 
