@@ -257,7 +257,6 @@ Workspace file references use location specifiers:
 
 - Unlike the [xcode](https://www.npmjs.com/package/xcode) package which uses PEG.js, this implementation uses [Chevrotain](https://chevrotain.io/).
 - This project support the Data type `<xx xx xx>`.
-- Unopinionated: this could change in the future :] but if it does we'll use modern graph API patterns that are typed.
 - This implementation also _appears_ to be more stable since we follow the [best guess pbxproj spec][spec].
 - String parsing is the trickiest part. This package uses a port of the actual [CFOldStylePlist parser](http://www.opensource.apple.com/source/CF/CF-744.19/CFOldStylePList.c) which is an approach first used at scale by the [CocoaPods team](https://github.com/CocoaPods/Nanaimo/blob/master/lib/nanaimo/unicode/next_step_mapping.rb) (originally credited to [Samantha Marshall](https://github.com/samdmarshall/pbPlist/blob/346c29f91f913d35d0e24f6722ec19edb24e5707/pbPlist/StrParse.py#L197)).
 
