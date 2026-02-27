@@ -10,6 +10,14 @@ bun add @bacons/xcode
 
 Run benchmarks with `bun run bench`.
 
+```mermaid
+xychart-beta horizontal
+  title "Parse Time (lower is better)"
+  x-axis ["@bacons/xcode", "legacy xcode"]
+  y-axis "Time (ms)" 0 --> 1.5
+  bar [0.12, 1.4]
+```
+
 | Parser | Time (29KB) | Time (263KB) | Throughput |
 |--------|-------------|--------------|------------|
 | **@bacons/xcode** | **120µs** | **800µs** | **315 MB/s** |
