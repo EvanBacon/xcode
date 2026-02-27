@@ -48,6 +48,6 @@
     "build": "tsc",
     "clean": "rm -rf build",
     "test": "jest",
-    "prepare": "yarn clean && yarn build"
+    "prepare": "bun run clean && bun run build"
   }
 }

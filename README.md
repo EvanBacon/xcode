@@ -3,7 +3,7 @@
 Very fast and well-typed parser for Xcode project files (`.pbxproj`).
 
 ```
-bun install @bacons/xcode
+bun add @bacons/xcode
 ```
 
 Here is a diagram of the grammar used for parsing:
