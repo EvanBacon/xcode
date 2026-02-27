@@ -43,3 +43,22 @@ export interface Group {
   /** Nested groups */
   groups?: Group[];
 }
+
+/**
+ * IDEWorkspaceChecks plist data.
+ *
+ * Introduced in Xcode 9.3, this file stores the state of workspace checks
+ * to prevent them from being recomputed each time the workspace is opened.
+ * Stored at `<workspace>.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist`
+ *
+ * @see https://developer.apple.com/documentation/xcode-release-notes/xcode-9_3-release-notes
+ */
+export interface IDEWorkspaceChecks {
+  /**
+   * Whether the macOS 32-bit deprecation warning has been computed/shown.
+   * Setting to true suppresses the warning dialog.
+   */
+  IDEDidComputeMac32BitWarning?: boolean;
+  /** Allow additional boolean flags for future Xcode versions */
+  [key: string]: boolean | undefined;
+}

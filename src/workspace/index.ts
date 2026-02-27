@@ -18,4 +18,5 @@
 
 export { parse } from "./parser";
 export { build } from "./writer";
+export { parseChecks, buildChecks } from "./checks";
 export * from "./types";

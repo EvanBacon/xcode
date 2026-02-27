@@ -8,6 +8,7 @@ import path from "path";
 
 import * as workspace from "../workspace";
 import type { XCWorkspace as WorkspaceData, FileRef, Group } from "../workspace/types";
+import { IDEWorkspaceChecks } from "./IDEWorkspaceChecks";
 import { XCSharedData } from "./XCSharedData";
 
 /**
@@ -234,6 +235,56 @@ export class XCWorkspace {
       const pathPortion = p.includes(":") ? p.split(":").slice(1).join(":") : p;
       return pathPortion === projectPath || p === projectPath;
     });
+  }
+
+  /**
+   * Get the IDEWorkspaceChecks for this workspace.
+   *
+   * @returns The checks instance, or null if not set
+   */
+  getWorkspaceChecks(): IDEWorkspaceChecks | null {
+    if (!this.filePath) {
+      return null;
+    }
+    return IDEWorkspaceChecks.open(this.filePath);
+  }
+
+  /**
+   * Get or create the IDEWorkspaceChecks for this workspace.
+   *
+   * @returns The checks instance (opened or newly created)
+   */
+  getOrCreateWorkspaceChecks(): IDEWorkspaceChecks {
+    if (!this.filePath) {
+      throw new Error(
+        "Workspace must be saved before accessing workspace checks."
+      );
+    }
+    return IDEWorkspaceChecks.openOrCreate(this.filePath);
+  }
+
+  /**
+   * Check if this workspace has IDEWorkspaceChecks configured.
+   *
+   * @returns true if the checks plist exists
+   */
+  hasWorkspaceChecks(): boolean {
+    if (!this.filePath) {
+      return false;
+    }
+    return IDEWorkspaceChecks.open(this.filePath) !== null;
+  }
+
+  /**
+   * Mark the 32-bit warning as computed.
+   *
+   * This suppresses the macOS 32-bit deprecation warning dialog in Xcode
+   * by setting IDEDidComputeMac32BitWarning to true.
+   */
+  setMac32BitWarningComputed(): void {
+    const checks = this.getOrCreateWorkspaceChecks();
+    checks.mac32BitWarningComputed = true;
+    checks.save();
   }
 
   private collectPathsFromGroup(group: Group): string[] {
