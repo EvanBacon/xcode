@@ -32,6 +32,10 @@
     "./workspace": {
       "types": "./build/workspace/index.d.ts",
       "default": "./build/workspace/index.js"
+    },
+    "./xcconfig": {
+      "types": "./build/xcconfig/index.d.ts",
+      "default": "./build/xcconfig/index.js"
     }
   },
   "files": [

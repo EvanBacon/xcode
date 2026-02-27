@@ -12,6 +12,8 @@ import type { SansIsa } from "./utils/util.types";
 import type { XcodeProject } from "./XcodeProject";
 import type { PBXFileReference } from "./PBXFileReference";
 import { resolveXcodeBuildSetting } from "./utils/resolveBuildSettings";
+import * as xcconfig from "../xcconfig";
+import type { XCConfig, XCConfigFlattenOptions } from "../xcconfig";
 
 const debug = require("debug")(
   "xcode:XCBuildConfiguration"
@@ -169,6 +171,62 @@ export class XCBuildConfiguration extends AbstractObject<XCBuildConfigurationMod
     return {
       baseConfigurationReference: String,
     };
+  }
+
+  /**
+   * Get the absolute file path of the base configuration xcconfig file.
+   * @returns The absolute path or null if no base configuration is set.
+   */
+  getBaseConfigurationFilePath(): string | null {
+    const fileRef = this.props.baseConfigurationReference;
+    if (!fileRef) return null;
+
+    const filePath = fileRef.props.path;
+    if (!filePath) return null;
+
+    const root = this.getXcodeProject().getProjectRoot();
+
+    // Handle different source tree types
+    const sourceTree = fileRef.props.sourceTree;
+    if (sourceTree === "<group>" || sourceTree === "SOURCE_ROOT") {
+      return path.join(root, filePath);
+    }
+    if (sourceTree === "<absolute>" || path.isAbsolute(filePath)) {
+      return filePath;
+    }
+
+    return path.join(root, filePath);
+  }
+
+  /**
+   * Parse and return the base configuration xcconfig file.
+   * @returns Parsed XCConfig or null if no base configuration is set or file doesn't exist.
+   */
+  getBaseConfiguration(): XCConfig | null {
+    const filePath = this.getBaseConfigurationFilePath();
+    if (!filePath || !fs.existsSync(filePath)) return null;
+
+    try {
+      return xcconfig.parseFile(filePath);
+    } catch (error) {
+      debug("Failed to parse base configuration: %s", error);
+      return null;
+    }
+  }
+
+  /**
+   * Get flattened build settings from the base configuration xcconfig file.
+   * Settings are merged from included files with current file taking precedence.
+   *
+   * @param options - Optional filtering by sdk/arch/config
+   * @returns Flattened key-value map of build settings, or empty object if no base config.
+   */
+  getBaseConfigurationSettings(
+    options?: XCConfigFlattenOptions
+  ): Record<string, string> {
+    const config = this.getBaseConfiguration();
+    if (!config) return {};
+    return xcconfig.flattenBuildSettings(config, options);
   }
 }
 

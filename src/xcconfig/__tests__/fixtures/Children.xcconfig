@@ -1,0 +1,6 @@
+// Children xcconfig - includes Parent
+#include "Parent.xcconfig"
+
+CHILD_SETTING = child_value
+OVERRIDDEN_SETTING = from_child
+INHERITED_SETTING = $(inherited) child_part

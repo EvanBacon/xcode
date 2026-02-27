@@ -1,0 +1,4 @@
+// Simple xcconfig file
+PRODUCT_NAME = MyApp
+PRODUCT_BUNDLE_IDENTIFIER = com.example.myapp
+SWIFT_VERSION = 5.0
