@@ -70,7 +70,7 @@ Notice how you don't need to strip or reapply quotes, you also don't need to fil
 
 ## API
 
-There's an experimental mutable-graph layer which makes it much easier to work with pbxproj.
+There's a mutable-graph layer which makes it much easier to work with pbxproj.
 
 ```ts
 import {
