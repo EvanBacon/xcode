@@ -36,6 +36,14 @@
     "./xcconfig": {
       "types": "./build/xcconfig/index.d.ts",
       "default": "./build/xcconfig/index.js"
+    },
+    "./breakpoints": {
+      "types": "./build/breakpoints/index.d.ts",
+      "default": "./build/breakpoints/index.js"
+    },
+    "./settings": {
+      "types": "./build/settings/index.d.ts",
+      "default": "./build/settings/index.js"
     }
   },
   "files": [

@@ -4,6 +4,7 @@ import path from "path";
 import crypto from "crypto";
 
 import { XCScheme, createBuildableReference } from "./XCScheme";
+import { XCSharedData } from "./XCSharedData";
 
 import { parse } from "../json";
 import * as json from "../json/types";
@@ -519,6 +520,34 @@ export class XcodeProject extends Map<json.UUID, AnyModel> {
       name,
       `${projectName}`
     );
+  }
+
+  // ============================================================================
+  // Shared Data Methods
+  // ============================================================================
+
+  /**
+   * Get the path to the xcshareddata directory.
+   */
+  getSharedDataDir(): string {
+    const projectDir = path.dirname(this.filePath);
+    return path.join(projectDir, "xcshareddata");
+  }
+
+  /**
+   * Get the XCSharedData instance for this project.
+   *
+   * @returns XCSharedData for accessing schemes, breakpoints, and settings
+   */
+  getSharedData(): XCSharedData {
+    const sharedDataDir = this.getSharedDataDir();
+    if (existsSync(sharedDataDir)) {
+      return XCSharedData.open(sharedDataDir);
+    }
+    // Create a new instance with the path set
+    const sharedData = XCSharedData.create();
+    sharedData.filePath = sharedDataDir;
+    return sharedData;
   }
 
   toJSON(): json.XcodeProject {

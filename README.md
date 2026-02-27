@@ -355,6 +355,111 @@ PRODUCT_BUNDLE_IDENTIFIER = $(BUNDLE_ID_PREFIX).$(PRODUCT_NAME:lower)
 OTHER_LDFLAGS = $(inherited) -framework UIKit
 ```
 
+## XCSharedData Support
+
+Access and manipulate shared data directories (`xcshareddata`) which contain schemes, breakpoints, and workspace settings that are intended for version control.
+
+### High-level API
+
+```ts
+import { XcodeProject, XCSharedData } from "@bacons/xcode";
+
+// Get shared data from a project
+const project = XcodeProject.open("/path/to/project.pbxproj");
+const sharedData = project.getSharedData();
+
+// Access schemes
+const schemes = sharedData.getSchemes();
+const appScheme = sharedData.getScheme("App");
+
+// Access breakpoints
+if (sharedData.breakpoints) {
+  console.log(sharedData.breakpoints.breakpoints?.length);
+}
+
+// Access workspace settings
+if (sharedData.workspaceSettings) {
+  console.log(sharedData.workspaceSettings.PreviewsEnabled);
+}
+
+// Modify and save
+sharedData.workspaceSettings = {
+  PreviewsEnabled: true,
+  IDEWorkspaceSharedSettings_AutocreateContextsIfNeeded: false,
+};
+sharedData.save();
+```
+
+### Breakpoints API
+
+Parse and build Xcode breakpoint files (`Breakpoints_v2.xcbkptlist`):
+
+```ts
+import * as breakpoints from "@bacons/xcode/breakpoints";
+import fs from "fs";
+
+// Parse breakpoint file
+const xml = fs.readFileSync(
+  "/path/to/xcshareddata/xcdebugger/Breakpoints_v2.xcbkptlist",
+  "utf-8",
+);
+const list = breakpoints.parse(xml);
+
+// Access breakpoints
+for (const bp of list.breakpoints ?? []) {
+  console.log(bp.breakpointExtensionID); // "Xcode.Breakpoint.FileBreakpoint"
+  console.log(bp.breakpointContent?.filePath);
+  console.log(bp.breakpointContent?.startingLineNumber);
+}
+
+// Add a new breakpoint
+list.breakpoints?.push({
+  breakpointExtensionID: "Xcode.Breakpoint.FileBreakpoint",
+  breakpointContent: {
+    uuid: "new-uuid",
+    shouldBeEnabled: true,
+    filePath: "MyApp/ViewController.swift",
+    startingLineNumber: "42",
+    endingLineNumber: "42",
+    actions: [
+      {
+        actionExtensionID: "Xcode.BreakpointAction.DebuggerCommand",
+        actionContent: { consoleCommand: "po self" },
+      },
+    ],
+  },
+});
+
+// Serialize back to XML
+const outputXml = breakpoints.build(list);
+```
+
+### Workspace Settings API
+
+Parse and build workspace settings files (`WorkspaceSettings.xcsettings`):
+
+```ts
+import * as settings from "@bacons/xcode/settings";
+import fs from "fs";
+
+// Parse settings file
+const plist = fs.readFileSync(
+  "/path/to/xcshareddata/WorkspaceSettings.xcsettings",
+  "utf-8",
+);
+const config = settings.parse(plist);
+
+console.log(config.BuildSystemType); // "Original" or "New"
+console.log(config.PreviewsEnabled); // true/false
+
+// Modify and save
+config.PreviewsEnabled = true;
+config.IDEWorkspaceSharedSettings_AutocreateContextsIfNeeded = false;
+
+const outputPlist = settings.build(config);
+fs.writeFileSync("/path/to/WorkspaceSettings.xcsettings", outputPlist);
+```
+
 ## Solution
 
 - Uses a hand-optimized single-pass parser that is 11x faster than the legacy `xcode` package (which uses PEG.js).
@@ -382,15 +487,14 @@ We support the following types: `Object`, `Array`, `Data`, `String`. Notably, we
 - [x] xcscheme support.
 - [x] Benchmarks (`bun run bench`).
 - [x] xcworkspace support.
+- [x] **XCConfig** Parsing: `.xcconfig` file parsing with `#include` support and build settings flattening.
+- [x] **XCSharedData**: Shared project data directory (schemes, breakpoints, workspace settings).
+- [x] **XCSchemeManagement**: Scheme ordering, visibility, and management plist.
+- [x] **WorkspaceSettings**: (`xcshareddata/WorkspaceSettings.xcsettings`) Derived data location, build system version, auto-create schemes setting.
+- [x] **XCBreakpointList**: (`xcshareddata/xcdebugger/Breakpoints_v2.xcbkptlist`) Shared debugger breakpoints (file, symbolic, exception breakpoints).
 - [ ] Create robust xcode projects from scratch.
 - [ ] Skills.
 - [ ] Import from other tools.
-- [x] **XCConfig** Parsing: `.xcconfig` file parsing with `#include` support and build settings flattening.
-- [ ] **XCSharedData**: Shared project data directory (schemes, breakpoints, workspace settings).
-- [ ] **XCSchemeManagement**: Scheme ordering, visibility, and management plist. Controls which schemes appear and in what order in Xcode.
-- [ ] **XCUserData**: User-specific data (breakpoints, UI state). Useful for tooling that manages user preferences.
-- [ ] **WorkspaceSettings**: (`xcshareddata/WorkspaceSettings.xcsettings`) Derived data location, build system version, auto-create schemes setting.
-- [ ] **XCBreakpointList**: (`xcshareddata/xcdebugger/Breakpoints_v2.xcbkptlist`) Shared debugger breakpoints (file, symbolic, exception breakpoints)
 - [ ] **XCUserData**: (`xcuserdata/<user>.xcuserdatad/`) Per-user schemes, breakpoints, UI state.
 - [ ] **IDEWorkspaceChecks**: (`xcshareddata/IDEWorkspaceChecks.plist`) "Trust this project" flag that suppresses Xcode warning.
 

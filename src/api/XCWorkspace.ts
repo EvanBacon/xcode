@@ -8,6 +8,7 @@ import path from "path";
 
 import * as workspace from "../workspace";
 import type { XCWorkspace as WorkspaceData, FileRef, Group } from "../workspace/types";
+import { XCSharedData } from "./XCSharedData";
 
 /**
  * High-level class for working with Xcode workspace files.
@@ -249,5 +250,35 @@ export class XCWorkspace {
     }
 
     return paths;
+  }
+
+  // ============================================================================
+  // Shared Data Methods
+  // ============================================================================
+
+  /**
+   * Get the path to the xcshareddata directory.
+   */
+  getSharedDataDir(): string | undefined {
+    if (!this.filePath) return undefined;
+    return path.join(this.filePath, "xcshareddata");
+  }
+
+  /**
+   * Get the XCSharedData instance for this workspace.
+   *
+   * @returns XCSharedData for accessing schemes, breakpoints, and settings
+   */
+  getSharedData(): XCSharedData {
+    const sharedDataDir = this.getSharedDataDir();
+    if (sharedDataDir && existsSync(sharedDataDir)) {
+      return XCSharedData.open(sharedDataDir);
+    }
+    // Create a new instance with the path set
+    const sharedData = XCSharedData.create();
+    if (sharedDataDir) {
+      sharedData.filePath = sharedDataDir;
+    }
+    return sharedData;
   }
 }
