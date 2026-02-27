@@ -5,12 +5,23 @@ import {
   XCLocalSwiftPackageReference,
   XCRemoteSwiftPackageReference,
   XCSwiftPackageProductDependency,
+  PBXNativeTarget,
 } from "..";
+import { PBXBuildFile } from "../PBXBuildFile";
+import { loadFixture, expectRoundTrip } from "./test-utils";
 
 const SPM_FIXTURE = path.join(
   __dirname,
   "../../json/__tests__/fixtures/006-spm.pbxproj"
 );
+
+const originalConsoleWarn = console.warn;
+beforeEach(() => {
+  console.warn = jest.fn();
+});
+afterAll(() => {
+  console.warn = originalConsoleWarn;
+});
 
 describe("XCLocalSwiftPackageReference", () => {
   describe("create", () => {
@@ -80,6 +91,20 @@ describe("XCRemoteSwiftPackageReference", () => {
         kind: "upToNextMajorVersion",
         minimumVersion: "2.5.1",
       });
+    });
+
+    it("should be referenced by PBXProject.packageReferences", () => {
+      const xcproj = XcodeProject.open(SPM_FIXTURE);
+      const project = xcproj.rootObject;
+
+      const packageReferences = project.props.packageReferences;
+      expect(packageReferences).toBeDefined();
+      expect(packageReferences!.length).toBeGreaterThan(0);
+
+      const supabaseRef = packageReferences!.find(
+        (ref) => ref.uuid === "AC9C55BC2BD9246500041977"
+      );
+      expect(supabaseRef).toBeDefined();
     });
   });
 
@@ -255,6 +280,36 @@ describe("XCSwiftPackageProductDependency", () => {
         "https://github.com/supabase/supabase-swift"
       );
     });
+
+    it("should be referenced by PBXBuildFile via productRef", () => {
+      const xcproj = XcodeProject.open(SPM_FIXTURE);
+
+      const buildFile = xcproj.getObject(
+        "AC9C55BE2BD9246500041977"
+      ) as PBXBuildFile;
+
+      expect(buildFile).toBeDefined();
+      expect(buildFile.isa).toBe("PBXBuildFile");
+      expect(buildFile.props.productRef).toBeDefined();
+      expect(buildFile.props.productRef!.uuid).toBe("AC9C55BD2BD9246500041977");
+    });
+
+    it("should be in target packageProductDependencies", () => {
+      const xcproj = XcodeProject.open(SPM_FIXTURE);
+
+      const watchTarget = xcproj.getObject(
+        "DCA0157385AE428CB5B4F71F"
+      ) as PBXNativeTarget;
+
+      expect(watchTarget).toBeDefined();
+      expect(watchTarget.props.packageProductDependencies).toBeDefined();
+      expect(watchTarget.props.packageProductDependencies!.length).toBeGreaterThan(0);
+
+      const supabaseDep = watchTarget.props.packageProductDependencies!.find(
+        (dep) => dep.uuid === "AC9C55BD2BD9246500041977"
+      );
+      expect(supabaseDep).toBeDefined();
+    });
   });
 
   describe("create", () => {
@@ -387,5 +442,82 @@ describe("round-trip serialization", () => {
     // Package should be deflated to UUID
     expect(typeof json.package).toBe("string");
     expect(json.package).toBe(packageRef.uuid);
+  });
+
+  it("should round-trip full project correctly", () => {
+    const xcproj = loadFixture("006-spm.pbxproj");
+    expectRoundTrip(xcproj);
+  });
+});
+
+describe("SPM integration", () => {
+  it("should maintain SPM references through round-trip", () => {
+    const xcproj = loadFixture("006-spm.pbxproj");
+
+    const originalPackageRef = xcproj.getObject(
+      "AC9C55BC2BD9246500041977"
+    ) as XCRemoteSwiftPackageReference;
+    const originalUrl = originalPackageRef.props.repositoryURL;
+
+    expectRoundTrip(xcproj);
+
+    const packageRefAfter = xcproj.getObject(
+      "AC9C55BC2BD9246500041977"
+    ) as XCRemoteSwiftPackageReference;
+    expect(packageRefAfter.props.repositoryURL).toBe(originalUrl);
+  });
+
+  it("should find all SPM-related objects", () => {
+    const xcproj = XcodeProject.open(SPM_FIXTURE);
+
+    const remotePackages: XCRemoteSwiftPackageReference[] = [];
+    const productDeps: XCSwiftPackageProductDependency[] = [];
+    const buildFilesWithProductRef: PBXBuildFile[] = [];
+
+    for (const obj of xcproj.values()) {
+      if (XCRemoteSwiftPackageReference.is(obj)) {
+        remotePackages.push(obj);
+      } else if (XCSwiftPackageProductDependency.is(obj)) {
+        productDeps.push(obj);
+      } else if (obj.isa === "PBXBuildFile") {
+        const buildFile = obj as PBXBuildFile;
+        if (buildFile.props.productRef) {
+          buildFilesWithProductRef.push(buildFile);
+        }
+      }
+    }
+
+    expect(remotePackages.length).toBeGreaterThan(0);
+    expect(productDeps.length).toBeGreaterThan(0);
+    expect(buildFilesWithProductRef.length).toBeGreaterThan(0);
+  });
+
+  it("should have valid package reference chain", () => {
+    const xcproj = XcodeProject.open(SPM_FIXTURE);
+    const project = xcproj.rootObject;
+
+    expect(project.props.packageReferences).toBeDefined();
+
+    for (const packageRef of project.props.packageReferences!) {
+      expect(
+        XCRemoteSwiftPackageReference.is(packageRef) ||
+          XCLocalSwiftPackageReference.is(packageRef)
+      ).toBe(true);
+    }
+  });
+
+  it("should serialize SPM objects correctly in full project", () => {
+    const xcproj = XcodeProject.open(SPM_FIXTURE);
+    const json = xcproj.toJSON();
+
+    expect(json.objects["AC9C55BC2BD9246500041977"]).toBeDefined();
+    expect(json.objects["AC9C55BC2BD9246500041977"].isa).toBe(
+      "XCRemoteSwiftPackageReference"
+    );
+
+    expect(json.objects["AC9C55BD2BD9246500041977"]).toBeDefined();
+    expect(json.objects["AC9C55BD2BD9246500041977"].isa).toBe(
+      "XCSwiftPackageProductDependency"
+    );
   });
 });
