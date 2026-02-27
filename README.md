@@ -277,6 +277,33 @@ Workspace file references use location specifiers:
 - `container:path` - Absolute container reference (rare)
 - `absolute:path` - Absolute file path
 
+### IDEWorkspaceChecks
+
+Manage `IDEWorkspaceChecks.plist` files that store workspace check states. Introduced in Xcode 9.3, these files prevent Xcode from recomputing checks each time a workspace is opened.
+
+The primary use is suppressing the macOS 32-bit deprecation warning:
+
+```ts
+import { XCWorkspace, IDEWorkspaceChecks } from "@bacons/xcode";
+
+// Suppress the 32-bit deprecation warning
+const workspace = XCWorkspace.open("/path/to/MyApp.xcworkspace");
+workspace.setMac32BitWarningComputed();
+
+// Or work with IDEWorkspaceChecks directly
+const checks = IDEWorkspaceChecks.openOrCreate("/path/to/MyApp.xcworkspace");
+checks.mac32BitWarningComputed = true;
+checks.save();
+
+// Low-level API
+import * as workspace from "@bacons/xcode/workspace";
+
+const plist = workspace.parseChecks(plistString);
+console.log(plist.IDEDidComputeMac32BitWarning); // true
+
+const output = workspace.buildChecks({ IDEDidComputeMac32BitWarning: true });
+```
+
 ## XCConfig Support
 
 Parse and manipulate Xcode configuration files (`.xcconfig`). These files define build settings that can be shared across targets and configurations.
@@ -496,7 +523,7 @@ We support the following types: `Object`, `Array`, `Data`, `String`. Notably, we
 - [ ] Skills.
 - [ ] Import from other tools.
 - [ ] **XCUserData**: (`xcuserdata/<user>.xcuserdatad/`) Per-user schemes, breakpoints, UI state.
-- [ ] **IDEWorkspaceChecks**: (`xcshareddata/IDEWorkspaceChecks.plist`) "Trust this project" flag that suppresses Xcode warning.
+- [x] **IDEWorkspaceChecks**: (`xcshareddata/IDEWorkspaceChecks.plist`) Workspace check state storage (e.g., 32-bit deprecation warning).
 
 # Docs
 
