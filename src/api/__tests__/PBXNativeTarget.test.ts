@@ -402,10 +402,10 @@ describe("PBXNativeTarget", () => {
       const xcproj = XcodeProject.open(MULTITARGET_FIXTURE);
       const mainTarget = xcproj.rootObject.getMainAppTarget();
 
-      // Create a watch app target
+      // Create a watch app target with correct watchOS product type
       const watchTarget = xcproj.rootObject.createNativeTarget({
         name: "TestWatchApp",
-        productType: "com.apple.product-type.application",
+        productType: "com.apple.product-type.application.watchapp2",
         buildConfigurationList: mainTarget!.props.buildConfigurationList,
       });
 
@@ -543,6 +543,54 @@ describe("PBXNativeTarget", () => {
       testTarget.setBuildSetting("WATCHOS_DEPLOYMENT_TARGET", "8.0");
 
       expect(testTarget.isWatchOSTarget()).toBe(false);
+    });
+  });
+
+  describe("isWatchExtension", () => {
+    it("should return true for watchkit-extension targets", () => {
+      const xcproj = XcodeProject.open(MULTITARGET_FIXTURE);
+      const mainTarget = xcproj.rootObject.getMainAppTarget();
+      const watchExtTarget = xcproj.rootObject.createNativeTarget({
+        name: "TestWatchExtension",
+        productType: "com.apple.product-type.watchkit-extension",
+        buildConfigurationList: mainTarget!.props.buildConfigurationList,
+      });
+
+      expect(watchExtTarget.isWatchExtension()).toBe(true);
+    });
+
+    it("should return true for watchkit2-extension targets", () => {
+      const xcproj = XcodeProject.open(MULTITARGET_FIXTURE);
+      const mainTarget = xcproj.rootObject.getMainAppTarget();
+      const watchExtTarget = xcproj.rootObject.createNativeTarget({
+        name: "TestWatch2Extension",
+        productType: "com.apple.product-type.watchkit2-extension",
+        buildConfigurationList: mainTarget!.props.buildConfigurationList,
+      });
+
+      expect(watchExtTarget.isWatchExtension()).toBe(true);
+    });
+
+    it("should return false for watchOS app targets", () => {
+      const xcproj = XcodeProject.open(MULTITARGET_FIXTURE);
+      const mainTarget = xcproj.rootObject.getMainAppTarget();
+      const watchTarget = xcproj.rootObject.createNativeTarget({
+        name: "TestWatchApp",
+        productType: "com.apple.product-type.application.watchapp2",
+        buildConfigurationList: mainTarget!.props.buildConfigurationList,
+      });
+
+      expect(watchTarget.isWatchExtension()).toBe(false);
+    });
+
+    it("should return false for regular app extensions", () => {
+      const xcproj = XcodeProject.open(MULTITARGET_FIXTURE);
+      const extensionTarget = xcproj.rootObject.getNativeTarget(
+        "com.apple.product-type.app-extension"
+      );
+
+      expect(extensionTarget).toBeDefined();
+      expect(extensionTarget!.isWatchExtension()).toBe(false);
     });
   });
 

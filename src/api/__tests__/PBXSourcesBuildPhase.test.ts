@@ -18,11 +18,14 @@ const RN_FIXTURE = path.join(
   "../../json/__tests__/fixtures/project-rn74.pbxproj"
 );
 
-it(`adds PBXCopyFilesBuildPhase for Watch extension`, () => {
+it(`adds PBXCopyFilesBuildPhase for Watch app`, () => {
   const xcproj = XcodeProject.open(WORKING_FIXTURE);
 
+  // Watch apps use wrapper.application file type, but we use .appex extension
+  // to trigger the isAppExtension() check in setupDefaults
   const fileRef = PBXFileReference.create(xcproj, {
     path: "Watchy.appex",
+    lastKnownFileType: "wrapper.app-extension",
   });
   const file = PBXBuildFile.create(xcproj, {
     fileRef,
@@ -55,7 +58,7 @@ it(`adds PBXCopyFilesBuildPhase for Watch extension`, () => {
     }),
     name: "Watchy",
     productName: "Watchy",
-    productType: "com.apple.product-type.application",
+    productType: "com.apple.product-type.application.watchapp2",
     productReference: fileRef,
   });
 
