@@ -8,7 +8,7 @@ This directory contains benchmarks comparing `@bacons/xcode` against other pbxpr
 |--------|----------|---------|
 | @bacons/xcode | TypeScript | Chevrotain |
 | xcode (legacy) | JavaScript | PEG.js |
-| xcodeproj | Ruby | CocoaPods gem |
+| xcodeproj | Ruby | CocoaPods gem (Nanaimo) |
 | XcodeProj | Swift | Tuist |
 
 ## Quick Start
@@ -45,7 +45,24 @@ cd bench/swift-bench
 swift build -c release
 ```
 
-## Benchmarks
+## Benchmark Methodology
+
+The benchmark compares parsers at two levels to ensure fair comparison:
+
+### Low-Level (String → JSON/Dict)
+
+- Content is pre-loaded into memory before timing
+- Only measures parsing, no file I/O
+- No object model construction
+- **This is the fairest comparison of raw parsing speed**
+
+### High-Level (File → Object Model)
+
+- Includes file I/O (reading from disk)
+- Includes full object model construction with resolved references
+- **This reflects real-world API usage**
+
+## Commands
 
 ### `bun run bench`
 
@@ -58,7 +75,7 @@ Runs detailed benchmarks of `@bacons/xcode` using [mitata](https://github.com/ev
 ### `bun run bench:compare`
 
 Runs cross-language comparison across all parsers:
-- Tests multiple fixtures (small to large)
+- Tests at both low-level and high-level
 - Shows avg/min/max times
 - Handles parser errors gracefully
 
@@ -66,14 +83,22 @@ Runs cross-language comparison across all parsers:
 
 Typical results on Apple Silicon (M1/M2):
 
-| Parser | 29KB (RN) | 263KB (Protobuf) |
-|--------|-----------|------------------|
-| @bacons/xcode | ~0.1ms | ~1ms |
-| xcode (legacy) | ~1.4ms | ❌ crashes |
-| xcodeproj (Ruby) | ~2-3ms | ~15-20ms |
-| XcodeProj (Swift) | ~0.5ms | ~3-4ms |
+### Low-Level (Pure Parsing)
 
-Note: Ruby and Swift times include some process/runtime overhead when called from the benchmark script.
+| Parser | 29KB (RN) | 263KB (Protobuf) | Relative |
+|--------|-----------|------------------|----------|
+| @bacons/xcode | 0.15ms | 0.82ms | 1x |
+| XcodeProj (Swift) | 0.38ms | 2.29ms | 2.5-2.8x |
+| xcodeproj (Ruby) | 3.27ms | 20.65ms | 22-25x |
+
+### High-Level (Full Object Model)
+
+| Parser | 29KB (RN) | 263KB (Protobuf) | Relative |
+|--------|-----------|------------------|----------|
+| @bacons/xcode | 0.37ms | 2.69ms | 1x |
+| xcode (legacy) | 1.48ms | crashes | 4x |
+| XcodeProj (Swift) | 2.03ms | 10.79ms | 4-5x |
+| xcodeproj (Ruby) | 3.57ms | 22.30ms | 8-10x |
 
 ## Adding Fixtures
 

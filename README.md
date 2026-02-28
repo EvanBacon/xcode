@@ -1,6 +1,6 @@
 # `@bacons/xcode`
 
-The fastest and most accurate parser for Xcode project files (`.pbxproj`). **10-28x faster** than alternatives (xcode, XcodeProj, xcodeproj) with better error messages and full spec compliance.
+The fastest and most accurate parser for Xcode project files (`.pbxproj`). **2.5-25x faster** than alternatives (XcodeProj, xcodeproj, xcode) with better error messages and full spec compliance.
 
 ```
 bun add @bacons/xcode
@@ -10,24 +10,38 @@ bun add @bacons/xcode
 
 Run benchmarks with `bun run bench` or `bun run bench:compare` for cross-language comparison.
 
+### Low-Level Parsing (String → JSON)
+
+Fair comparison with pre-loaded content, no file I/O:
+
 ```mermaid
 xychart-beta horizontal
   title "Parse Time - 29KB file (lower is better)"
-  x-axis ["@bacons/xcode", "xcode (legacy)", "XcodeProj (Swift)", "xcodeproj (Ruby)"]
-  y-axis "Time (ms)" 0 --> 4
-  bar [0.15, 1.54, 2.00, 3.63]
+  x-axis ["@bacons/xcode", "XcodeProj (Swift)", "xcodeproj (Ruby)"]
+  y-axis "Time (ms)" 0 --> 3.5
+  bar [0.15, 0.38, 3.27]
 ```
 
 | Parser | Language | Time (29KB) | Time (263KB) | Relative |
 |--------|----------|-------------|--------------|----------|
-| **@bacons/xcode** | TypeScript | **0.15ms** | **0.81ms** | **1x** |
-| xcode (legacy) | JavaScript | 1.54ms | crashes | 10x slower |
-| XcodeProj (Tuist) | Swift | 2.00ms | 11.2ms | 13x slower |
-| xcodeproj (CocoaPods) | Ruby | 3.63ms | 22.5ms | 24x slower |
+| **@bacons/xcode** | TypeScript | **0.15ms** | **0.82ms** | **1x** |
+| XcodeProj (Tuist) | Swift | 0.38ms | 2.29ms | 2.5-2.8x slower |
+| xcodeproj (CocoaPods) | Ruby | 3.27ms | 20.65ms | 22-25x slower |
+
+### High-Level API (File → Object Model)
+
+Real-world usage including file I/O and object graph construction:
+
+| Parser | Language | Time (29KB) | Time (263KB) | Relative |
+|--------|----------|-------------|--------------|----------|
+| **@bacons/xcode** | TypeScript | **0.37ms** | **2.69ms** | **1x** |
+| xcode (legacy) | JavaScript | 1.48ms | crashes | 4x slower |
+| XcodeProj (Tuist) | Swift | 2.03ms | 10.79ms | 4-5x slower |
+| xcodeproj (CocoaPods) | Ruby | 3.57ms | 22.30ms | 8-10x slower |
 
 ### Key Performance Features
 
-- **10-28x faster** than alternatives (xcode, XcodeProj, xcodeproj)
+- **2.5-25x faster** than alternatives depending on comparison level
 - Single-pass parsing with no intermediate representation
 - Pre-computed lookup tables for character classification
 - Handles files that crash the legacy parser
