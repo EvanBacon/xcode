@@ -191,9 +191,7 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
         "com.apple.product-type.application.on-demand-install-capable"
       ) {
         return "Embed App Clips";
-      } else if (
-        target.props.productType === "com.apple.product-type.application"
-      ) {
+      } else if (target.isWatchOSTarget()) {
         return "Embed Watch Content";
       } else if (
         target.props.productType ===
@@ -227,8 +225,17 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
 
   isWatchOSTarget(): boolean {
     return (
-      this.props.productType === "com.apple.product-type.application" &&
-      !!this.getDefaultBuildSetting("WATCHOS_DEPLOYMENT_TARGET")
+      this.props.productType === "com.apple.product-type.application.watchapp" ||
+      this.props.productType === "com.apple.product-type.application.watchapp2" ||
+      this.props.productType ===
+        "com.apple.product-type.application.watchapp2-container"
+    );
+  }
+
+  isWatchExtension(): boolean {
+    return (
+      this.props.productType === "com.apple.product-type.watchkit-extension" ||
+      this.props.productType === "com.apple.product-type.watchkit2-extension"
     );
   }
 
