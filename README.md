@@ -10,13 +10,8 @@ bun add @bacons/xcode
 
 Run benchmarks with `bun run bench` or `bun run bench:compare` for cross-language comparison.
 
-```mermaid
-xychart-beta horizontal
-  title "Parse Time - 29KB file (lower is better)"
-  x-axis ["@bacons/xcode", "xcode (legacy)", "XcodeProj (Swift)", "xcodeproj (Ruby)"]
-  y-axis "Time (ms)" 0 --> 4
-  bar [0.15, 1.54, 2.00, 3.63]
-```
+<img width="688" height="387" alt="Xnapper-2026-02-28-09 06 57" src="https://github.com/user-attachments/assets/f02d56cf-e7cd-4104-9c94-474d112bc2c9" />
+
 
 | Parser | Language | Time (29KB) | Time (263KB) | Relative |
 |--------|----------|-------------|--------------|----------|
