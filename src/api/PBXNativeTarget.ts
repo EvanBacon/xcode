@@ -210,7 +210,12 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
       );
     });
     if (existing) {
-      return existing as PBXCopyFilesBuildPhase;
+      const phase = existing as PBXCopyFilesBuildPhase;
+      // Ensure correct settings even for existing phases.
+      // This handles cases where an existing phase has incorrect dstPath/dstSubfolderSpec,
+      // which can cause App Store validation failures (e.g., watch apps must be in Watch/ subdirectory).
+      phase.ensureDefaultsForTarget(target);
+      return phase;
     }
 
     const phase = this.createBuildPhase(PBXCopyFilesBuildPhase, {
@@ -223,13 +228,35 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
     return phase;
   }
 
+  /**
+   * Returns true if this target is a watchOS application.
+   * This includes both legacy watchOS app types (watchapp, watchapp2) and
+   * modern watchOS apps which use the standard application product type
+   * with SDKROOT = watchos in build settings.
+   */
   isWatchOSTarget(): boolean {
-    return (
+    // Legacy watchOS app product types
+    if (
       this.props.productType === "com.apple.product-type.application.watchapp" ||
       this.props.productType === "com.apple.product-type.application.watchapp2" ||
       this.props.productType ===
         "com.apple.product-type.application.watchapp2-container"
-    );
+    ) {
+      return true;
+    }
+
+    // Modern watchOS apps use com.apple.product-type.application with
+    // SDKROOT = watchos in build settings
+    if (this.props.productType === "com.apple.product-type.application") {
+      const buildSettings =
+        this.props.buildConfigurationList?.props.buildConfigurations?.[0]?.props
+          .buildSettings;
+      if (buildSettings && buildSettings.SDKROOT === "watchos") {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   isWatchExtension(): boolean {
