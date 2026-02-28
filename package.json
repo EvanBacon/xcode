@@ -78,6 +78,8 @@
     "clean": "rm -rf build",
     "test": "jest",
     "bench": "bun run bench/parse.bench.ts",
+    "bench:compare": "bun run bench/compare.ts",
+    "bench:setup": "cd bench/swift-bench && swift build -c release",
     "prepare": "bun run clean && bun run build"
   }
 }
