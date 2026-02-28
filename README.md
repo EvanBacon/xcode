@@ -1,6 +1,6 @@
 # `@bacons/xcode`
 
-The fastest and most accurate parser for Xcode project files (`.pbxproj`). **11x faster** than the legacy `xcode` package with better error messages and full spec compliance.
+The fastest and most accurate parser for Xcode project files (`.pbxproj`). **10-28x faster** than alternatives (xcode, XcodeProj, xcodeproj) with better error messages and full spec compliance.
 
 ```
 bun add @bacons/xcode
@@ -8,24 +8,26 @@ bun add @bacons/xcode
 
 ## Performance
 
-Run benchmarks with `bun run bench`.
+Run benchmarks with `bun run bench` or `bun run bench:compare` for cross-language comparison.
 
 ```mermaid
 xychart-beta horizontal
-  title "Parse Time (lower is better)"
-  x-axis ["@bacons/xcode", "legacy xcode"]
-  y-axis "Time (ms)" 0 --> 1.5
-  bar [0.12, 1.4]
+  title "Parse Time - 29KB file (lower is better)"
+  x-axis ["@bacons/xcode", "xcode (legacy)", "XcodeProj (Swift)", "xcodeproj (Ruby)"]
+  y-axis "Time (ms)" 0 --> 4
+  bar [0.15, 1.54, 2.00, 3.63]
 ```
 
-| Parser | Time (29KB) | Time (263KB) | Throughput |
-|--------|-------------|--------------|------------|
-| **@bacons/xcode** | **120µs** | **800µs** | **315 MB/s** |
-| legacy xcode | 1.4ms | crashes | ~20 MB/s |
+| Parser | Language | Time (29KB) | Time (263KB) | Relative |
+|--------|----------|-------------|--------------|----------|
+| **@bacons/xcode** | TypeScript | **0.15ms** | **0.81ms** | **1x** |
+| xcode (legacy) | JavaScript | 1.54ms | crashes | 10x slower |
+| XcodeProj (Tuist) | Swift | 2.00ms | 11.2ms | 13x slower |
+| xcodeproj (CocoaPods) | Ruby | 3.63ms | 22.5ms | 24x slower |
 
 ### Key Performance Features
 
-- **11.7x faster** than the legacy `xcode` npm package
+- **10-28x faster** than alternatives (xcode, XcodeProj, xcodeproj)
 - Single-pass parsing with no intermediate representation
 - Pre-computed lookup tables for character classification
 - Handles files that crash the legacy parser
