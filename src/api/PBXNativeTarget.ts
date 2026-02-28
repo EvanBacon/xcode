@@ -227,8 +227,10 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
 
   isWatchOSTarget(): boolean {
     return (
-      this.props.productType === "com.apple.product-type.application" &&
-      !!this.getDefaultBuildSetting("WATCHOS_DEPLOYMENT_TARGET")
+      this.props.productType === "com.apple.product-type.application.watchapp" ||
+      this.props.productType === "com.apple.product-type.application.watchapp2" ||
+      this.props.productType ===
+        "com.apple.product-type.application.watchapp2-container"
     );
   }
 
