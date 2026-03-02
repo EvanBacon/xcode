@@ -71,7 +71,7 @@ export class AbstractBuildPhase<
 
   removeFileReference(file: PBXFileReference) {
     const buildFiles = this.props.files.filter(
-      (buildFile) => buildFile.props.fileRef.uuid === file.uuid
+      (buildFile) => buildFile.props.fileRef?.uuid === file.uuid
     );
     buildFiles.forEach((buildFile) => {
       this.props.files.splice(this.props.files.indexOf(buildFile), 1);

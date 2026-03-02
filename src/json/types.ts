@@ -716,8 +716,8 @@ export interface PBXNativeTarget<
 /** Info about build settings for a file in a `PBXBuildPhase`. */
 export interface PBXBuildFile<TFileRef = UUID, TProductRef = UUID>
   extends AbstractObject<ISA.PBXBuildFile> {
-  /** UUID for an object of type <PBXFileReference|PBXGroup|PBXVariantGroup|XCVersionGroup|PBXReferenceProxy> */
-  fileRef: TFileRef;
+  /** UUID for an object of type <PBXFileReference|PBXGroup|PBXVariantGroup|XCVersionGroup|PBXReferenceProxy>. Optional when using productRef for Swift Packages. */
+  fileRef?: TFileRef;
   settings?: {
     ATTRIBUTES?: ("RemoveHeadersOnCopy" | (string & {}))[];
   } & Record<string, any>;

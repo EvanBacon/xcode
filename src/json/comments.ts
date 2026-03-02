@@ -57,10 +57,12 @@ export function createReferenceList(
     const buildPhaseName =
       getBuildPhaseNameContainingFile(id) ?? "[missing build phase]";
 
-    const name = getCommentForObject(
-      buildFile.fileRef ?? buildFile.productRef,
-      objects[buildFile.fileRef ?? buildFile.productRef]
-    );
+    const refId = buildFile.fileRef ?? buildFile.productRef;
+    if (!refId) {
+      return `[unknown] in ${buildPhaseName}`;
+    }
+
+    const name = getCommentForObject(refId, objects[refId]);
 
     return `${name} in ${buildPhaseName}`;
   }

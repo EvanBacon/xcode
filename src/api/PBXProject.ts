@@ -9,6 +9,8 @@ import * as json from "../json/types";
 import { AbstractObject } from "./AbstractObject";
 import { PBXNativeTarget, PBXNativeTargetModel } from "./PBXNativeTarget";
 import { XCBuildConfiguration } from "./XCBuildConfiguration";
+import { XCRemoteSwiftPackageReference } from "./XCRemoteSwiftPackageReference";
+import { XCLocalSwiftPackageReference } from "./XCLocalSwiftPackageReference";
 
 import type { PickRequired, SansIsa } from "./utils/util.types";
 import type { PBXGroup } from "./AbstractGroup";
@@ -16,8 +18,6 @@ import type { XcodeProject } from "./XcodeProject";
 import type { PBXAggregateTarget } from "./PBXAggregateTarget";
 import type { PBXLegacyTarget } from "./PBXLegacyTarget";
 import type { XCConfigurationList } from "./XCConfigurationList";
-import type { XCRemoteSwiftPackageReference } from "./XCRemoteSwiftPackageReference";
-import type { XCLocalSwiftPackageReference } from "./XCLocalSwiftPackageReference";
 
 export type PBXProjectModel = json.PBXProject<
   XCConfigurationList,
@@ -233,5 +233,109 @@ export class PBXProject extends AbstractObject<PBXProjectModel> {
     if (this.props.attributes?.TargetAttributes?.[uuid]) {
       delete this.props.attributes.TargetAttributes[uuid];
     }
+  }
+
+  /**
+   * Adds a Swift package reference to the project if not already present.
+   *
+   * @param packageRef The package reference to add (XCRemoteSwiftPackageReference or XCLocalSwiftPackageReference)
+   * @returns The package reference
+   */
+  addPackageReference(
+    packageRef: XCRemoteSwiftPackageReference | XCLocalSwiftPackageReference
+  ): XCRemoteSwiftPackageReference | XCLocalSwiftPackageReference {
+    if (!this.props.packageReferences) {
+      this.props.packageReferences = [];
+    }
+
+    // Check if already added
+    const existing = this.props.packageReferences.find(
+      (ref) => ref.uuid === packageRef.uuid
+    );
+    if (existing) {
+      return existing;
+    }
+
+    this.props.packageReferences.push(packageRef);
+    return packageRef;
+  }
+
+  /**
+   * Gets an existing package reference by repository URL (for remote) or relative path (for local).
+   *
+   * @param identifier The repository URL or relative path to search for
+   * @returns The package reference if found, null otherwise
+   */
+  getPackageReference(
+    identifier: string
+  ): XCRemoteSwiftPackageReference | XCLocalSwiftPackageReference | null {
+    if (!this.props.packageReferences) {
+      return null;
+    }
+
+    for (const ref of this.props.packageReferences) {
+      if (
+        XCRemoteSwiftPackageReference.is(ref) &&
+        ref.props.repositoryURL === identifier
+      ) {
+        return ref;
+      }
+      if (
+        XCLocalSwiftPackageReference.is(ref) &&
+        ref.props.relativePath === identifier
+      ) {
+        return ref;
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Creates and adds a remote Swift package reference to the project.
+   *
+   * @param opts Options for creating the remote package reference
+   * @returns The created or existing package reference
+   */
+  addRemoteSwiftPackage(
+    opts: SansIsa<json.XCRemoteSwiftPackageReference>
+  ): XCRemoteSwiftPackageReference {
+    // Check if package already exists
+    if (opts.repositoryURL) {
+      const existing = this.getPackageReference(opts.repositoryURL);
+      if (existing && XCRemoteSwiftPackageReference.is(existing)) {
+        return existing;
+      }
+    }
+
+    const packageRef = XCRemoteSwiftPackageReference.create(
+      this.getXcodeProject(),
+      opts
+    );
+    this.addPackageReference(packageRef);
+    return packageRef;
+  }
+
+  /**
+   * Creates and adds a local Swift package reference to the project.
+   *
+   * @param opts Options for creating the local package reference
+   * @returns The created or existing package reference
+   */
+  addLocalSwiftPackage(
+    opts: SansIsa<json.XCLocalSwiftPackageReference>
+  ): XCLocalSwiftPackageReference {
+    // Check if package already exists
+    const existing = this.getPackageReference(opts.relativePath);
+    if (existing && XCLocalSwiftPackageReference.is(existing)) {
+      return existing;
+    }
+
+    const packageRef = XCLocalSwiftPackageReference.create(
+      this.getXcodeProject(),
+      opts
+    );
+    this.addPackageReference(packageRef);
+    return packageRef;
   }
 }
