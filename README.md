@@ -484,6 +484,100 @@ const outputPlist = settings.build(config);
 fs.writeFileSync("/path/to/WorkspaceSettings.xcsettings", outputPlist);
 ```
 
+## Swift Package Manager Support
+
+Add Swift Package Manager dependencies to your Xcode projects with full wiring handled automatically.
+
+### Adding Remote Packages
+
+```ts
+import { XcodeProject } from "@bacons/xcode";
+
+const project = XcodeProject.open("/path/to/project.pbxproj");
+const rootProject = project.rootObject;
+
+// Add a remote Swift package to the project
+const packageRef = rootProject.addRemoteSwiftPackage({
+  repositoryURL: "https://github.com/apple/swift-collections",
+  requirement: {
+    kind: "upToNextMajorVersion",
+    minimumVersion: "1.0.0",
+  },
+});
+
+// Add the package product to a target
+const target = rootProject.getMainAppTarget("ios");
+const productDep = target.addSwiftPackageProduct({
+  productName: "Collections",
+  package: packageRef,
+});
+
+// Save the project
+fs.writeFileSync("/path/to/project.pbxproj", build(project.toJSON()));
+```
+
+### Adding Local Packages
+
+```ts
+// Add a local Swift package (e.g., from a monorepo)
+const localPackage = rootProject.addLocalSwiftPackage({
+  relativePath: "../Packages/MyFeature",
+});
+
+// Add the product to your target
+target.addSwiftPackageProduct({
+  productName: "MyFeature",
+  package: localPackage,
+});
+```
+
+### What Gets Wired Up
+
+When you call `target.addSwiftPackageProduct()`, the following is handled automatically:
+
+1. Creates `XCSwiftPackageProductDependency` and adds it to target's `packageProductDependencies`
+2. Creates `PBXBuildFile` with `productRef` pointing to the dependency
+3. Adds the build file to the target's Frameworks build phase
+
+### Managing Package Dependencies
+
+```ts
+// Get all package product dependencies for a target
+const deps = target.getSwiftPackageProductDependencies();
+
+// Find an existing package by URL or path
+const existing = rootProject.getPackageReference(
+  "https://github.com/apple/swift-collections"
+);
+
+// Remove a package product from a target (cleans up build file too)
+target.removeSwiftPackageProduct(productDep);
+```
+
+### Version Requirements
+
+Remote packages support various version requirement types:
+
+```ts
+// Up to next major version (e.g., 1.0.0 to 2.0.0)
+{ kind: "upToNextMajorVersion", minimumVersion: "1.0.0" }
+
+// Up to next minor version (e.g., 1.2.0 to 1.3.0)
+{ kind: "upToNextMinorVersion", minimumVersion: "1.2.0" }
+
+// Exact version
+{ kind: "exactVersion", version: "1.2.3" }
+
+// Version range
+{ kind: "versionRange", minimumVersion: "1.0.0", maximumVersion: "2.0.0" }
+
+// Branch
+{ kind: "branch", branch: "main" }
+
+// Revision (commit hash)
+{ kind: "revision", revision: "abc123def456" }
+```
+
 ## Solution
 
 - Uses a hand-optimized single-pass parser that is 11x faster than the legacy `xcode` package (which uses PEG.js).
@@ -521,6 +615,7 @@ We support the following types: `Object`, `Array`, `Data`, `String`. Notably, we
 - [ ] Import from other tools.
 - [ ] **XCUserData**: (`xcuserdata/<user>.xcuserdatad/`) Per-user schemes, breakpoints, UI state.
 - [x] **IDEWorkspaceChecks**: (`xcshareddata/IDEWorkspaceChecks.plist`) Workspace check state storage (e.g., 32-bit deprecation warning).
+- [x] **Swift Package Manager**: Add remote and local SPM dependencies with automatic wiring.
 
 # Docs
 
