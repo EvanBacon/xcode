@@ -919,9 +919,9 @@ describe("end-to-end Swift Package workflow", () => {
 
     // Verify it serializes correctly
     const json = xcproj.toJSON();
-    expect(json.objects[packageRef.uuid].repositoryURL).toBe(
+    expect((json.objects[packageRef.uuid] as any).repositoryURL).toBe(
       "https://github.com/apple/swift-collections"
     );
-    expect(json.objects[productDep.uuid].productName).toBe("Collections");
+    expect((json.objects[productDep.uuid] as any).productName).toBe("Collections");
   });
 });
