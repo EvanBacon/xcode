@@ -103,12 +103,9 @@ export class PBXFileReference extends AbstractObject<PBXFileReferenceModel> {
   }
 
   protected setupDefaults() {
-    if (this.props.fileEncoding == null) {
-      this.props.fileEncoding = 4;
-    }
-    // if (this.sourceTree == null) {
-    //   this.sourceTree = "SOURCE_ROOT";
-    // }
+    // Note: fileEncoding and includeInIndex are intentionally NOT set as defaults.
+    // Xcode only includes these properties when explicitly set. Setting them
+    // automatically would cause unnecessary changes when round-tripping projects.
 
     if (
       !this.props.lastKnownFileType &&
@@ -116,10 +113,6 @@ export class PBXFileReference extends AbstractObject<PBXFileReferenceModel> {
       !this.props.explicitFileType
     ) {
       this.setLastKnownFileType();
-    }
-
-    if (this.props.includeInIndex == null) {
-      this.props.includeInIndex = 0;
     }
 
     if (this.props.name == null && this.props.path) {
@@ -131,11 +124,6 @@ export class PBXFileReference extends AbstractObject<PBXFileReferenceModel> {
     }
     if (!this.props.sourceTree) {
       this.props.sourceTree = getPossibleDefaultSourceTree(this.props);
-    }
-
-    // Clear the includeInIndex flag for framework files
-    if (this.props.path && path.extname(this.props.path) === ".framework") {
-      this.props.includeInIndex = undefined;
     }
   }
   getParent() {

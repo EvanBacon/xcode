@@ -75,8 +75,6 @@ describe("PBXFileReference", () => {
       expect(ref.uuid).toBe("XX4DFF38D47332D6BF0183XX");
 
       expect(ref.props).toEqual({
-        fileEncoding: 4,
-        includeInIndex: undefined,
         isa: "PBXFileReference",
         name: "SwiftUI.framework",
         path: "System/Library/Frameworks/SwiftUI.framework",
@@ -85,28 +83,23 @@ describe("PBXFileReference", () => {
       });
     });
 
-    it("should set default file encoding", () => {
+    // Note: fileEncoding and includeInIndex are no longer set by default
+    // to avoid adding properties when round-tripping projects.
+    // Users can set these explicitly if needed.
+
+    it("should not set fileEncoding by default", () => {
       const xcproj = XcodeProject.open(WORKING_FIXTURE);
       const ref = PBXFileReference.create(xcproj, {
         path: "test.swift",
       });
 
-      expect(ref.props.fileEncoding).toBe(4);
+      expect(ref.props.fileEncoding).toBeUndefined();
     });
 
-    it("should set includeInIndex for regular files", () => {
+    it("should not set includeInIndex by default", () => {
       const xcproj = XcodeProject.open(WORKING_FIXTURE);
       const ref = PBXFileReference.create(xcproj, {
         path: "test.swift",
-      });
-
-      expect(ref.props.includeInIndex).toBe(0);
-    });
-
-    it("should clear includeInIndex for framework files", () => {
-      const xcproj = XcodeProject.open(WORKING_FIXTURE);
-      const ref = PBXFileReference.create(xcproj, {
-        path: "TestFramework.framework",
       });
 
       expect(ref.props.includeInIndex).toBeUndefined();
@@ -141,8 +134,6 @@ describe("PBXFileReference", () => {
       });
 
       expect(ref.props).toEqual({
-        fileEncoding: 4,
-        includeInIndex: 0,
         isa: "PBXFileReference",
         lastKnownFileType: "sourcecode.swift",
         name: "funky.swift",
@@ -157,8 +148,6 @@ describe("PBXFileReference", () => {
       });
 
       expect(ref.props).toEqual({
-        fileEncoding: 4,
-        includeInIndex: 0,
         isa: "PBXFileReference",
         lastKnownFileType: "text.css",
         name: "funky.css",
@@ -173,8 +162,6 @@ describe("PBXFileReference", () => {
       });
 
       expect(ref.props).toEqual({
-        fileEncoding: 4,
-        includeInIndex: 0,
         isa: "PBXFileReference",
         lastKnownFileType: "text.html",
         name: "funky.html",
@@ -189,8 +176,6 @@ describe("PBXFileReference", () => {
       });
 
       expect(ref.props).toEqual({
-        fileEncoding: 4,
-        includeInIndex: 0,
         isa: "PBXFileReference",
         lastKnownFileType: "text.json",
         name: "funky.json",
@@ -205,8 +190,6 @@ describe("PBXFileReference", () => {
       });
 
       expect(ref.props).toEqual({
-        fileEncoding: 4,
-        includeInIndex: 0,
         isa: "PBXFileReference",
         lastKnownFileType: "sourcecode.javascript",
         name: "funky.js",
@@ -221,8 +204,6 @@ describe("PBXFileReference", () => {
       });
 
       expect(ref.props).toEqual({
-        fileEncoding: 4,
-        includeInIndex: 0,
         isa: "PBXFileReference",
         name: "funky",
         path: "fun/funky",

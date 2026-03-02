@@ -246,18 +246,9 @@ export class PBXShellScriptBuildPhase extends AbstractBuildPhase<
       this.props.shellScript =
         "# Type a script or drag a script file from your workspace to insert its path.\n";
     }
-    if (!this.props.outputFileListPaths) {
-      this.props.outputFileListPaths = [];
-    }
-    if (!this.props.outputPaths) {
-      this.props.outputPaths = [];
-    }
-    if (!this.props.inputFileListPaths) {
-      this.props.inputFileListPaths = [];
-    }
-    if (!this.props.inputPaths) {
-      this.props.inputPaths = [];
-    }
+    // Note: inputPaths, outputPaths, inputFileListPaths, outputFileListPaths
+    // are intentionally NOT initialized to empty arrays. Xcode omits these
+    // properties when they are empty.
     super.setupDefaults();
   }
 }
