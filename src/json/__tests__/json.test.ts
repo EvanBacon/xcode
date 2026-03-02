@@ -70,14 +70,14 @@ describe(parse, () => {
     "007-xcode16.pbxproj",
 
     "AFNetworking.pbxproj",
-    // "project.pbxproj", // Keys not sorted alphabetically in original
+    "project.pbxproj",
     "project-rn74.pbxproj",
     "project-multitarget-missing-targetattributes.pbxproj",
     "project-multitarget.pbxproj",
     "project-rni.pbxproj",
     "project-swift.pbxproj",
 
-    // "project-with-entitlements.pbxproj", // Keys not sorted alphabetically in original
+    "project-with-entitlements.pbxproj",
 
     "project-with-incorrect-create-manifest-ios-path.pbxproj",
     "project-without-create-manifest-ios.pbxproj",
