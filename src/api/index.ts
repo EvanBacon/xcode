@@ -14,7 +14,6 @@ export { PBXProject } from "./PBXProject";
 export { PBXReferenceProxy } from "./PBXReferenceProxy";
 export {
   AbstractBuildPhase,
-  AnyBuildPhase,
   PBXAppleScriptBuildPhase,
   PBXCopyFilesBuildPhase,
   PBXFrameworksBuildPhase,
@@ -24,6 +23,7 @@ export {
   PBXShellScriptBuildPhase,
   PBXSourcesBuildPhase,
 } from "./PBXSourcesBuildPhase";
+export type { AnyBuildPhase } from "./PBXSourcesBuildPhase";
 export { PBXVariantGroup } from "./PBXVariantGroup";
 export { PBXTargetDependency } from "./PBXTargetDependency";
 export { AbstractObject } from "./AbstractObject";

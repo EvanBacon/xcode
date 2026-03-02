@@ -3,15 +3,14 @@ import assert from "assert";
 import path from "path";
 
 import * as json from "../../json/types";
-import type {
-  PBXGroup,
-  PBXFileReference,
-  AbstractObject,
-  PBXProject,
-  PBXFileSystemSynchronizedBuildFileExceptionSet,
-  PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet,
-  PBXNativeTarget,
-} from "../";
+// Import types directly from source files to avoid circular dependency through index
+import type { PBXGroup } from "../AbstractGroup";
+import type { PBXFileReference } from "../PBXFileReference";
+import type { AbstractObject } from "../AbstractObject";
+import type { PBXProject } from "../PBXProject";
+import type { PBXFileSystemSynchronizedBuildFileExceptionSet } from "../PBXFileSystemSynchronizedBuildFileExceptionSet";
+import type { PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet } from "../PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet";
+import type { PBXNativeTarget } from "../PBXNativeTarget";
 
 function unique<T>(array: T[]) {
   return Array.from(new Set(array));

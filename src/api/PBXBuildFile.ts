@@ -26,6 +26,9 @@ export class PBXBuildFile extends AbstractObject<PBXBuildFileModel> {
     return object.isa === PBXBuildFile.isa;
   }
 
+  /**
+   * Creates a PBXBuildFile with a fileRef for source files, resources, etc.
+   */
   static create(
     project: XcodeProject,
     opts: PickRequired<SansIsa<PBXBuildFileModel>, "fileRef">
@@ -34,6 +37,20 @@ export class PBXBuildFile extends AbstractObject<PBXBuildFileModel> {
       isa: PBXBuildFile.isa,
       ...opts,
     }) as PBXBuildFile;
+  }
+
+  /**
+   * Creates a PBXBuildFile with a productRef for Swift Package dependencies.
+   * Use this instead of `create()` when linking a Swift Package product.
+   */
+  static createFromProductRef(
+    project: XcodeProject,
+    opts: PickRequired<SansIsa<PBXBuildFileModel>, "productRef">
+  ) {
+    return project.createModel<PBXBuildFileModel>({
+      isa: PBXBuildFile.isa,
+      ...opts,
+    } as PBXBuildFileModel) as PBXBuildFile;
   }
 
   protected getObjectProps() {

@@ -10,14 +10,17 @@ import {
   type AnyBuildPhase,
 } from "./PBXSourcesBuildPhase";
 import { PBXFileReference } from "./PBXFileReference";
+import { PBXBuildFile } from "./PBXBuildFile";
+import { XCSwiftPackageProductDependency } from "./XCSwiftPackageProductDependency";
 import type { PickRequired, SansIsa } from "./utils/util.types";
 import type { XcodeProject } from "./XcodeProject";
 import type { PBXBuildRule } from "./PBXBuildRule";
 import { PBXTargetDependency } from "./PBXTargetDependency";
 import type { XCConfigurationList } from "./XCConfigurationList";
-import type { XCSwiftPackageProductDependency } from "./XCSwiftPackageProductDependency";
 import type { PBXFileSystemSynchronizedRootGroup } from "./PBXFileSystemSynchronizedRootGroup";
 import { PBXContainerItemProxy } from "./PBXContainerItemProxy";
+import type { XCRemoteSwiftPackageReference } from "./XCRemoteSwiftPackageReference";
+import type { XCLocalSwiftPackageReference } from "./XCLocalSwiftPackageReference";
 
 export type PBXNativeTargetModel = json.PBXNativeTarget<
   XCConfigurationList,
@@ -379,5 +382,106 @@ export class PBXNativeTarget extends AbstractTarget<PBXNativeTargetModel> {
 
     // Call parent which handles removing from PBXProject.targets array
     return super.removeFromProject();
+  }
+
+  /**
+   * Adds a Swift package product dependency to this target.
+   * This handles the full wiring:
+   * 1. Creates the XCSwiftPackageProductDependency
+   * 2. Adds it to target's packageProductDependencies
+   * 3. Creates a PBXBuildFile with productRef
+   * 4. Adds the build file to the frameworks build phase
+   *
+   * Note: The package reference must already be added to the project via
+   * `project.addPackageReference()`, `project.addRemoteSwiftPackage()`, or
+   * `project.addLocalSwiftPackage()`.
+   *
+   * @param opts.productName Name of the product from the Swift package
+   * @param opts.package The package reference (XCRemoteSwiftPackageReference or XCLocalSwiftPackageReference)
+   * @returns The created XCSwiftPackageProductDependency
+   */
+  addSwiftPackageProduct(opts: {
+    productName: string;
+    package?: XCRemoteSwiftPackageReference | XCLocalSwiftPackageReference;
+  }): XCSwiftPackageProductDependency {
+    const xcproj = this.getXcodeProject();
+
+    // Initialize packageProductDependencies if needed
+    if (!this.props.packageProductDependencies) {
+      this.props.packageProductDependencies = [];
+    }
+
+    // Check if this product dependency already exists for this target
+    const existing = this.props.packageProductDependencies.find(
+      (dep) =>
+        dep.props.productName === opts.productName &&
+        dep.props.package?.uuid === opts.package?.uuid
+    );
+    if (existing) {
+      return existing;
+    }
+
+    // Create the product dependency
+    const productDep = XCSwiftPackageProductDependency.create(xcproj, {
+      productName: opts.productName,
+      package: opts.package,
+    });
+
+    // Add to target's packageProductDependencies
+    this.props.packageProductDependencies.push(productDep);
+
+    // Create a build file with productRef pointing to the dependency
+    const buildFile = PBXBuildFile.createFromProductRef(xcproj, {
+      productRef: productDep,
+    });
+
+    // Add the build file to the frameworks build phase
+    this.getFrameworksBuildPhase().props.files.push(buildFile);
+
+    return productDep;
+  }
+
+  /**
+   * Gets all Swift package product dependencies for this target.
+   *
+   * @returns Array of XCSwiftPackageProductDependency objects
+   */
+  getSwiftPackageProductDependencies(): XCSwiftPackageProductDependency[] {
+    return this.props.packageProductDependencies ?? [];
+  }
+
+  /**
+   * Removes a Swift package product dependency from this target.
+   * This handles removing from packageProductDependencies and the build file from the frameworks phase.
+   *
+   * @param productDep The product dependency to remove
+   */
+  removeSwiftPackageProduct(productDep: XCSwiftPackageProductDependency): void {
+    // Remove from packageProductDependencies
+    if (this.props.packageProductDependencies) {
+      const index = this.props.packageProductDependencies.findIndex(
+        (dep) => dep.uuid === productDep.uuid
+      );
+      if (index !== -1) {
+        this.props.packageProductDependencies.splice(index, 1);
+      }
+    }
+
+    // Find and remove the build file that references this product dependency
+    const frameworksPhase = this.getBuildPhase(PBXFrameworksBuildPhase);
+    if (frameworksPhase) {
+      const buildFileIndex = frameworksPhase.props.files.findIndex(
+        (file) => file.props.productRef?.uuid === productDep.uuid
+      );
+      if (buildFileIndex !== -1) {
+        const buildFile = frameworksPhase.props.files[buildFileIndex];
+        frameworksPhase.props.files.splice(buildFileIndex, 1);
+        // Remove the build file from the project
+        buildFile.removeFromProject();
+      }
+    }
+
+    // Remove the product dependency from the project
+    productDep.removeFromProject();
   }
 }
