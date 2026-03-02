@@ -176,7 +176,14 @@ export class Writer {
   }
 
   private writeObject(object: JSONObject, isBase?: boolean) {
-    Object.entries(object).forEach(([key, value]) => {
+    Object.entries(object)
+      .sort(([a], [b]) => {
+        // isa always comes first, then case-sensitive ASCII alphabetical
+        if (a === "isa") return -1;
+        if (b === "isa") return 1;
+        return a < b ? -1 : a > b ? 1 : 0;
+      })
+      .forEach(([key, value]) => {
       if (this.options.skipNullishValues && value == null) {
         return;
       } else if (value instanceof Buffer) {
@@ -281,7 +288,14 @@ export class Writer {
     ) => {
       line.push(this.formatId(key) + " = {");
 
-      Object.entries(value).forEach(([key, obj]) => {
+      Object.entries(value)
+        .sort(([a], [b]) => {
+          // isa always comes first, then case-sensitive ASCII alphabetical
+          if (a === "isa") return -1;
+          if (b === "isa") return 1;
+          return a < b ? -1 : a > b ? 1 : 0;
+        })
+        .forEach(([key, obj]) => {
         if (this.options.skipNullishValues && obj == null) {
           return;
         } else if (obj instanceof Buffer) {
