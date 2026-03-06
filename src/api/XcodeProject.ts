@@ -5,6 +5,7 @@ import crypto from "crypto";
 
 import { XCScheme, createBuildableReference } from "./XCScheme";
 import { XCSharedData } from "./XCSharedData";
+import { XCUserData } from "./XCUserData";
 
 import { parse } from "../json";
 import * as json from "../json/types";
@@ -548,6 +549,47 @@ export class XcodeProject extends Map<json.UUID, AnyModel> {
     const sharedData = XCSharedData.create();
     sharedData.filePath = sharedDataDir;
     return sharedData;
+  }
+
+  // ============================================================================
+  // User Data Methods
+  // ============================================================================
+
+  /**
+   * Get the path to the xcuserdata directory.
+   */
+  getUserDataDir(): string {
+    const projectDir = path.dirname(this.filePath);
+    return path.join(projectDir, "xcuserdata");
+  }
+
+  /**
+   * Get all user data directories in this project.
+   *
+   * @returns Array of XCUserData instances for each user
+   */
+  getAllUserData(): XCUserData[] {
+    return XCUserData.discoverUsers(this.getUserDataDir());
+  }
+
+  /**
+   * Get user data for a specific user.
+   *
+   * @param userName The username to get data for
+   * @returns XCUserData for the specified user (creates new if doesn't exist)
+   */
+  getUserData(userName: string): XCUserData {
+    const userDataDir = this.getUserDataDir();
+    const userPath = path.join(userDataDir, `${userName}.xcuserdatad`);
+
+    if (existsSync(userPath)) {
+      return XCUserData.open(userPath);
+    }
+
+    // Create a new instance with the path set
+    const userData = XCUserData.create(userName);
+    userData.filePath = userPath;
+    return userData;
   }
 
   toJSON(): json.XcodeProject {
