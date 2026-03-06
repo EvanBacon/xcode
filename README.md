@@ -458,6 +458,78 @@ list.breakpoints?.push({
 const outputXml = breakpoints.build(list);
 ```
 
+## XCUserData Support
+
+Access and manipulate user data directories (`xcuserdata`) which contain per-user schemes, breakpoints, and scheme management. Unlike shared data, user data is per-developer and typically not checked into version control.
+
+### High-level API
+
+```ts
+import { XcodeProject, XCUserData } from "@bacons/xcode";
+
+// Get user data from a project
+const project = XcodeProject.open("/path/to/project.pbxproj");
+
+// Get all users
+const allUserData = project.getAllUserData();
+for (const userData of allUserData) {
+  console.log(`User: ${userData.userName}`);
+  console.log(`Schemes: ${userData.getSchemes().length}`);
+}
+
+// Get data for a specific user
+const myUserData = project.getUserData("johnsmith");
+
+// Access user schemes
+const schemes = myUserData.getSchemes();
+const debugScheme = myUserData.getScheme("MyApp-Debug");
+
+// Access user breakpoints
+if (myUserData.breakpoints) {
+  console.log(myUserData.breakpoints.breakpoints?.length);
+}
+
+// Access scheme management (order, visibility)
+if (myUserData.schemeManagement) {
+  console.log(myUserData.schemeManagement.SchemeUserState);
+}
+
+// Modify and save
+myUserData.breakpoints = {
+  uuid: "new-uuid",
+  type: "1",
+  version: "2.0",
+  breakpoints: [],
+};
+myUserData.save();
+```
+
+### Standalone Usage
+
+```ts
+import { XCUserData } from "@bacons/xcode";
+
+// Open existing user data
+const userData = XCUserData.open(
+  "/path/to/Project.xcodeproj/xcuserdata/username.xcuserdatad"
+);
+console.log(userData.userName); // "username"
+
+// Create new user data
+const newUserData = XCUserData.create("newuser");
+newUserData.schemeManagement = {
+  SchemeUserState: {
+    "App.xcscheme": { orderHint: 0 },
+  },
+};
+newUserData.save("/path/to/Project.xcodeproj/xcuserdata/newuser.xcuserdatad");
+
+// Discover all users in a project
+const users = XCUserData.discoverUsers(
+  "/path/to/Project.xcodeproj/xcuserdata"
+);
+```
+
 ### Workspace Settings API
 
 Parse and build workspace settings files (`WorkspaceSettings.xcsettings`):
@@ -613,7 +685,7 @@ We support the following types: `Object`, `Array`, `Data`, `String`. Notably, we
 - [ ] Create robust xcode projects from scratch.
 - [ ] Skills.
 - [ ] Import from other tools.
-- [ ] **XCUserData**: (`xcuserdata/<user>.xcuserdatad/`) Per-user schemes, breakpoints, UI state.
+- [x] **XCUserData**: (`xcuserdata/<user>.xcuserdatad/`) Per-user schemes, breakpoints, UI state.
 - [x] **IDEWorkspaceChecks**: (`xcshareddata/IDEWorkspaceChecks.plist`) Workspace check state storage (e.g., 32-bit deprecation warning).
 - [x] **Swift Package Manager**: Add remote and local SPM dependencies with automatic wiring.
 

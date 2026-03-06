@@ -35,5 +35,6 @@ export { XCSwiftPackageProductDependency } from "./XCSwiftPackageProductDependen
 export { XCVersionGroup } from "./XCVersionGroup";
 export { XCScheme, createBuildableReference } from "./XCScheme";
 export { XCSharedData } from "./XCSharedData";
+export { XCUserData } from "./XCUserData";
 export { XCWorkspace } from "./XCWorkspace";
 export { IDEWorkspaceChecks } from "./IDEWorkspaceChecks";
