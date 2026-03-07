@@ -234,10 +234,10 @@ export interface PBXFileSystemSynchronizedRootGroup<TException = UUID>
   extends AbstractPhysicalFileObject<ISA.PBXFileSystemSynchronizedRootGroup> {
   /** The list of exceptions applying to this group. */
   exceptions?: TException[];
-  /** Maps relative paths inside the synchronized root group to a particular file type. If a path doesn’t have a particular file type specified, Xcode defaults to the default file type based on the extension of the file. */
-  explicitFileTypes: Record<string, string>;
+  /** Maps relative paths inside the synchronized root group to a particular file type. If a path doesn't have a particular file type specified, Xcode defaults to the default file type based on the extension of the file. */
+  explicitFileTypes?: Record<string, string>;
   /** List of relative paths to children folder whose configuration is overwritten. */
-  explicitFolders: string[];
+  explicitFolders?: string[];
 }
 
 /** Object for referencing files that should be excluded from synchronization with the file system. */
@@ -900,8 +900,19 @@ export interface PBXProject<
   knownRegions: ("en" | "Base" | (string & {}))[];
   /** Object is a UUID for a `PBXGroup`. */
   mainGroup: TMainGroup;
+  /**
+   * Minimize reference proxies in the project.
+   * @example `1`
+   */
+  minimizedProjectReferenceProxies?: BoolNumber;
   /** Object is a UUID for a `PBXGroup`. */
   productRefGroup?: TProductRefGroup;
+  /**
+   * Preferred object version for the project.
+   * Used in modern Xcode projects (objectVersion 77+).
+   * @example `77`
+   */
+  preferredProjectObjectVersion?: number;
   /** Relative path for the project. */
   projectDirPath: string;
   /** Relative root path for the project. */
@@ -1043,6 +1054,8 @@ export interface BuildSettings {
   // INFOPLIST_KEY_LSApplicationCategoryType
 
   WATCHOS_DEPLOYMENT_TARGET?: string;
+  /** visionOS deployment target version. @example `"26.2"` */
+  XROS_DEPLOYMENT_TARGET?: string;
   MARKETING_VERSION?: number | string;
   SKIP_INSTALL?: BoolString;
   SWIFT_EMIT_LOC_STRINGS?: BoolString;
@@ -1068,7 +1081,13 @@ export interface BuildSettings {
   OTHER_LDFLAGS?: string[];
   SWIFT_COMPILATION_MODE?: "wholemodule" | (string & {});
   SWIFT_OPTIMIZATION_LEVEL?: "-O" | "-Onone" | "-Owholemodule" | (string & {});
-  SWIFT_VERSION?: "4.2" | "5" | (string & {});
+  SWIFT_VERSION?: "4.2" | "5" | "5.0" | (string & {});
+  /** Enables Swift's approachable concurrency mode. */
+  SWIFT_APPROACHABLE_CONCURRENCY?: BoolString;
+  /** Default actor isolation for Swift code. @example `"MainActor"` */
+  SWIFT_DEFAULT_ACTOR_ISOLATION?: "MainActor" | (string & {});
+  /** Enable Swift upcoming feature for member import visibility. */
+  SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY?: BoolString;
 
   ENABLE_USER_SCRIPT_SANDBOXING?: BoolString;
   ALWAYS_SEARCH_USER_PATHS?: BoolString;
@@ -1115,7 +1134,7 @@ export interface BuildSettings {
   "INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]"?: BoolString;
   ENABLE_STRICT_OBJC_MSGSEND?: string;
   ENABLE_TESTABILITY?: string;
-  GCC_C_LANGUAGE_STANDARD?: "gnu11" | (string & {});
+  GCC_C_LANGUAGE_STANDARD?: "gnu11" | "gnu17" | (string & {});
   GCC_DYNAMIC_NO_PIC?: BoolString;
   GCC_NO_COMMON_BLOCKS?: BoolString;
   GCC_OPTIMIZATION_LEVEL?: string;
@@ -1147,4 +1166,24 @@ export interface BuildSettings {
   LOCALIZATION_PREFERS_STRING_CATALOGS?: BoolString;
   ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS?: BoolString;
   DEAD_CODE_STRIPPING?: BoolString;
+
+  // Modern SwiftUI multiplatform app settings
+  /** Enable App Sandbox for macOS apps. */
+  ENABLE_APP_SANDBOX?: BoolString;
+  /** Register app groups capability. */
+  REGISTER_APP_GROUPS?: BoolString;
+  /** Enable user-selected files access. @example `"readonly"` */
+  ENABLE_USER_SELECTED_FILES?: "readonly" | "readwrite" | (string & {});
+  /** Generate Swift symbols for string catalogs. */
+  STRING_CATALOG_GENERATE_SYMBOLS?: BoolString;
+
+  // SDK-specific build settings (platform-conditional)
+  "INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]"?: BoolString;
+  "INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]"?: BoolString;
+  "INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]"?: BoolString;
+  "INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]"?: BoolString;
+  "INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]"?: BoolString;
+  "INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]"?: string;
+  "INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]"?: string;
+  "LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]"?: string | string[];
 }

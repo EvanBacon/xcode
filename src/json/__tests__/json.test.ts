@@ -33,6 +33,7 @@ describe(parse, () => {
     "007-xcode16.pbxproj",
     "008-out-of-order-orphans.pbxproj",
     "009-expo-app-clip.pbxproj",
+    "010-swiftui-multiplatform.pbxproj",
     "shopify-tophat.pbxproj",
     "AFNetworking.pbxproj",
     "project.pbxproj",
@@ -68,6 +69,7 @@ describe(parse, () => {
   const inOutFixtures = [
     "006-spm.pbxproj",
     "007-xcode16.pbxproj",
+    "010-swiftui-multiplatform.pbxproj",
 
     "AFNetworking.pbxproj",
     "project.pbxproj",
