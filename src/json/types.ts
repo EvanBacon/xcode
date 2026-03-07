@@ -1170,7 +1170,12 @@ export interface BuildSettings {
   // Modern SwiftUI multiplatform app settings
   /** Enable App Sandbox for macOS apps. */
   ENABLE_APP_SANDBOX?: BoolString;
-  /** Register app groups capability. */
+  /**
+   * Register app groups capability. Required for extensions to access
+   * app group containers. Should be `YES` for any target using App Groups.
+   * Without this, extensions may silently fail to access shared containers.
+   * @see https://developer.apple.com/documentation/Xcode/configuring-app-groups
+   */
   REGISTER_APP_GROUPS?: BoolString;
   /** Enable user-selected files access. @example `"readonly"` */
   ENABLE_USER_SELECTED_FILES?: "readonly" | "readwrite" | (string & {});
