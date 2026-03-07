@@ -149,13 +149,11 @@ export class XCBuildConfiguration extends AbstractObject<XCBuildConfigurationMod
         );
       }
 
-      // @ts-expect-error: A setting could refer to another setting that isn't of type string.
       return this.props.buildSettings[sub];
     };
 
     const setting = this.props.buildSettings[buildSetting];
     if (typeof setting === "string") {
-      // @ts-expect-error
       return resolveXcodeBuildSetting(setting, resolver);
     }
     if (Array.isArray(setting)) {
