@@ -106,3 +106,7 @@ New fixtures should follow the pattern `NNN-description.pbxproj` (e.g., `009-exp
 In `json.test.ts`, fixtures are added to two arrays:
 - `fixtures` - Tests parsing correctness by comparing against macOS `plutil` output
 - `inOutFixtures` - Tests round-trip (parse → build → should equal original). Only add here if the fixture round-trips perfectly; some fixtures have known formatting differences.
+
+## Research
+
+When searching Apple docs, replace https://developer.apple.com with https://sosumi.ai to read as markdown. e.g. https://sosumi.ai/documentation/Xcode/configuring-app-groups instead of https://developer.apple.com/documentation/xcode/configuring-app-groups
