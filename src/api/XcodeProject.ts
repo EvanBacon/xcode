@@ -2,6 +2,7 @@ import assert from "assert";
 import { readFileSync, readdirSync, existsSync, unlinkSync, rmdirSync } from "fs";
 import path from "path";
 import crypto from "crypto";
+import { hostname, userInfo } from "os";
 
 import { XCScheme, createBuildableReference } from "./XCScheme";
 import { XCSharedData } from "./XCSharedData";
@@ -49,19 +50,96 @@ const debug = require("debug")(
   "xcparse:model:XcodeProject"
 ) as typeof console.log;
 
-function uuidForPath(path: string): string {
-  return (
-    // Xcode seems to make the first 7 and last 8 characters the same so we'll inch toward that.
-    "XX" +
-    crypto
-      .createHash("md5")
-      .update(path)
-      .digest("hex")
-      .toUpperCase()
-      .slice(0, 20) +
-    "XX"
-  );
+// Lookup table from Xcode's DevToolsSupport framework for username hashing.
+// Maps ASCII characters to 5-bit values: 0x00–0x19 for letters (case-insensitive),
+// 0x1A–0x1E for digits, 0x1F for everything else.
+// prettier-ignore
+const USER_HASH_TABLE = [
+  0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,
+  0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,
+  0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,
+  0x1a,0x1b,0x1c,0x1d,0x1e,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,
+  0x1f,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,
+  0x0f,0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,0x19,0x1f,0x1f,0x1f,0x1f,0x1f,
+  0x1f,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,
+  0x0f,0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,0x19,0x1f,0x1f,0x1f,0x1f,0x1f,
+];
+
+/** Replicates Xcode's NSUserName XOR-fold hash to a single byte. */
+export function xcodeUserHash(name: string): number {
+  let h = 0;
+  let shift = 0;
+  for (const ch of name) {
+    const c = ch.charCodeAt(0);
+    const v = c > 127 ? 0x1f : USER_HASH_TABLE[c];
+    let folded = ((v << shift) | ((v << shift) >>> 8)) >>> 0;
+    if (shift === 0) folded = v;
+    h = (h ^ folded) >>> 0;
+    shift = (shift + 5) & 7;
+  }
+  return h & 0xff;
 }
+
+const COCOA_EPOCH = new Date("2001-01-01T00:00:00Z").getTime();
+
+/**
+ * Generates 24-character hex IDs matching Xcode's PBXObjectID format.
+ *
+ * Layout (12 bytes → 24 hex chars):
+ *   [0]     user hash  — NSUserName() XOR-folded via lookup table
+ *   [1]     PID        — getpid() & 0xFF
+ *   [2–3]   counter    — 16-bit big-endian, incremented per ID
+ *   [4–7]   timestamp  — seconds since 2001-01-01, big-endian
+ *   [8]     zero       — always 0x00
+ *   [9–11]  random     — seeded once per generator instance
+ */
+class XcodeIDGenerator {
+  private counter: number;
+  private lastTimestamp = 0;
+  private counterSnapshot = 0;
+  private readonly userHash: number;
+  private readonly pidByte: number;
+  private readonly randomBytes: Buffer;
+
+  constructor() {
+    const user = userInfo().username;
+    this.userHash = xcodeUserHash(user);
+    this.pidByte = process.pid & 0xff;
+
+    // Seed random bytes (approximating gethostid + srandom + random)
+    const seed = crypto
+      .createHash("md5")
+      .update(`${hostname()}:${user}:${process.pid}:${Date.now()}`)
+      .digest();
+
+    this.randomBytes = seed.subarray(0, 3);
+    this.counter = seed.readUInt16BE(4);
+  }
+
+  next(): string {
+    this.counter = (this.counter + 1) & 0xffff;
+
+    const now = Math.floor((Date.now() - COCOA_EPOCH) / 1000);
+    if (now > this.lastTimestamp) {
+      this.counterSnapshot = this.counter;
+      this.lastTimestamp = now;
+    } else if (this.counter === this.counterSnapshot) {
+      this.lastTimestamp++;
+    }
+
+    const buf = Buffer.alloc(12);
+    buf[0] = this.userHash;
+    buf[1] = this.pidByte;
+    buf.writeUInt16BE(this.counter, 2);
+    buf.writeUInt32BE(this.lastTimestamp >>> 0, 4);
+    buf[8] = 0x00;
+    this.randomBytes.copy(buf, 9);
+    return buf.toString("hex").toUpperCase();
+  }
+}
+
+/** Shared generator instance — one per process, matching Xcode's behavior. */
+const idGenerator = new XcodeIDGenerator();
 
 type IsaMapping = {
   [json.ISA.PBXBuildFile]: PBXBuildFile;
@@ -300,7 +378,7 @@ export class XcodeProject extends Map<json.UUID, AnyModel> {
   }
 
   createModel<TProps extends json.AbstractObject<any>>(opts: TProps) {
-    const uuid = this.getUniqueId(JSON.stringify(canonicalize(opts)));
+    const uuid = this.getUniqueId();
     const model = this.createObject(uuid, opts);
     this.set(uuid, model);
     return model;
@@ -342,15 +420,12 @@ export class XcodeProject extends Map<json.UUID, AnyModel> {
     return true;
   }
 
-  private getUniqueId(seed: string): string {
-    const id = uuidForPath(seed);
-    if (this.isUniqueId(id)) {
-      return id;
-    }
-    return this.getUniqueId(
-      // Add a space to the seed to increase the hash.
-      seed + " "
-    );
+  private getUniqueId(): string {
+    let id: string;
+    do {
+      id = idGenerator.next();
+    } while (!this.isUniqueId(id));
+    return id;
   }
 
   // ============================================================================
@@ -619,20 +694,3 @@ function assertRootObject(
   }
 }
 
-function canonicalize(value: any): any {
-  // Deep sort serialized `value` object to make it deterministic.
-  if (Array.isArray(value)) {
-    return value.map(canonicalize);
-  } else if (typeof value === "object") {
-    if ("uuid" in value && typeof value.uuid === "string") {
-      return value.uuid;
-    }
-    const sorted: Record<string, any> = {};
-    for (const key of Object.keys(value).sort()) {
-      sorted[key] = canonicalize(value[key]);
-    }
-    return sorted;
-  } else {
-    return value;
-  }
-}
