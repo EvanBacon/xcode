@@ -34,6 +34,7 @@ describe(parse, () => {
     "008-out-of-order-orphans.pbxproj",
     "009-expo-app-clip.pbxproj",
     "010-swiftui-multiplatform.pbxproj",
+    "011-swift-ios-27.pbxproj",
     "shopify-tophat.pbxproj",
     "AFNetworking.pbxproj",
     "project.pbxproj",
@@ -70,6 +71,7 @@ describe(parse, () => {
     "006-spm.pbxproj",
     "007-xcode16.pbxproj",
     "010-swiftui-multiplatform.pbxproj",
+    "011-swift-ios-27.pbxproj",
 
     "AFNetworking.pbxproj",
     "project.pbxproj",

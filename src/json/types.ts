@@ -1016,9 +1016,13 @@ export interface BuildSettings {
   IPHONEOS_DEPLOYMENT_TARGET?: string;
   MACOSX_DEPLOYMENT_TARGET?: string;
   TVOS_DEPLOYMENT_TARGET?: string;
+  /** tvOS deployment target version, using the legacy `APPLETVOS` SDK name. Emitted by newer Xcode templates alongside `TVOS_DEPLOYMENT_TARGET`. @since Xcode 7.1 @example `"27.0"` */
+  APPLETVOS_DEPLOYMENT_TARGET?: string;
   WATCHOS_DEPLOYMENT_TARGET?: string;
   /** visionOS deployment target version. @example `"2.0"` */
   XROS_DEPLOYMENT_TARGET?: string;
+  /** DriverKit deployment target version. @since Xcode 11.0 @example `"27.0"` */
+  DRIVERKIT_DEPLOYMENT_TARGET?: string;
 
   /** The name of the build setting for the deployment target for the effective platform. */
   DEPLOYMENT_TARGET_SETTING_NAME?: string;
@@ -1443,6 +1447,31 @@ export interface BuildSettings {
   /** Must contain a profile name (or UUID). */
   PROVISIONING_PROFILE_SPECIFIER?: string;
 
+  /** Register app groups in provisioning profiles. Emitted by newer Xcode templates that use App Groups. @since Xcode 16.0 */
+  REGISTER_APP_GROUPS?: BoolString;
+
+  /** Enables distribution of the app via Web Distribution in the EU (iOS 17.5+). @since Xcode 15.4 */
+  ALTERNATIVE_DISTRIBUTION_WEB?: BoolString;
+
+  /** The list of alternative app marketplaces this app may be distributed through in the EU (iOS 17.4+). @since Xcode 15.3 */
+  MARKETPLACES?: string[];
+
+  // ============================================================================
+  // Launch & Library Load Constraints (iOS 17 / macOS 14+)
+  // ============================================================================
+
+  /** Path to a launch environment constraint plist applied to the parent process. @since Xcode 15.0 */
+  LAUNCH_CONSTRAINT_PARENT?: string;
+
+  /** Path to a launch environment constraint plist applied to the responsible process. @since Xcode 15.0 */
+  LAUNCH_CONSTRAINT_RESPONSIBLE?: string;
+
+  /** Path to a launch environment constraint plist applied to the process itself. @since Xcode 15.0 */
+  LAUNCH_CONSTRAINT_SELF?: string;
+
+  /** Path to a library load constraint plist restricting which processes may load this library. @since Xcode 15.0 */
+  LIBRARY_LOAD_CONSTRAINT?: string;
+
   // ============================================================================
   // Swift Settings
   // ============================================================================
@@ -1470,6 +1499,12 @@ export interface BuildSettings {
 
   /** Enables the use of the forward slash syntax for regular-expressions. */
   SWIFT_ENABLE_BARE_SLASH_REGEX?: BoolString;
+
+  /** Build the target with the Embedded Swift language subset, producing standalone binaries without the full Swift runtime. @since Xcode 27.0 */
+  SWIFT_ENABLE_EMBEDDED?: BoolString;
+
+  /** Enables the compilation cache for Swift, reusing previous compilation results. Defaults to `$(COMPILATION_CACHE_ENABLE_CACHING)`. @since Xcode 16.0 */
+  SWIFT_ENABLE_COMPILE_CACHE?: BoolString;
 
   /** Emit the extracted compile-time known values from the Swift compiler. */
   SWIFT_ENABLE_EMIT_CONST_VALUES?: BoolString;
@@ -1604,6 +1639,12 @@ export interface BuildSettings {
 
   /** Enables the use of modules for system APIs. */
   CLANG_ENABLE_MODULES?: BoolString;
+
+  /** Builds Clang module dependencies via explicit tasks rather than implicitly during compilation. Defaults to `YES`. @since Xcode 16.0 */
+  CLANG_ENABLE_EXPLICIT_MODULES?: BoolString;
+
+  /** Enables the compilation cache for Clang, reusing previous compilation results. Defaults to `$(COMPILATION_CACHE_ENABLE_CACHING)`. @since Xcode 16.0 */
+  CLANG_ENABLE_COMPILE_CACHE?: BoolString;
 
   /** When enabled, `clang` will use the shared debug info available in `clang` modules and precompiled headers. */
   CLANG_ENABLE_MODULE_DEBUGGING?: BoolString;
@@ -2636,6 +2677,15 @@ export interface BuildSettings {
   /** When enabled, includes the localization information of the selected assets in the generated partial Info.plist file. */
   ASSETCATALOG_COMPILER_INCLUDE_INFOPLIST_LOCALIZATIONS?: BoolString;
 
+  /** When enabled, includes sticker pack content from the target's asset catalogs in the built product. @since Xcode 8.0 */
+  ASSETCATALOG_COMPILER_INCLUDE_STICKER_CONTENT?: BoolString;
+
+  /** The role the target's sticker icon plays, when building a Messages sticker target. @since Xcode 8.0 */
+  ASSETCATALOG_COMPILER_TARGET_STICKERS_ICON_ROLE?:
+    | "host-app"
+    | "extension"
+    | (string & {});
+
   /** Name of an asset catalog launch image set whose contents will be merged into the `Info.plist`. */
   ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME?: string;
 
@@ -2768,6 +2818,12 @@ export interface BuildSettings {
   /** When enabled, localizable content in this target/project can be exported. */
   LOCALIZATION_EXPORT_SUPPORTED?: BoolString;
 
+  /** When enabled, only builds content for languages explicitly supported by the project. @since Xcode 15.0 */
+  BUILD_ONLY_KNOWN_LOCALIZATIONS?: BoolString;
+
+  /** When enabled, localizable strings wrapped in NSLocalizedString-like macros are extracted even if commented out or wrapped in `#if 0`. @since Xcode 15.0 */
+  LOCALIZED_STRING_CODE_COMMENTS?: BoolString;
+
   /** When enabled, string tables generated in a localization export will prefer the String Catalog format. */
   LOCALIZATION_PREFERS_STRING_CATALOGS?: BoolString;
 
@@ -2808,6 +2864,25 @@ export interface BuildSettings {
 
   /** When enabled, generates assets needed for App Shortcuts Flexible Matching. */
   APP_SHORTCUTS_ENABLE_FLEXIBLE_MATCHING?: BoolString;
+
+  /** Defines how a Core ML / AI model is built for deployment in the product bundle. @since Xcode 27.0 */
+  AIMODEL_BUILD_TYPE?: "package" | "compile" | (string & {});
+
+  /** Specifies the chips where AI model asset inference may run. @since Xcode 27.0 */
+  AIMODEL_INFERENCE_MODE?: "default" | "cpu-only" | (string & {});
+
+  /** Enables code size profiling for the build, emitting reports to `CODESIZE_PROFILE_OUTPUT_DIR`. @since Xcode 27.0 */
+  ENABLE_CODESIZE_PROFILE?: BoolString;
+
+  /** Indicates the target supports Text-Based InstallAPI (`.tbd` generation), enabling its generation during `install` builds. @since Xcode 11.0 */
+  SUPPORTS_TEXT_BASED_API?: BoolString;
+
+  /**
+   * A per-project random value injected by newer Xcode templates, used to keep generated
+   * bundle identifiers unique (e.g. `devplaceholder.$(PROJECT_UNIQUE_VALUE:identifier).$(PRODUCT_NAME:identifier)`).
+   * @since Xcode 16.0
+   */
+  PROJECT_UNIQUE_VALUE?: string;
 
   /** A Boolean value that indicates whether the app may prompt the user for permission to send Apple events. */
   AUTOMATION_APPLE_EVENTS?: BoolString;
