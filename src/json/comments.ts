@@ -15,16 +15,37 @@ export function createReferenceList(
   const strict = false;
   const objects: Record<string, any> = project?.objects ?? {};
 
+  // Xcode 27.0 writes pbxproj files with `objectVersion = 90`, which introduced
+  // a more descriptive comment style for build configurations, e.g.
+  // `Debug configuration for PBXNativeTarget "App"` instead of just `Debug`.
+  const usesVerboseConfigComments = Number(project?.objectVersion) >= 90;
+
   const referenceCache: Record<string, string> = {};
 
-  function getXCConfigurationListComment(id: string) {
+  /**
+   * Resolve the object that owns a given `XCConfigurationList` (the target or
+   * project whose `buildConfigurationList` points at it) and return its `isa`
+   * and display name, matching the values Xcode embeds in pbxproj comments.
+   */
+  function getConfigurationListOwner(
+    id: string
+  ): { isa: string; name: string } | null {
     for (const [innerId, obj] of Object.entries(objects) as any) {
       if (obj.buildConfigurationList === id) {
         let name = obj.name ?? obj.path ?? obj.productName;
         if (!name) {
+          // The main `PBXProject` object has no name; Xcode labels it with the
+          // project name, which the built product is named after. Derive it from
+          // the first target's product reference (e.g. `App.app` -> `App`),
+          // falling back to the target's name/productName.
+          const firstTarget = objects[obj.targets?.[0]];
+          const productPath =
+            objects[firstTarget?.productReference]?.path ??
+            objects[firstTarget?.productReference]?.name;
           name =
-            objects[obj.targets?.[0]]?.productName ??
-            objects[obj.targets?.[0]]?.name;
+            (productPath && productPath.replace(/\.[^.]+$/, "")) ??
+            firstTarget?.productName ??
+            firstTarget?.name;
 
           if (!name) {
             // NOTE(EvanBacon): I have no idea what I'm doing...
@@ -39,10 +60,37 @@ export function createReferenceList(
           }
         }
 
-        return `Build configuration list for ${obj.isa} "${name}"`;
+        return { isa: obj.isa, name };
       }
     }
-    return `Build configuration list for [unknown]`;
+    return null;
+  }
+
+  function getXCConfigurationListComment(id: string) {
+    const owner = getConfigurationListOwner(id);
+    if (!owner) {
+      return `Build configuration list for [unknown]`;
+    }
+    return `Build configuration list for ${owner.isa} "${owner.name}"`;
+  }
+
+  function getXCBuildConfigurationComment(id: string, object: any): string {
+    // Older pbxproj versions just use the configuration name (e.g. `Debug`).
+    if (!usesVerboseConfigComments) {
+      return object.name ?? "";
+    }
+    // Find the configuration list that contains this build configuration, then
+    // describe it in terms of its owning target/project.
+    for (const [listId, obj] of Object.entries(objects) as any) {
+      if (obj.isa === "XCConfigurationList" && obj.buildConfigurations?.includes(id)) {
+        const owner = getConfigurationListOwner(listId);
+        if (owner) {
+          return `${object.name} configuration for ${owner.isa} "${owner.name}"`;
+        }
+        break;
+      }
+    }
+    return object.name ?? "";
   }
 
   function getBuildPhaseNameContainingFile(buildFileId: string): string | null {
@@ -81,6 +129,8 @@ export function createReferenceList(
       referenceCache[id] = getPBXBuildFileComment(id, object);
     } else if (isXCConfigurationList(object)) {
       referenceCache[id] = getXCConfigurationListComment(id);
+    } else if (object.isa === "XCBuildConfiguration") {
+      referenceCache[id] = getXCBuildConfigurationComment(id, object);
     } else if (isXCRemoteSwiftPackageReference(object)) {
       if (object.repositoryURL) {
         referenceCache[id] = `${object.isa} "${getRepoNameFromURL(
